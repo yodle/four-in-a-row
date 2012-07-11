@@ -7,6 +7,10 @@ var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
 var http = require('http');
 var url = require('url');
+var mongo = require('mongodb');
+var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {}), {});
+
+var gamedb = require('./gamedb');
 
 var c4engine = require('./engine');
 var Utils = c4engine.Utils;
@@ -47,7 +51,8 @@ app.post('/game/init/:ailevel', function(req, res) {
     }
     else
     {
-	res.end(JSON.stringify({msg:'', gameId:1234, board:[[0,0,0,0,0,0]]}));
+	var game = gamedb.GameDb(db).init(nickname);
+	res.end(JSON.stringify(game));
     }
 });
 
