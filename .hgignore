@@ -1,7 +1,0 @@
-~$
-^npm-debug.log$
-^.monitor$
-.swp$
-^node_modules/
-^err.log$
-^out.log$
