@@ -18,14 +18,14 @@ module.exports = {
     
     'engine initialization sets up the game': function() {
         before();
-        assert.length(socket.sent, 1);
+        assert.equal(1, socket.sent.length);
         assert.includes(socket.sent, 'available');
     },
     
     'on error show the message in the ui': function() {
         before();
         handlers.error({msg: 'error'});
-        assert.length(UI.messages, 1);
+        assert.equal(1, UI.messages.length);
         assert.includes(UI.messages, 'error');
     }
 };
