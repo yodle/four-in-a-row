@@ -1,8 +1,8 @@
 node_modules/*
 ~$
-^npm-debug.log$
+npm-debug.log
 ^.monitor$
 .swp$
-^server/node_modules/
+server/node_modules/
 ^err.log$
 ^out.log$
