@@ -39,10 +39,16 @@ app.configure('production', function(){
 app.use(express.bodyParser());
 
 app.post('/game/init/:ailevel', function(req, res) {
-    var ai = req.params.ailevel;
+    var ai = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || 'anonymous';
-    console.log('NICK:-------\n' + nickname + '\n--------');
-    res.end(JSON.stringify({msg:'', gameId:1234, board:[[0,0,0,0,0,0]]}));
+
+    if (isNaN(ai) || ai < 1 || ai > 6) {
+	res.end(JSON.stringify({error: 'ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'}));
+    }
+    else
+    {
+	res.end(JSON.stringify({msg:'', gameId:1234, board:[[0,0,0,0,0,0]]}));
+    }
 });
 
 app.post('/game/move/:gameId', function(req, res) {
