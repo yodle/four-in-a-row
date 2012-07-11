@@ -18,8 +18,6 @@ var replayAi = require('./ais/replay_ai');
 // Configuration
 
 app.configure(function(){
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
     app.use(express.bodyParser());
     app.use(express.methodOverride());
     app.use(app.router);
@@ -39,13 +37,6 @@ app.configure('production', function(){
 });
 
 app.use(express.bodyParser());
-
-// Routes
-app.get('/', function(req, res){
-    res.render('index', {
-        title: 'Express'
-    });
-});
 
 app.post('/game/init/:ailevel', function(req, res) {
     var ai = req.params.ailevel;
