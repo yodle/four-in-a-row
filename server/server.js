@@ -47,6 +47,18 @@ app.get('/', function(req, res){
     });
 });
 
+app.post('/game/init/:ailevel', function(req, res) {
+    var ai = req.params.ailevel;
+    var nickname = req.body.nickname || 'anonymous';
+    console.log('NICK:-------\n' + nickname + '\n--------');
+    res.end(JSON.stringify({msg:'', gameId:1234, board:[[0,0,0,0,0,0]]}));
+});
+
+app.post('/game/move/:gameId', function(req, res) {
+    var game = req.params.gameId;
+    res.end(JSON.stringify({msg:'', state:'Open', board:[[0,0,0,0,0,1]]}));
+});
+
 app.post('/ai/random/move', function(req, res) {
     var move = randomAi.move(req.body);
     res.setHeader('Content-Type', 'application/json');
