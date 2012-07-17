@@ -59,23 +59,6 @@ app.post('/game/move/:gameId', function(req, res) {
     res.end(JSON.stringify({msg:'', state:'Open', board:[[0,0,0,0,0,1]]}));
 });
 
-app.post('/ai/random/move', function(req, res) {
-    var move = randomAi.move(req.body);
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({move: move}));
-});
-
-app.post('/ai/twostep/move', function(req, res) {
-    var move = twoStepAi.move(req.body);
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({move: move}));
-});
-
-app.post('/ai/replay/move', function(req, res) {
-    var move = replayAi.move(req.body, req.query['m'].split(','));
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({move: move}));
-});
 
 var ComputerPlayer = function(moveUrl, playerIdx, moveCallback) {
     this.playerIdx = playerIdx;
