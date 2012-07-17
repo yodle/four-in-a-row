@@ -1,10 +1,8 @@
-
 /**
  * Module dependencies.
  */
 var express = require('express');
 var app = module.exports = express.createServer();
-var io = require('socket.io').listen(app);
 var http = require('http');
 var url = require('url');
 var mongo = require('mongodb');
@@ -47,12 +45,12 @@ app.post('/game/init/:ailevel', function(req, res) {
     var nickname = req.body.nickname || 'anonymous';
 
     if (isNaN(ai) || ai < 1 || ai > 6) {
-	res.end(JSON.stringify({error: 'ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'}));
+        res.end(JSON.stringify({error: 'ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'}));
     }
     else
     {
-	var game = gamedb.GameDb(db).init(nickname);
-	res.end(JSON.stringify(game));
+        var game = gamedb.GameDb(db).init(nickname);
+        res.end(JSON.stringify(game));
     }
 });
 
