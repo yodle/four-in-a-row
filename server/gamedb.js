@@ -1,7 +1,7 @@
 exports.GameDb = (function (db) {
     return {
-	init: function(nick, callback) {
-	    var toInsert = {'nickname': nick};
+	init: function(nick, board, callback) {
+	    var toInsert = {'nickname': nick, 'board':board};
 	    db.open(function(err, client) { 
 		client.createCollection('games', function(err, col) {
 		    client.collection('games', function(err, col) {

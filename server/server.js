@@ -13,11 +13,9 @@ var gamedb = require('./gamedb');
 var c4engine = require('./engine');
 var Utils = c4engine.Utils;
 
-var randomAi = require('./ais/random_ai');
-var twoStepAi = require('./ais/twostep_ai');
-var replayAi = require('./ais/replay_ai');
-
 // Configuration
+var ROWS = 6;
+var COLS = 7;
 
 app.configure(function(){
     app.use(express.bodyParser());
@@ -51,6 +49,7 @@ app.post('/game/init/:ailevel', function(req, res) {
     {
 	gamedb.GameDb(db).init(
 	    nickname, 
+	    Utils.initBoard(ROWS, COLS, function(row, col) { return 0; }),
 	    function(game){
 		res.end(JSON.stringify(game));
 	    }
@@ -136,8 +135,5 @@ ComputerPlayer.prototype.toString = function() {
 };
 
 // Application
-var ROWS = 6;
-var COLS = 7;
-
 app.listen(port);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
