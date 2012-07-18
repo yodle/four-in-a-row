@@ -5,9 +5,25 @@ var mockMongo = {
 	db: {
 	},
 	collection: {
-		insert: function(object) {
-			mockMongo.db[object.gameId] = object;
+	    insert: function(object, params, callback) {
+			object._id = "" + new Date().getTime() + Math.floor(Math.random() * 100000);
+			mockMongo.db[object._id] = object;
+			callback();
+	    },
+	    db: {
+		bson_serializer: {
+		    ObjectID: {
+			createFromHexString : function(id) { return id; }
+		    }
 		}
+	    },
+	    find: function(document, callback) {
+		return {
+		    toArray : function(callback) {
+			callback(null, [mockMongo.db[document._id]]);
+		    }
+		}
+	    }
 	},
 	client: {
 		createCollection: function(collectionName, callback) {
@@ -16,9 +32,6 @@ var mockMongo = {
 		collection: function(collectionName, callback) {
 			callback(null, mockMongo.collection);
 		},
-		find: function(document, callback) {
-			callback(null, [mockMongo.db[document.gameId]]);
-		}
 	},
     open: function(callback) {
 		callback(null, mockMongo.client);	
@@ -36,32 +49,35 @@ var nonEmpty = function(possiblyEmpty) {
 
 module.exports = {
     'init returns game identifier': function() {
-	var underTest = before();
-	var gameId = underTest.init('dennis');
-	assert.equal(true, nonEmpty(gameId) && 0  < gameId.length);
+	before().init('dennis', function(gameId){
+	    assert.equal(true, nonEmpty(gameId) && 0  < gameId.length);
+	});
     },
 
     'consecutive inits result in distinct game Ids': function() {
 	var underTest = before();
-	var game1 = underTest.init('dennis');
-	var game2 = underTest.init('fend');
-	assert.equal(false, game1 == game2);
+	underTest.init('dennis', function(game1) {
+	    underTest.init('fend', function(game2) {
+		assert.equal(false, game1 == game2);		
+	    });
+	});
     },
 
     'gamedb can recover game state from init': function() {
 	var underTest = before();
-	var gameId = underTest.init('dennis');
-	underTest.findGame(gameId, function(nick) {
+        underTest.init('dennis', function(gameId) { 
+	    underTest.findGame(gameId, function(nick) {
 		assert.equal(true, nonEmpty(nick));
+	    });
 	});
     },
 
     'gamedb recovers nickname from init': function() {
 	var underTest = before();
-	var gameId = underTest.init('nick');
-	
-	underTest.findGame(gameId, function(obj) {
+	underTest.init('nick', function(gameId) {
+	    underTest.findGame(gameId, function(obj) {
 		assert.equal('nick', obj.nickname);
+	    });
 	});
     }
 };

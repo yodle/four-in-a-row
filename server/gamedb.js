@@ -1,22 +1,25 @@
 exports.GameDb = (function (db) {
     return {
-	init: function(nick) {
-	    var gameId = "" + new Date().getTime() + Math.floor(Math.random() * 100000);
-	    db.open(function(err,client) { 
+	init: function(nick, callback) {
+	    var toInsert = {'nickname': nick};
+	    db.open(function(err, client) { 
 		client.createCollection('games', function(err, col) {
 		    client.collection('games', function(err, col) {
-			col.insert({'nickname': nick, 'gameId': gameId}, function() {});
+			col.insert(toInsert, {safe:true}, function() { callback(toInsert._id); });
 		    });
 		});
 	    });
-	    return gameId;
 	},
 	
 	findGame: function(id, callback) {
 		db.open(function(err, client) {
 			client.collection('games', function(err, col) {
-				client.find({'gameId': id}, function(err, cursor) {
-					callback(cursor[0]);
+			    col.find({'_id': col.db.bson_serializer.ObjectID.createFromHexString(id)}).toArray(function(err, results) {
+				    var game = null;
+				    if (0 != results.length) {
+					game = results[0];
+				    }
+				    callback(game);
 				});
 			});
 		});

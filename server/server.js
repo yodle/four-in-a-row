@@ -51,14 +51,32 @@ app.post('/game/init/:ailevel', function(req, res) {
     }
     else
     {
-	var game = gamedb.GameDb(db).init(nickname);
-	res.end(JSON.stringify(game));
+	gamedb.GameDb(db).init(
+	    nickname, 
+	    function(game){
+		res.end(JSON.stringify(game));
+	    }
+	);
     }
 });
 
 app.post('/game/move/:gameId', function(req, res) {
     var game = req.params.gameId;
     res.end(JSON.stringify({msg:'', state:'Open', board:[[0,0,0,0,0,1]]}));
+});
+
+app.get('/game/state/:gameId', function(req, res) {
+    var gameId = req.params.gameId;
+    gamedb.GameDb(db).findGame(
+	gameId,
+	function(game) {
+	    var response = "{'error':'bad game id specified [" + gameId + "]'}";
+	    if (null != game) {
+		response = JSON.stringify(game);
+	    }
+	    res.end(response);
+	}
+    );
 });
 
 app.post('/ai/random/move', function(req, res) {
