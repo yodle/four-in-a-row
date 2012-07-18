@@ -1,6 +1,6 @@
 var http = require('http');
 
-exports.ComputerPlayer = function(moveUrl, playerIdx, moveCallback) {
+ComputerPlayer = function(moveUrl, playerIdx, moveCallback) {
     this.playerIdx = playerIdx;
     this.moveUrl = url.parse(moveUrl);
     this.moveCallback = moveCallback;
@@ -58,3 +58,4 @@ ComputerPlayer.prototype.toString = function() {
     return "Computer Player " + this.playerIdx;
 };
 
+exports.ComputerPlayer = ComputerPlayer;
