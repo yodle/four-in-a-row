@@ -51,8 +51,8 @@ Game.prototype.move = function() {
 };
 
 Game.prototype._advanceTurn = function() {
-    if(engine.turn == Utils.Players.P1) { engine.turn = Utils.Players.P2 }
-    else if(engine.turn == Utils.Players.P2) { engine.turn = Utils.Players.P1; }
+    if(this.turn == Utils.Players.P1) { this.turn = Utils.Players.P2 }
+    else if(this.turn == Utils.Players.P2) { this.turn = Utils.Players.P1; }
 };
 
 exports.newGame = function(rows, cols, humanPlayer) {

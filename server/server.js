@@ -9,7 +9,7 @@ var mongo = require('mongodb');
 var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {}), {});
 
 var gamedb = require('./gamedb');
-var c4engine = require('./engine');
+var game = require('./game');
 var Utils = require('./utils');
 
 var computerplayer = require('./computer_player');
