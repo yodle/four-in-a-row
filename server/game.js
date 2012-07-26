@@ -1,11 +1,12 @@
 var Utils = require('./utils');
 
-var Game = function(rows, cols, humanPlayer) {
+var Game = function(rows, cols, humanPlayer, nickname) {
     this.ROWS = rows;
     this.COLS = cols;
 
     this.gameOver = false;
     this.humanPlayer = humanPlayer;
+    this.nickname = nickname;
     this.turn = Utils.Players.P1;
     this.moves = 0;
     this.moveList = [];
@@ -16,18 +17,6 @@ var Game = function(rows, cols, humanPlayer) {
 	this.COLS,
 	function() { return Utils.Players.EMPTY; }
     );
-};
-
-Game.prototype.getState = function() {
-    // TODO: WML: NEEDED?
-    return {
-        rows: this.ROWS,
-        cols: this.COLS,
-        board: this.board,
-        lastMove: this.lastMove,
-        currentTurn: this.turn,
-        moveNumber: this.moves
-    };
 };
 
 Game.prototype.move = function() {
@@ -55,7 +44,6 @@ Game.prototype._advanceTurn = function() {
     else if(this.turn == Utils.Players.P2) { this.turn = Utils.Players.P1; }
 };
 
-exports.newGame = function(rows, cols, humanPlayer) {
-    return new Game(rows, cols, humanPlayer);
+exports.newGame = function(rows, cols, humanPlayer, nickname) {
+    return new Game(rows, cols, humanPlayer, nickname);
 };
-
