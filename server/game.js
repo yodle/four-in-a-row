@@ -10,7 +10,7 @@ var Game = function(rows, cols, humanPlayer, nickname) {
     this.turn = Utils.Players.P1;
     this.moves = 0;
     this.moveList = [];
-    this.lastMove = undefined;
+    this.lastMove = null;
 
     this.board = Utils.initBoard(
 	this.ROWS,
