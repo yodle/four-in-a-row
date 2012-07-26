@@ -1,46 +1,40 @@
 var gamedb = require('../gamedb');
 var assert = require('assert');
 
-var mockMongo = { 
-	db: {
+var mockMongo = {
+    memoryStore: { },
+    col: {
+	insert: function(object, params, callback) {
+	    object._id = "" + new Date().getTime() + Math.floor(Math.random() * 100000);
+	    mockMongo.memoryStore[object._id] = object;
+	    callback();
 	},
-	collection: {
-	    insert: function(object, params, callback) {
-			object._id = "" + new Date().getTime() + Math.floor(Math.random() * 100000);
-			mockMongo.db[object._id] = object;
-			callback();
-	    },
-	    db: {
-		bson_serializer: {
-		    ObjectID: {
-			createFromHexString : function(id) { return id; }
-		    }
-		}
-	    },
-	    find: function(document, callback) {
-		return {
-		    toArray : function(callback) {
-			callback(null, [mockMongo.db[document._id]]);
-		    }
+	db: {
+	    bson_serializer: {
+		ObjectID: {
+		    createFromHexString : function(id) { return id; }
 		}
 	    }
 	},
-	client: {
-		createCollection: function(collectionName, callback) {
-			callback(null, mockMongo.collection);
-		},
-		collection: function(collectionName, callback) {
-			callback(null, mockMongo.collection);
-		},
-	},
-    open: function(callback) {
-		callback(null, mockMongo.client);	
-    }
+	find: function(document, callback) {
+	    return {
+		toArray : function(callback) {
+		    callback(null, [mockMongo.memoryStore[document._id]]);
+		}
+	    }
+	}
+    },
+    createCollection: function(collectionName, callback) {
+	callback(null, mockMongo.col);
+    },
 
+    collection: function(collectionName, callback) {
+	callback(null, mockMongo.col);
+    },
 };
 
 var before = function() {
-    return gamedb.GameDb(mockMongo);
+    return new gamedb.GameDb(mockMongo);
 };
 
 var nonEmpty = function(possiblyEmpty) {

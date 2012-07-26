@@ -6,17 +6,19 @@ var app = module.exports = express.createServer();
 var http = require('http');
 var url = require('url');
 var mongo = require('mongodb');
-var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {}), {});
+var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {auto_reconnect: true}), {});
 
 var gamedb = require('./gamedb');
-
-var c4engine = require('./engine');
-var Utils = c4engine.Utils;
+var game = require('./game');
+var computerplayer = require('./computer_player');
+var Utils = require('./utils');
 
 // Configuration
 var ROWS = 6;
 var COLS = 7;
+var PORT = 3000;
 
+// Initialization
 app.configure(function(){
     app.use(express.bodyParser());
     app.use(express.methodOverride());
@@ -24,20 +26,22 @@ app.configure(function(){
     app.use(express.static(__dirname + '/public'));
 });
 
-var port = 3000;
-
 app.configure('development', function(){
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-    port = 3000;
+    PORT = 3000;
 });
 
 app.configure('production', function(){
     app.use(express.errorHandler()); 
-    port = 80;
+    PORT = 80;
 });
 
 app.use(express.bodyParser());
 
+db.open(function(err, client) { if (err) {throw err;} });
+gameDb = new gamedb.GameDb(db);
+
+// Routes
 app.post('/game/init/:ailevel', function(req, res) {
     var ai = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || 'anonymous';
@@ -47,7 +51,7 @@ app.post('/game/init/:ailevel', function(req, res) {
     }
     else
     {
-	gamedb.GameDb(db).init(
+	gameDb.init(
 	    nickname, 
 	    Utils.initBoard(ROWS, COLS, function(row, col) { return 0; }),
 	    function(game){
@@ -64,7 +68,7 @@ app.post('/game/move/:gameId', function(req, res) {
 
 app.get('/game/state/:gameId', function(req, res) {
     var gameId = req.params.gameId;
-    gamedb.GameDb(db).findGame(
+    gameDb.findGame(
 	gameId,
 	function(game) {
 	    var response = "{'error':'bad game id specified [" + gameId + "]'}";
@@ -76,64 +80,6 @@ app.get('/game/state/:gameId', function(req, res) {
     );
 });
 
-var ComputerPlayer = function(moveUrl, playerIdx, moveCallback) {
-    this.playerIdx = playerIdx;
-    this.moveUrl = url.parse(moveUrl);
-    this.moveCallback = moveCallback;
-};
-
-ComputerPlayer.prototype.valid = function() {
-    if(this.moveUrl.hostname === undefined) {
-        return false;
-    }
-    
-    return true;
-};
-
-ComputerPlayer.prototype.move = function(msg, state) {  
-    if(state.currentTurn == this.playerIdx) {
-        var mc = this.moveCallback;
-        var callback = function(moveJson) {
-            var move = moveJson.move;
-            mc(move);
-        };
-
-        var that = this;
-        // this artifically slows down the game pace
-        setTimeout(function() { that.makeRequest.call(that, state, callback) }, 500);
-    }
-};
-
-ComputerPlayer.prototype.makeRequest = function(state, callback) {
-    var data = JSON.stringify(state);
-    var path = this.moveUrl.pathname;
-    if(this.moveUrl.search) {
-        path = path + this.moveUrl.search;
-    }
-    var options = {
-        host: this.moveUrl.hostname,
-        port: this.moveUrl.port,
-        path: path,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        },
-        method: 'POST'
-    };
-
-    var req = http.request(options, function(res) {
-        res.on('data', function(data) {
-            callback(JSON.parse(data));
-        });
-    });
-    
-    req.end(data);
-};
-
-ComputerPlayer.prototype.toString = function() {
-    return "Computer Player " + this.playerIdx;
-};
-
 // Application
-app.listen(port);
+app.listen(PORT);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

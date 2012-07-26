@@ -1,13 +1,7 @@
-var engine = require('../engine');
+var Utils = require('../utils');
 var assert = require('assert');
 
-var Utils = engine.Utils;
-
 module.exports = {
-    'Utils object is defined': function() {
-        assert.isDefined(engine.Utils);
-    },
-    
     'Highest filled row on empty board is 0': function() {
         var board = [[]];
         assert.eql(0, Utils.highestFilledRow(board, 0));
