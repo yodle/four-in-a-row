@@ -53,7 +53,7 @@ makeJsonp = function(jsonp, body) {
     }
 };
 // Routes
-app.post('/game/init/:ailevel', function(req, res) {
+app.all('/game/init/:ailevel', function(req, res) {
     var ai = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || 'anonymous';
     var jsonp = req.body.jsonp;
@@ -82,7 +82,7 @@ function findGame(gameId, callback) {
     );
 };
 
-app.post('/game/move/:gameId', function(req, res) {
+app.all('/game/move/:gameId', function(req, res) {
     var gameId = req.params.gameId;
     var move = req.body.move;
     var jsonp = req.body.jsonp;
