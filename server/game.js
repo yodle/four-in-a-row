@@ -1,6 +1,6 @@
 var Utils = require('./utils');
 
-var Game = function(rows, cols, humanPlayer, nickname) {
+var Game = function(rows, cols, humanPlayer, nickname, ai) {
     this.ROWS = rows;
     this.COLS = cols;
 
@@ -11,6 +11,7 @@ var Game = function(rows, cols, humanPlayer, nickname) {
     this.moves = 0;
     this.moveList = [];
     this.lastMove = null;
+    this.ai = ai;
 
     this.board = Utils.initBoard(
 	this.ROWS,
@@ -44,6 +45,6 @@ Game.prototype._advanceTurn = function() {
     else if(this.turn == Utils.Players.P2) { this.turn = Utils.Players.P1; }
 };
 
-exports.newGame = function(rows, cols, humanPlayer, nickname) {
-    return new Game(rows, cols, humanPlayer, nickname);
+exports.newGame = function(rows, cols, humanPlayer, nickname, ai) {
+    return new Game(rows, cols, humanPlayer, nickname, ai);
 };
