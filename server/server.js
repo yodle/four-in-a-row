@@ -51,11 +51,11 @@ app.post('/game/init/:ailevel', function(req, res) {
     }
     else
     {
+	var theGame = game.newGame(ROWS, COLS, Utils.Players.P1, nickname, ai); // TODO: WML: hard-coded P1
 	gameDb.init(
-	    nickname, 
-	    Utils.initBoard(ROWS, COLS, function(row, col) { return 0; }),
+	    theGame, 
 	    function(game){
-		res.end(JSON.stringify(game));
+		res.end(JSON.stringify(theGame));
 	    }
 	);
     }

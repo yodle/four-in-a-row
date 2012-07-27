@@ -2,12 +2,11 @@ var GameDb = function(db) {
     this.db = db;
 };
 
-GameDb.prototype.init = function(nick, board, callback) {
-    var toInsert = {'nickname': nick, 'board':board};
+GameDb.prototype.init = function(game, callback) {
     var that = this;
     this.db.createCollection('games', function(err, col) {
 	that.db.collection('games', function(err, col) {
-	    col.insert(toInsert, {safe:true}, function() { callback(toInsert._id); });
+	    col.insert(game, {safe:true}, function() { callback(game._id); });
 	});
     });
 };

@@ -43,15 +43,15 @@ var nonEmpty = function(possiblyEmpty) {
 
 module.exports = {
     'init returns game identifier': function() {
-	before().init('dennis', [0,0,0], function(gameId){
+	before().init({ }, function(gameId){
 	    assert.equal(true, nonEmpty(gameId) && 0  < gameId.length);
 	});
     },
 
     'consecutive inits result in distinct game Ids': function() {
 	var underTest = before();
-	underTest.init('dennis', [0,0,0], function(game1) {
-	    underTest.init('fend', [0,0,0], function(game2) {
+	underTest.init({ }, function(game1) {
+	    underTest.init({ }, function(game2) {
 		assert.equal(false, game1 == game2);		
 	    });
 	});
@@ -59,7 +59,7 @@ module.exports = {
 
     'gamedb can recover game state from init': function() {
 	var underTest = before();
-        underTest.init('dennis', [0,0,0], function(gameId) { 
+        underTest.init({ }, function(gameId) { 
 	    underTest.findGame(gameId, function(nick) {
 		assert.equal(true, nonEmpty(nick));
 	    });
@@ -68,7 +68,7 @@ module.exports = {
 
     'gamedb recovers nickname from init': function() {
 	var underTest = before();
-	underTest.init('nick', [0,0,0], function(gameId) {
+	underTest.init({nickname: 'nick'}, function(gameId) {
 	    underTest.findGame(gameId, function(obj) {
 		assert.equal('nick', obj.nickname);
 	    });
@@ -77,7 +77,7 @@ module.exports = {
 
     'gamedb recovers board from init': function() {
 	var underTest = before();
-	underTest.init('nick', [1,2,3], function(gameId) {
+	underTest.init({board: [1,2,3]}, function(gameId) {
 	    underTest.findGame(gameId, function(obj) {
 		assert.deepEqual([1,2,3], obj.board);
 	    });
