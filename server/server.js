@@ -61,23 +61,35 @@ app.post('/game/init/:ailevel', function(req, res) {
     }
 });
 
+function findGame(gameId, callback) {
+    gameDb.findGame(
+        gameId,
+        function(game) {
+            callback(game);
+        }
+    )
+};
+
 app.post('/game/move/:gameId', function(req, res) {
-    var game = req.params.gameId;
-    res.end(JSON.stringify({msg:'', state:'Open', board:[[0,0,0,0,0,1]]}));
+    var gameId = req.params.gameId;
+    findGame(gameId, function(game) {
+        var callback = function(state) {
+            res.end(JSON.stringify(state));
+        };
+        var ai = new computerplayer.ComputerPlayer('url', 0, callback);
+        ai.move('', game);
+    });
 });
 
 app.get('/game/state/:gameId', function(req, res) {
     var gameId = req.params.gameId;
-    gameDb.findGame(
-	gameId,
-	function(game) {
-	    var response = "{'error':'bad game id specified [" + gameId + "]'}";
-	    if (null != game) {
-		response = JSON.stringify(game);
-	    }
-	    res.end(response);
-	}
-    );
+    findGame(gameId, function(game) {
+        var response = "{'error':'bad game id specified [" + gameId + "]'}";
+        if(null != game) {
+            response = JSON.stringify(game);
+        }
+        res.end(response);
+    });
 });
 
 // Application

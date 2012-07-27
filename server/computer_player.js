@@ -22,9 +22,7 @@ ComputerPlayer.prototype.move = function(msg, state) {
             mc(move);
         };
 
-        var that = this;
-        // this artifically slows down the game pace
-        setTimeout(function() { that.makeRequest.call(that, state, callback) }, 500);
+        this.makeRequest.call(this, state, callback);
     }
 };
 
