@@ -118,6 +118,13 @@ header.main {background:#f0f0f0; padding:20px 0 25px; margin-bottom:20px; border
 	.c-icon.ex-link {font-size:.8em;}
 	.c-icon.ex-link:hover {text-decoration: none;}
 
+/*=== C4 Board ===*/
+#c4-board {background: url('../images/c4-board/empty.png'); position: relative; z-index: 10; display: block; height:384px;}
+	#c4-board .p1, #c4-board .p2 {height:64px; width:64px; position: absolute;}
+	#c4-board .p1 {background: url('../images/c4-board/player1.png');}
+	#c4-board .p2 {background: url('../images/c4-board/player2.png');}
+
+
 /*=== Status Messages ===*/
 .statusMessage {border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; padding:10px 10px 10px 50px; line-height:1; background: #ececec; border:1px solid #b9b9b9; color:#888;}
 	.statusMessage strong {font-family: 'OpenSansBold', arial black; font-size:16px; color:#464646; font-weight:normal; margin-bottom:4px; display:block;}

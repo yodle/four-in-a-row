@@ -55,8 +55,9 @@ makeJsonp = function(jsonp, body) {
 // Routes
 app.all('/game/init/:ailevel', function(req, res) {
     var ai = parseInt(req.params.ailevel);
-    var nickname = req.body.nickname || 'anonymous';
-    var jsonp = req.body.jsonp;
+    var nickname = req.body.nickname || req.query.nickname || 'anonymous';
+    var jsonp = req.query.jsonp;
+    console.log(jsonp);
 
     if (isNaN(ai) || ai < 1 || ai > 6) {
         res.end(JSON.stringify({error: 'ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'}));

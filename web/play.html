@@ -27,7 +27,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	
 	<!-- Modernizr -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
 	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
 </head>
@@ -73,7 +73,10 @@
 				<!-- Main Content -->
 				<div class="main-col6 tablet-col5 clearfix border-right">
 					<section class="module mediablock">
-						<img src="assets/images/yodle-c4.jpg">
+						<div id="c4-board">
+							<div id="move1" class="p1" style="top:320px; left:384px;"></div>
+							<div id="move2" class="p2"></div>
+						</div>
 					</section>
 				</div>
 				<!-- End Main Content -->
@@ -84,10 +87,11 @@
 						<form id="inputCode" action="#">
 							<h3>Input Code</h3>
 							<div class="formfield col6 no-gutter">
-                                <textarea id="codeInput">
+                                <textarea id="codeInput" wrap="off">
 // Code must evalutate to an object containing the 'getNextMove' function.
-var ai = {
-    getNextMove: 
+(function() {
+    return {
+         getNextMove:
          function(board) { 
              // Board is a 2d array containing values 0-2 
              // (0 for empty, 1 for first player, 2 for second player)
@@ -96,7 +100,8 @@ var ai = {
              // return a random move (0-6 are valid columns)
              return Math.floor(Math.rand() * 6);
          }
-};
+       }
+})();
                                 </textarea>
 							</div>
 							<fieldset class="formfield">

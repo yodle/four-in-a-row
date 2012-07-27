@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-    var baseGameServerUrl = "localhost:3000/game";
+    var baseGameServerUrl = "http://localhost:3000/game";
     var gameInitUrl = baseGameServerUrl + "/init";
     var moveUrl = baseGameServerUrl + "/move";
 
@@ -19,13 +19,14 @@ $(document).ready(function() {
      * Callback from the server when it finish processing out move/init.
      */
     function gameResponseCallback(data) {
-        var state = data.state;
+        var isGameOver = data.gameOver;
         var msg = data.msg;
         var board = data.board;
+        var moveList = data.moveList;
         var gameId = data._id;
 
         if (state = "Open") {
-            var moveColumn = aiObject.getNextMove(board);
+            var moveColumn = aiObject.getNextMove(board, moveList);
 
             moveArgsData = {
                 column: moveColumn
@@ -60,8 +61,18 @@ $(document).ready(function() {
         };
 
         // Post to the server to start the game, and expect json response to callback
-        var url =gameInitUrl + '/' + difficulty + '?callback=?'; 
-        $.post(url, gameInitData, gameResponseCallback, "json");
+        var url =gameInitUrl + '/' + difficulty; // + '?jsonp=?'; 
+        //$.get(url, gameInitData, gameResponseCallback, "json");
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: gameInitData,
+            jsonp: "jsonp",
+            success: gameResponseCallback,
+            type: "jsonp",
+            dataType: "jsonp"
+        });
 
         // All logic is done already, don't submit to this page...
         return false;
