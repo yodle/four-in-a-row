@@ -39,37 +39,6 @@
 .tablet-hide {display:block;}
 .desktop-hide {display:none;}
 
-
-/* Grid w/ Yodle.Validate script */
-	.formfield.col1 input, .formfield.col1 textarea {width:42px}
-		.formfield.col1 select {width:56px}
-	.formfield.col2 input, .formfield.col2 textarea {width:120px;}
-		.formfield.col2 select {width:134px;}
-	.formfield.col3 input, .formfield.col3 textarea {width:198px;}
-		.formfield.col3 select {width:212px;}
-	.formfield.col4 input, .formfield.col4 textarea {width:276px;}
-		.formfield.col4 select {width:290px;}
-	.formfield.col5 input, .formfield.col5 textarea {width:354px;}
-		.formfield.col5 select {width:368px;}
-	.formfield.col6 input, .formfield.col6 textarea {width:432px;}
-		.formfield.col6 select {width:446px;}
-	.formfield.col7 input, .formfield.col7 textarea {width:510px;}
-		.formfield.col7 select {width:526px;}
-	.formfield.col8 input, .formfield.col8 textarea {width:588px;}
-		.formfield.col8 select {width:602px;}
-	.formfield.col9 input, .formfield.col9 textarea {width:666px;}
-		.formfield.col9 select {width:680px;}
-	.formfield.col10 input, .formfield.col10 textarea {width:744px;}
-		.formfield.col10 select {width:758px;}
-	.formfield.col11 input, .formfield.col11 textarea {width:822px;}
-		.formfield.col11 select {width:836px;}
-	.formfield.col12 input, .formfield.col12 textarea {width:900px;}
-		.formfield.col12 select {width:914px;}
-
-	.formfield input[type="checkbox"], 
-	.formfield input[type="radio"] {width:13px; }
-
-
 /* Desktop + */
 @media only screen and (min-width: 971px) {
 }
@@ -135,25 +104,7 @@
 
 /* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
 @media only screen and (min-width: 480px) and (max-width: 767px) {
-	/* Grid w/ Yodle.Validate script */
-	.formfield.col6 input, .formfield.col6 textarea {width:432px;}
-		.formfield.col6 select {width:446px;}
-	.formfield.col7 input, .formfield.col7 textarea {width:432px;}
-		.formfield.col7 select {width:446px;}
-	.formfield.col8 input, .formfield.col8 textarea {width:432px;}
-		.formfield.col8 select {width:446px;}
-	.formfield.col9 input, .formfield.col9 textarea {width:432px;}
-		.formfield.col9 select {width:446px;}
-	.formfield.col10 input, .formfield.col10 textarea {width:432px;}
-		.formfield.col10 select {width:446px;}
-	.formfield.col11 input, .formfield.col11 textarea {width:432px;}
-		.formfield.col11 select {width:446px;}
-	.formfield.col12 input, .formfield.col12 textarea {width:432px;}
-		.formfield.col12 select {width:446px;}
-
-	.formfield input[type="checkbox"], 
-	.formfield input[type="radio"] {width:13px;}
-
+	
 	.full-width {min-width:478px; width:auto;}
 	.container_12 {width:478px;}
 	.main-col1,.main-col2,.main-col3,.main-col4,.main-col5,.main-col6,.main-col7,.main-col8,.main-col9,.main-col10,.main-col11,.main-col12 {width:448px; margin-left:auto; margin-right:auto; float:none;}
@@ -164,27 +115,7 @@
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
 @media only screen and (max-width: 479px) {
-	/* Grid w/ Yodle.Validate script */
-	.formfield.col5 input, .formfield.col5 textarea,
-	.formfield.col6 input, .formfield.col6 textarea,
-	.formfield.col7 input, .formfield.col7 textarea,
-	.formfield.col8 input, .formfield.col8 textarea,
-	.formfield.col9 input, .formfield.col9 textarea,
-	.formfield.col10 input, .formfield.col10 textarea,
-	.formfield.col11 input, .formfield.col11 textarea,
-	.formfield.col12 input, .formfield.col12 textarea {width:276px;}
-		.formfield.col5 select,
-		.formfield.col6 select,
-		.formfield.col7 select,
-		.formfield.col8 select,
-		.formfield.col9 select,
-		.formfield.col10 select,
-		.formfield.col11 select,
-		.formfield.col12 select {width:290px;}
-
-	.formfield input[type="checkbox"], 
-	.formfield input[type="radio"] {width:13px; }
-
+	
 	.full-width {min-width:322px; width:auto;}
 	.container_12 {width:322px;}
 	.main-col1,.main-col2,.main-col3,.main-col4,.main-col5,.main-col6,.main-col7,.main-col8,.main-col9,.main-col10,.main-col11,.main-col12 {width:292px; margin-left:auto; margin-right:auto; float:none;}

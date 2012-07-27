@@ -27,7 +27,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	
 	<!-- Modernizr -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
 </head>
@@ -68,13 +68,14 @@
 		<div id="container" class="full-width center">
 			<div class="container_12">
 				<header class="main-col12 tablet-col9">
-					<h1>Challenge</h1>
+					<h1>Play Game</h1>
 				</header>
 				<!-- Main Content -->
 				<div class="main-col6 tablet-col5 clearfix border-right">
-					<section class="module mediablock">
-						<div id="c4-board">
-							<div id="move1" class="p1" style="top:320px; left:384px;"></div>
+					<section id="game-board" class="module mediablock">
+						<div id="c4-board" class="clearfix;"></div>
+						<div id="c4-moves">
+							<div id="move1" class="p1"></div>
 							<div id="move2" class="p2"></div>
 						</div>
 					</section>
@@ -86,8 +87,9 @@
 					<section class="module listing">
 						<form id="inputCode" action="#">
 							<h3>Input Code</h3>
-							<div class="formfield col6 no-gutter">
-                                <textarea id="codeInput" wrap="off">
+							<div class="formfield col6 tablet-col4 no-gutter">
+                                <div class="field-wrapper">
+                                    <textarea id="codeInput" wrap="off">
 // Code must evalutate to an object containing the 'getNextMove' function.
 (function() {
     return {
@@ -102,7 +104,7 @@
          }
        }
 })();
-                                </textarea>
+                                </textarea></div>
 							</div>
 							<fieldset class="formfield">
 								<legend>Difficulty</legend>

@@ -119,10 +119,13 @@ header.main {background:#f0f0f0; padding:20px 0 25px; margin-bottom:20px; border
 	.c-icon.ex-link:hover {text-decoration: none;}
 
 /*=== C4 Board ===*/
-#c4-board {background: url('../images/c4-board/empty.png'); position: relative; z-index: 10; display: block; height:384px;}
-	#c4-board .p1, #c4-board .p2 {height:64px; width:64px; position: absolute;}
-	#c4-board .p1 {background: url('../images/c4-board/player1.png');}
-	#c4-board .p2 {background: url('../images/c4-board/player2.png');}
+#game-board {position: relative; height:100%; overflow: hidden; height:384px;}
+#c4-board {background: url('../images/c4-board/empty-board.png') no-repeat; z-index: 10;}
+#c4-moves {z-index: 9;}
+#c4-board, #c4-moves {position: absolute; display: block; height:384px; background-size:100%; top:0; width:100%;}
+	#c4-moves .p1, #c4-board .p2 {height:64px; width:64px; position: absolute;}
+	#c4-moves .p1 {background: url('../images/c4-board/player1.png') no-repeat; background-size:100%;}
+	#c4-moves .p2 {background: url('../images/c4-board/player2.png') no-repeat; background-size:100%;}
 
 
 /*=== Status Messages ===*/
@@ -206,63 +209,28 @@ footer#mainFooter {position: relative;}
 		#p-bing {background-position: -150px 0; width:55px;}
 		#p-ask {background-position: -210px 0; width:30px;}
 
-/*=== Forms ===*/
-form section {float:left; width:100%;}
+/*=== Forms & Formfields ===*/
+form label {line-height:1.3em; font-weight:bold;}
+form label.inField {position: absolute; cursor: text; color:#8e8e8e; padding:12px 9px 2px; z-index:5}
+	form .textarea label.inField { padding:10px 8px}
+input, textarea, select, .field-wrapper {border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border:1px solid #c8c8c8; box-shadow: 0 0 5px #dcdcdc inset; -moz-box-shadow: 0 0 5px #dcdcdc inset; -webkit-box-shadow: 0 0 5px #dcdcdc inset; padding:9px 7px 3px; outline:none; font-family: "OpenSansSemiBold", sans-serif; color:#636363; min-height:20px;}
+.formfield select,  
+.formfield input, 
+.formfield textarea, 
+.formfield label {font-size: 13px;}
+	input[type="checkbox"], input[type="radio"] {box-shadow: none; border:none; padding:0; width:13px; min-height:0;}
+	textarea {min-height:100px; resize:none;}
+
+fieldset label {clear:both;}
+
+.formfield select {width:100%;}
+	.formfield, fieldset {display:block; position: relative; margin-bottom: 15px}
+
+.field-wrapper input, .field-wrapper textarea {width: 100%; margin: 0; padding: 0; border: 0; box-shadow: none;}
 
 button.button, input.button {float:right;}
-
-.inField {position: absolute; font-family: "OpenSans", sans-serif; cursor: text; color:#8e8e8e; padding:12px 9px 2px; z-index: 5}
-.textarea .inField { padding:10px 8px}
-input, textarea, select {border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border:1px solid #c8c8c8; box-shadow: 0 0 5px #dcdcdc inset; -moz-box-shadow: 0 0 5px #dcdcdc inset; -webkit-box-shadow: 0 0 5px #dcdcdc inset; padding:9px 7px 3px; outline:none; font-family: "OpenSansSemiBold", sans-serif; color:#636363;}
-	input[type="checkbox"], input[type="radio"] {box-shadow: none; border:none; padding:0; }
-	
-	/* Contact Form */
-		select, input, textarea, .inField {font-size: 13px;}
-		#contact-form select {width:212px;}
-		input[type="text"], input[type="tel"], input[type="email"], input[type="url"] {height:20px;}
-		input[type="zip"] {height:20px;}
-		textarea {height:200px;}
-		
-		.formfield, fieldset {display:block; position: relative; margin-bottom: 15px}
-
-/*=== Yodle Validator Essentials ===*/
-	fieldset{border:none; display:block;}
-	
 	fieldset label {display:block; font-weight:normal; padding:6px 5px 4px; color:#464646; line-height:1em;}
 	fieldset input {margin-right:5px;}
-	
-	/* Form Field Style */
-	.yv-formField {position: relative; background-color: #efeff0; border-radius: 3px; display:block; border:1px solid #c8c8c8; }
-	.yv-formField input, .yv-formField textarea, .yv-formField select {z-index: 3; position: relative; border-color: #c8c8c8!important;}
-	
-	/* Feature Styles */
-	.yv-formField .fieldCaption {position: absolute; bottom:2px; left:5px; z-index: 1; font-size: 11px; font-weight:normal;}
-	.yv-formField .helpTip {background-image:url(helpTip.png); position: absolute; top:4px; right:4px; width:12px; height:12px;  z-index: 4;}
-	.yv-formField .helpTip .helpTipContent {z-index:20; color:#4D4D4F; position:absolute; top:0; left:0; font-size:11px; padding:10px 12px; width:110px; border-radius:3px; border:1px solid #8F8F8F; line-height:15px; box-shadow:0 0 6px #b8b8b8; -moz-box-shadow:0 0 6px #b8b8b8; -webkit-box-shadow:0 0 6px #b8b8b8; display:none; 
-		background: -moz-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0; 
-		background: -webkit-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
-		background: -ms-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
-		background: -o-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
-		background: linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
-		background-color: #EFEFF0;
-	}
-	/*.yv-formField .helpTip:hover .helpTipContent {display:block;}*/
-	.yv-formField .helpTip-pointer {background-image:url(helpTip-pointer.png); display:block; width:14px; height:14px; position:absolute; right:14px; bottom:-12px;}
-	
-	.yv-formField.yv-focus, .yv-formField.yv-focus, .yv-formField.yv-focus input, .yv-formField.yv-focus textarea {border-color:#8f8f8f!important}
-	
-	.yv-formField .helperText {color:#4d4d4f;}
-	
-	.yv-required-field {margin-left:3px;}
-	
-	/* Validation */
-	.yv-formField.invalid {border-color:#C63232!important; color:#C63232; background-color:#FDE7E4!important;}
-	.yv-formField.invalid input, .yv-formField.invalid textarea, .yv-formField.invalid select {border-color:#C63232!important}
-	.yv-formField.valid {border-color:#7bb111!important; box-shadow-color:#7bb111!important;}
-	.yv-formField.valid input, .yv-formField.valid textarea, .yv-formField.valid select {border-color:#7bb111!important}
-/*=== END Yodle VALIDATOR ESSENTIALS ===*/
-
-
 
 /* Desktop + */
 @media only screen and (min-width: 971px) {
@@ -282,6 +250,9 @@ input, textarea, select {border-radius: 3px; -moz-border-radius: 3px; -webkit-bo
 	/* Footer */
 	footer#mainFooter .wrapper {height:259px; margin-bottom:70px;}
 	#footer section {min-height:230px;}
+
+	/* Game pieces */
+	#c4-moves .p1, #c4-board .p2 {height:54px; width:54px; position: absolute;}
 }
 
 /* All Mobile Sizes (devices and browser) */
@@ -347,4 +318,8 @@ input, textarea, select {border-radius: 3px; -moz-border-radius: 3px; -webkit-bo
 	footer #footer .container_12 section li {width:100%;}
 	#copyright .text {width:170px;}
 
+	/* Game pieces */
+	#c4-moves .p1, #c4-board .p2 {height:42px; width:42px; position: absolute;}
+
+	#game-board, #c4-board {height:252px;}
 }
