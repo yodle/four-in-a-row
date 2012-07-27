@@ -22,7 +22,10 @@ var mockMongo = {
 		    callback(null, [mockMongo.memoryStore[document._id]]);
 		}
 	    }
-	}
+	},
+    update: function(search, document, callback) {
+        mockMongo.memoryStore[search._id] = document;
+    }
     },
     createCollection: function(collectionName, callback) {
 	callback(null, mockMongo.col);
@@ -82,5 +85,16 @@ module.exports = {
 		assert.deepEqual([1,2,3], obj.board);
 	    });
 	});
+    },
+
+    'gamedb can update board state': function() {
+        var underTest = before();
+        underTest.init({board: [1,2,3]}, function(gameId) {
+            underTest.update(gameId, {board:[2,3,4]}, function(game) {
+                underTest.findGame(gameId, function(obj) {
+                    assert.deepEqual([2,3,4], obj.board);
+                });
+            });
+        });
     }
 };

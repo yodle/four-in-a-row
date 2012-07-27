@@ -4,7 +4,6 @@
 var express = require('express');
 var app = module.exports = express.createServer();
 var http = require('http');
-var url = require('url');
 var mongo = require('mongodb');
 var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {auto_reconnect: true}), {});
 
@@ -18,6 +17,10 @@ var ROWS = 6;
 var COLS = 7;
 var PORT = 3000;
 
+var ais = {
+    1: {url:'http://localhost:3001/ai/random/move'},
+    2: {url:'http://localhost:3001/ai/twostep/move'}
+}
 // Initialization
 app.configure(function(){
     app.use(express.bodyParser());
@@ -61,23 +64,42 @@ app.post('/game/init/:ailevel', function(req, res) {
     }
 });
 
+function findGame(gameId, callback) {
+    gameDb.findGame(
+        gameId,
+        function(game) {
+            callback(game);
+        }
+    );
+};
+
 app.post('/game/move/:gameId', function(req, res) {
-    var game = req.params.gameId;
-    res.end(JSON.stringify({msg:'', state:'Open', board:[[0,0,0,0,0,1]]}));
+    var gameId = req.params.gameId;
+    var move = req.body.move;
+    findGame(gameId, function(gameSpec) {
+        gameSpec = game.deserialize(gameSpec);
+        gameSpec.move(move); // make the player's move
+        var aiSpec = ais[gameSpec.ai];
+        var callback = function(move) {
+            gameSpec.move(move); // make the AI move
+            gameDb.update(gameId, gameSpec, function(game) {
+                res.end(JSON.stringify(game));
+            });
+        };
+        var ai = new computerplayer.ComputerPlayer(aiSpec.url, game.turn, callback);
+        ai.move('', gameSpec);
+    });
 });
 
 app.get('/game/state/:gameId', function(req, res) {
     var gameId = req.params.gameId;
-    gameDb.findGame(
-	gameId,
-	function(game) {
-	    var response = "{'error':'bad game id specified [" + gameId + "]'}";
-	    if (null != game) {
-		response = JSON.stringify(game);
-	    }
-	    res.end(response);
-	}
-    );
+    findGame(gameId, function(game) {
+        var response = "{'error':'bad game id specified [" + gameId + "]'}";
+        if(null != game) {
+            response = JSON.stringify(game);
+        }
+        res.end(response);
+    });
 });
 
 // Application

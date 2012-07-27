@@ -10,6 +10,15 @@ GameDb.prototype.init = function(game, callback) {
 	});
     });
 };
+
+GameDb.prototype.update = function(id, game, callback) {
+    var that = this;
+    this.db.collection('games', function(err, col) {
+        col.update({'_id': col.db.bson_serializer.ObjectID.createFromHexString(id)}, game, function() {
+            callback(game);
+        });
+    });
+};
 	
 GameDb.prototype.findGame = function(id, callback) {
     this.db.collection('games', function(err, col) {
