@@ -20,7 +20,7 @@ var Game = function(rows, cols, humanPlayer, nickname, ai) {
     );
 };
 
-Game.prototype.move = function() {
+Game.prototype.move = function(col) {
     if(this.gameOver) { 
 	return; 
     }
@@ -44,6 +44,16 @@ Game.prototype._advanceTurn = function() {
     if(this.turn == Utils.Players.P1) { this.turn = Utils.Players.P2 }
     else if(this.turn == Utils.Players.P2) { this.turn = Utils.Players.P1; }
 };
+
+exports.deserialize(function(game) {
+    var that = new Game(game.ROWS, game.COLS, game.humanPlayer, game.nickname, game.ai);
+    that.gameOver = game.gameOver;
+    that.turn = game.turn;
+    that.moves = game.moves;
+    that.moveList = game.moveList;
+    that.lastMove = game.lastMove;
+    that.board = game.board;
+});
 
 exports.newGame = function(rows, cols, humanPlayer, nickname, ai) {
     return new Game(rows, cols, humanPlayer, nickname, ai);

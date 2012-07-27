@@ -18,6 +18,9 @@ var ROWS = 6;
 var COLS = 7;
 var PORT = 3000;
 
+var ais = {
+    1: {url:'localhost:3000'}
+}
 // Initialization
 app.configure(function(){
     app.use(express.bodyParser());
@@ -67,17 +70,20 @@ function findGame(gameId, callback) {
         function(game) {
             callback(game);
         }
-    )
+    );
 };
 
 app.post('/game/move/:gameId', function(req, res) {
     var gameId = req.params.gameId;
-    findGame(gameId, function(game) {
-        var callback = function(state) {
-            res.end(JSON.stringify(state));
+    findGame(gameId, function(gameSpec) {
+        gameSpec = game.deserialize(gameSpec);
+        var aiSpec = ais[gameSpec.ai];
+        var callback = function(move) {
+            gameSpec.move(move);
+            res.end(JSON.stringify(gameSpec));
         };
-        var ai = new computerplayer.ComputerPlayer('url', 0, callback);
-        ai.move('', game);
+        var ai = new computerplayer.ComputerPlayer(aiSpec.url, game.turn, callback);
+        ai.move('', gameSpec);
     });
 });
 
