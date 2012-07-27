@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'Icon';
+    src: url('icons/yodle-fonts-webfont.eot');
+    src: url('icons/yodle-fonts-webfont.eot?#iefix') format('embedded-opentype'),
+         url('icons/yodle-fonts-webfont.woff') format('woff'),
+         url('icons/yodle-fonts-webfont.ttf') format('truetype'),
+         url('icons/yodle-fonts-webfont.svg#SVGFont1Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
