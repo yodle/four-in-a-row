@@ -12,9 +12,9 @@ class Game:
 		self.port = port
 
 	def init(self, nickname, level):
-		response = self.get_post_request(self.host, self.port, '/init/' + str(level), {'nickname': nickname})
+		response = self.get_post_request(self.host, self.port, '/game/init/' + str(level), {'nickname': nickname})
 		json_root = json.loads(response)
-		self.gameId = json_root['gameId']
+		self.gameId = json_root['_id']
 		self.update_board(json_root['board'])
 	
 	def move(self, col):
