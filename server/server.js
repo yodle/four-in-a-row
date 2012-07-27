@@ -4,7 +4,6 @@
 var express = require('express');
 var app = module.exports = express.createServer();
 var http = require('http');
-var url = require('url');
 var mongo = require('mongodb');
 var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {auto_reconnect: true}), {});
 
@@ -19,7 +18,8 @@ var COLS = 7;
 var PORT = 3000;
 
 var ais = {
-    1: {url:'localhost:3000'}
+    1: {url:'http://localhost:3001/ai/random/move'},
+    2: {url:'http://localhost:3001/ai/twostep/move'}
 }
 // Initialization
 app.configure(function(){
@@ -75,12 +75,16 @@ function findGame(gameId, callback) {
 
 app.post('/game/move/:gameId', function(req, res) {
     var gameId = req.params.gameId;
+    var move = req.body.move;
     findGame(gameId, function(gameSpec) {
         gameSpec = game.deserialize(gameSpec);
+        gameSpec.move(move); // make the player's move
         var aiSpec = ais[gameSpec.ai];
         var callback = function(move) {
-            gameSpec.move(move);
-            res.end(JSON.stringify(gameSpec));
+            gameSpec.move(move); // make the AI move
+            gameDb.update(gameId, gameSpec, function(game) {
+                res.end(JSON.stringify(game));
+            });
         };
         var ai = new computerplayer.ComputerPlayer(aiSpec.url, game.turn, callback);
         ai.move('', gameSpec);

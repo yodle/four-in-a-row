@@ -1,4 +1,5 @@
 var http = require('http');
+var url = require('url');
 
 ComputerPlayer = function(moveUrl, playerIdx, moveCallback) {
     this.playerIdx = playerIdx;

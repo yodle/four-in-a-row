@@ -53,6 +53,7 @@ exports.deserialize = function(game) {
     that.moveList = game.moveList;
     that.lastMove = game.lastMove;
     that.board = game.board;
+    return that;
 };
 
 exports.newGame = function(rows, cols, humanPlayer, nickname, ai) {
