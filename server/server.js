@@ -57,7 +57,7 @@ app.all('/game/init/:ailevel', function(req, res) {
     var ai = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || req.query.nickname || 'anonymous';
     var jsonp = req.query.jsonp;
-    console.log(jsonp);
+    //console.log(jsonp);
 
     if (isNaN(ai) || ai < 1 || ai > 6) {
         res.end(JSON.stringify({error: 'ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'}));
@@ -85,8 +85,9 @@ function findGame(gameId, callback) {
 
 app.all('/game/move/:gameId', function(req, res) {
     var gameId = req.params.gameId;
-    var move = req.body.move;
-    var jsonp = req.body.jsonp;
+    var move = req.body.move || req.query.move;
+    var jsonp = req.query.jsonp;
+	//console.log('move: ' + move);
     findGame(gameId, function(gameSpec) {
         gameSpec = game.deserialize(gameSpec);
         gameSpec.move(move); // make the player's move
