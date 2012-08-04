@@ -326,4 +326,11 @@ button.button, input.button {float:right;}
 	#c4-moves .p1, #c4-board .p2 {height:42px; width:42px; position: absolute;}
 
 	#game-board, #c4-board {height:252px;}
+
+}
+
+div #editor { 
+	position: relative;
+	height: 400px;
+	width: 100%;
 }

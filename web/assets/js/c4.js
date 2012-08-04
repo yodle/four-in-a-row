@@ -121,7 +121,7 @@ $(document).ready(function() {
         var difficulty = $("input[name=difficulty]:checked").val();
 
         // Eval the user input function and get their object
-        var userCodeInput = $("#codeInput").val();
+        var userCodeInput = editor.getSession().getValue();
         aiObject = eval(userCodeInput);
 
         var gameInitData = {
@@ -165,4 +165,26 @@ $(document).ready(function() {
 	GAME_UI.initBoard(ROWS, COLS);
 	GAME_UI.resetBoard();
 	GAME_UI.startGame();
+
+	// Ace
+	var editor = ace.edit("editor");
+	var JavaScriptMode = require("ace/mode/javascript").Mode;
+	editor.getSession().setMode(new JavaScriptMode());
+	editor.setTheme("ace/theme/solarized_dark");
+	editor.getSession().setValue(
+"// Code must evalutate to an object containing the 'getNextMove' function.\n" +
+"(function() {\n" +
+"    return {\n" +
+"         getNextMove:\n" +
+"         function(board) { \n" +
+"             // Board is a 2d array containing values 0-2 \n" +
+"             // (0 for empty, 1 for first player, 2 for second player)\n" +
+"\n" +
+"             // Instead of evaluating the board just\n" +
+"             // return a random move (0-6 are valid columns)\n" +
+"             return Math.floor(Math.random() * 6);\n" +
+"         }\n" +
+"       }\n" +
+"})();\n"
+	);
 });

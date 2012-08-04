@@ -30,6 +30,11 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
+
+	<!--  ace editor -->
+	<script src="assets/js/ace.js"></script>
+	<script src="assets/js/mode-javascript.js"></script>
+	<script src="assets/js/theme-solarized_darjk.js"></script>
 </head>
 
 <body class="landingPage">
@@ -66,7 +71,7 @@
 	<div id="content">
 		<div id="contentBG"></div>
 		<div id="container" class="full-width center">
-			<div class="container_12">
+			<div class="container_12 clearfix">
 				<header class="main-col12 tablet-col9">
 					<h1>Play Game</h1>
 				</header>
@@ -86,26 +91,7 @@
 				<aside class="main-col6 tablet-col4 clearfix border-left">
 					<section class="module listing">
 						<form id="inputCode" action="#">
-							<h3>Input Code</h3>
 							<div class="formfield col6 tablet-col4 no-gutter">
-                                <div class="field-wrapper">
-                                    <textarea id="codeInput" wrap="off">
-// Code must evalutate to an object containing the 'getNextMove' function.
-(function() {
-    return {
-         getNextMove:
-         function(board) { 
-             // Board is a 2d array containing values 0-2 
-             // (0 for empty, 1 for first player, 2 for second player)
-
-             // Instead of evaluating the board just
-             // return a random move (0-6 are valid columns)
-             return Math.floor(Math.random() * 6);
-         }
-       }
-})();
-                                </textarea></div>
-							</div>
 							<fieldset class="formfield">
 								<legend>Difficulty</legend>
 									<label><input type="radio" name="difficulty" value="1">Level 1</label>
@@ -122,6 +108,12 @@
 				<!-- End Sidebar -->
 
 			</div> <!-- End container 12 -->
+
+			<div class="container_12 clearfix">
+				<h3>Input Code</h3>
+				<!-- Code editor -->
+				<div id="editor"></div>
+			</div>
 		</div><!-- End #container -->
 	</div><!-- End #content -->
 <footer id="mainFooter">
