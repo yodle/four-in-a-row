@@ -18,8 +18,8 @@ var COLS = 7;
 var PORT = 3000;
 
 var ais = {
-    1: {url:'http://localhost:3001/ai/random/move'},
-    2: {url:'http://localhost:3001/ai/twostep/move'}
+    1: {url:'http://localhost:3001/ai/random'},
+    2: {url:'http://localhost:3001/ai/twostep'}
 }
 // Initialization
 app.configure(function(){
@@ -52,15 +52,19 @@ makeJsonp = function(jsonp, body) {
         return body;
     }
 };
+
+var errorResponse = function(error) {
+    return JSON.stringify({'error': error});
+}
+
 // Routes
 app.all('/game/init/:ailevel', function(req, res) {
     var ai = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || req.query.nickname || 'anonymous';
     var jsonp = req.query.jsonp;
-    //console.log(jsonp);
 
     if (isNaN(ai) || ai < 1 || ai > 6) {
-        res.end(JSON.stringify({error: 'ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'}));
+        res.end(errorResponse('ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'));
     }
     else
     {
@@ -84,21 +88,55 @@ function findGame(gameId, callback) {
 };
 
 app.all('/game/move/:gameId', function(req, res) {
+
     var gameId = req.params.gameId;
     var move = req.body.move || req.query.move;
+    if(typeof(move) === 'undefined') {
+        res.end(errorResponse('Must specify a "move" parameter'));
+        return;
+    }
     var jsonp = req.query.jsonp;
-	//console.log('move: ' + move);
     findGame(gameId, function(gameSpec) {
+        if(gameSpec === null) {
+            res.end(errorResponse('Invalid GameId: ' + gameId));
+            return;
+        }
         gameSpec = game.deserialize(gameSpec);
-        gameSpec.move(move); // make the player's move
+
+        var moveResult = gameSpec.move(move); // make the player's move
+        if(moveResult.failed) {
+            res.end(errorResponse(moveResult.message));
+            return;
+        }
+
         var aiSpec = ais[gameSpec.ai];
-        var callback = function(move) {
-            gameSpec.move(move); // make the AI move
+        var callback = function(result) {
+            if(result.success) {
+                var moveResult = gameSpec.move(result.move); // make the AI move
+                if(moveResult.failed) {
+                    res.end(errorResponse("something fishy is going on with your opponent, we're calling the game a draw"));
+                    return;
+                }
+                gameDb.update(gameId, gameSpec, function(game) {
+                    res.end(makeJsonp(jsonp, JSON.stringify(game)));
+                });
+            }
+            else {
+                res.end(errorResponse("opponent is taking a break, try again later\n" + result.error));
+                return; 
+            }
+        };
+        var ai = new computerplayer.ComputerPlayer(aiSpec.url, gameSpec.turn, callback);
+
+        if(gameSpec.gameOver) {
+            //Player wins!
             gameDb.update(gameId, gameSpec, function(game) {
+                ai.endGame(gameSpec);
                 res.end(makeJsonp(jsonp, JSON.stringify(game)));
             });
-        };
-        var ai = new computerplayer.ComputerPlayer(aiSpec.url, game.turn, callback);
+            return;
+        }
+
         ai.move('', gameSpec);
     });
 });
@@ -107,7 +145,7 @@ app.get('/game/state/:gameId', function(req, res) {
     var gameId = req.params.gameId;
     findGame(gameId, function(game) {
         var response = "{'error':'bad game id specified [" + gameId + "]'}";
-        if(null != game) {
+        if(null !== game) {
             response = JSON.stringify(game);
         }
         res.end(response);

@@ -14,15 +14,18 @@ var Game = function(rows, cols, humanPlayer, nickname, ai) {
     this.ai = ai;
 
     this.board = Utils.initBoard(
-	this.ROWS,
-	this.COLS,
-	function() { return Utils.Players.EMPTY; }
+        this.ROWS,
+        this.COLS,
+        function() { return Utils.Players.EMPTY; }
     );
 };
 
 Game.prototype.move = function(col) {
     if(this.gameOver) { 
-	return; 
+        return { failed: true, message: "The game has ended already" }; 
+    }
+    if(!Utils.isLegalMove(this.board, col)) {
+        return { failed: true, message: "(" + col + ") is an invalid move" };
     }
      
     target = Utils.highestFilledRow(this.board, col) - 1;
@@ -37,7 +40,10 @@ Game.prototype.move = function(col) {
         if (winner) {
             this.gameOver = winner;
         }
+        return { failed: false };
     }
+
+    return { failed: true, message: "(" + col + ") is an invalid move" };
 };
 
 Game.prototype._advanceTurn = function() {
