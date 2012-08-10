@@ -108,11 +108,19 @@ app.all('/game/move/:gameId', function(req, res) {
             res.end(errorResponse(moveResult.message));
             return;
         }
+        if(gameSpec.gameOver) {
+            //Player wins!
+            gameDb.update(gameId, gameSpec, function(game) {
+                res.end(makeJsonp(jsonp, JSON.stringify(game)));
+            });
+            return;
+        }
 
         var aiSpec = ais[gameSpec.ai];
         var callback = function(result) {
             if(result.success) {
                 var moveResult = gameSpec.move(result.move); // make the AI move
+                console.log('result is: ' + JSON.stringify(moveResult));
                 if(moveResult.failed) {
                     res.end(errorResponse("something fishy is going on with your opponent, we're calling the game a draw"));
                     return;
