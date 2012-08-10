@@ -19,8 +19,7 @@ ComputerPlayer.prototype.move = function(msg, state) {
     if(state.currentTurn == this.playerIdx) {
         var mc = this.moveCallback;
         var callback = function(moveJson) {
-            var move = moveJson.move;
-            mc(move);
+            mc(moveJson);
         };
 
         this.makeRequest.call(this, state, callback);
@@ -46,8 +45,13 @@ ComputerPlayer.prototype.makeRequest = function(state, callback) {
 
     var req = http.request(options, function(res) {
         res.on('data', function(data) {
-            callback(JSON.parse(data));
+            var data = JSON.parse(data);
+            data.success = true;
+            callback(data);
         });
+    });
+    req.on('error', function(e) {
+        callback({success: false, error: e});
     });
     
     req.end(data);
