@@ -92,10 +92,10 @@ $(document).ready(function() {
 			else {
 				// Game is over.
 				if (didWeWin) {
-					endGame('You won!');
+					endGame('You won!', didWeWin);
 				}
 				else {
-					endGame('You lost!');
+					endGame('You lost!', didWeWin);
 				}
 			}
 		};
@@ -152,12 +152,26 @@ $(document).ready(function() {
     /**
      * Displays message lightbox with results of game
      */
-    function endGame(message) {
+    function endGame(message, didWeWin) {
         /* Open Lightbox */
         yodle.ui.lightbox.open('#gameStatusModal');
 
         /* Add text to modal body */
-        $("#gameStatusModal .statusMessage p.message").html(message);
+        $("#gameStatusModal .statusMessage strong").first().html(message);
+
+        if (didWeWin) {
+            $("#gameStatusModal .statusMessage")
+                .removeClass("error")
+                .addClass("success");
+        }
+        else {
+            $("#gameStatusModal .statusMessage")
+                .removeClass("success")
+                .addClass("error");
+        }
+
+
+
     }
 
 	// Initialize the game ui 

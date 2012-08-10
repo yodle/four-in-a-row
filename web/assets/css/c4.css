@@ -118,7 +118,7 @@ header.main {background:#f0f0f0; padding:20px 0 25px; margin-bottom:20px; border
 	.c-icon.ex-link {font-size:.8em;}
 	.c-icon.ex-link:hover {text-decoration: none;}
 
-/*=== C4 Board ===*/
+/*=== Four in a row Board ===*/
 #game-board {position: relative; height:100%; overflow: hidden; height:384px;}
 /*
 #c4-board {background: url('../images/c4-board/empty-board.png') no-repeat; z-index: 10;}
@@ -127,9 +127,9 @@ header.main {background:#f0f0f0; padding:20px 0 25px; margin-bottom:20px; border
 	#c4-moves .p1, #c4-board .p2 {height:64px; width:64px; position: absolute;}
 	#c4-moves .p1 {background: url('../images/c4-board/player1.png') no-repeat; background-size:100%;}
 	#c4-moves .p2 {background: url('../images/c4-board/player2.png') no-repeat; background-size:100%;}
-	*/
 #c4-board {position: absolute; display: block; background-size:100%; top:0; height:100%; width:100%;}
 .c4-move {z-index: 10; }
+	*/
 
 
 /*=== Status Messages ===*/
@@ -256,7 +256,9 @@ button.button, input.button {float:right;}
 	#footer section {min-height:230px;}
 
 	/* Game pieces */
+    /*
 	#c4-moves .p1, #c4-board .p2 {height:54px; width:54px; position: absolute;}
+    */
 }
 
 /* All Mobile Sizes (devices and browser) */
@@ -323,9 +325,11 @@ button.button, input.button {float:right;}
 	#copyright .text {width:170px;}
 
 	/* Game pieces */
-	#c4-moves .p1, #c4-board .p2 {height:42px; width:42px; position: absolute;}
+	/*
+     * #c4-moves .p1, #c4-board .p2 {height:42px; width:42px; position: absolute;}
 
 	#game-board, #c4-board {height:252px;}
+     */
 
 }
 
