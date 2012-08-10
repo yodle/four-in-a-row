@@ -7,7 +7,7 @@
 <head>
 	<!-- Meta  -->
 	<meta charset="UTF-8">
-	<title>C4 | Yodle</title>
+	<title>Four in a Row | Yodle</title>
 	<meta name="description" content="Description"/>
 	<meta name="robots" content="noindex,nofollow,noarchive" />
 
@@ -41,7 +41,7 @@
 			<div class="container_12">
 				<div class="main-col12 tablet-col9">
 					<a id="logo" href="http://www.yodle.com/"><img src="http://c336444.r44.cf1.rackcdn.com/logo.png" alt="Yodle Logo"></a>
-					<div id="siteTitle">C4</div>
+					<div id="siteTitle">Four in a Row</div>
 				</div>
 			</div>
 		</div>
@@ -68,26 +68,55 @@
 		<div id="container" class="full-width center">
 			<div class="container_12">
 				<div class="main-col12">
-					<h1>Page Header Goes Here</h1>
+					<h1>Welcome to the Yodle Four in a Row Challenge</h1>
 				</div>
 
 
 				<!-- Right Column -->
 				<div class="main-col8 tablet-col5 clearfix border-right">
 					<section class="module mediablock">
-						<h2>What Is This?</h2>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-						<p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+						<h2>What Is It?</h2>
+						<p>Think you've got what it takes to match our engineers in a battle of wits? Take on the Yodle Four in a Row Challenge!</p>
+						<p>Four in a Row is a simple game in which players take alternating turns dropping a single play token into one of seven columns in a vertically oriented board. As the name suggests, the first player to align four adjacent play tokens in a horizontal, vertical, or diagonal fashion wins the game.</p>
+						<p>While the rules are simple, coming up with an efficient AI to play the game well is a challenging (and fun) endeavor. If you're up to the challenge, try to take on one of our engineer-submitted AIs in a one-on-one deathmatch.</p>
 					</section>
 					<section class="module mediablock">
 						<h2>How to Play</h2>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+						<p>There are three ways to play:</p>
 						<ul>
-							<li>It has survived not only five centuries, but also the leap into electronic typesetting</li>
-							<li>It has survived not only five centuries, but also the leap into electronic typesetting</li>
-							<li>It has survived not only five centuries, but also the leap into electronic typesetting</li>
+							<li>Write a javascript AI in our <a href='play.html'>online code editor</a></li>
+							<li>Use one of the <a href="about:blank">Java</a>, <a href="about:blank">Python</a>, or <a href="about:blank">Ruby</a> clients</li>
+							<li>Roll your own in your language of choice against the Four in a Row Rest API</li>
 						</ul>
-						<p>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+					</section>
+					<section class="module mediablock">
+						<h2>REST API Documentation</h2>
+						<p>The REST API consists of two primary API methods and one supporting method for testing purposes. Each method returns the same information in the response, which is encoded in JSON format. Where resource identifiers are required in the URL, they are denoted as <tt>:param_description</tt>. POST parameters are denoted in (parentheses) after the URL. All API URLs are relative to http://TODO_DOMAIN_HERE.com.</p>
+						<strong>Standard JSON Response</strong>
+						<p>
+						  <table>
+						    <thead><tr><td>Key</td><td>Value</td></tr></thead>
+						    <tbody>
+						      <tr><td>ROWS</td><td>The number of rows in the game board, always 6</td>
+						      <tr><td>COLS</td><td>The number of columns in the game board, always 6</td>
+						      <tr><td>_id</td><td>The unique game identifier, used in the other API methods</td>
+						      <tr><td>humanPlayer&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Your player number (1 or 2), corresponding to the turn order</td>
+						      <tr><td>gameOver</td><td>True if the game is over</td>
+						      <tr><td>nickname</td><td>The nickname you supplied to the init API, used for the leaderboard</td>
+						      <tr><td>turn</td><td>Whose turn it is - will always be your player number except if the opponent AI is thinking during a request to get the game state</td>
+						      <tr><td>moves</td><td>How many moves have been played in the current game</td>
+						      <tr><td>lastMove</td><td>The most recent move (denoted by column), or null on the first turn</td>
+						      <tr><td>moveList</td><td>An array containing the move history in ascending chronological order</td>
+						      <tr><td>ai</td><td>The opponent AI level</td>
+						      <tr><td>board</td><td>The current board state; a two-dimensional array with columns (left-to-right) on the first dimension and rows (top of the board at lowest index) on the second</td>
+						    </tbody>
+                                                  </table>
+                                                </p>
+						<strong>API Method: POST /game/init/:aiLevel (nickname)</strong>
+						<p>Initiates a new game. AI level should be an integer between 1 and 6, with 1 being the easiest and 6 being the hardest. A nickname may be supplied for the leaderboard (strongly suggested). The response will contain the human player's player number, denoting whether the human player is the first or second to make a move. If the computer player is the first player, the board will reflect the computer player's first move in the response.</p>
+						<strong>API Method: POST /game/move/:gameId (move)</strong>						<p>Inserts a single play token into the board, into the column designated by the <tt>move</tt> parameter (between 1 and 7). The <tt>gameId</tt> segment of the uri should correspond to a unique game identifier returned by a call to the <tt>init/</tt> API. Once the move has been made, the server will solicit a move from the computer opponent before returning. Thus, after a call to the <tt>init/</tt> or <tt>move/</tt> APIs, it will always either be the human player's turn or the game will be over.</p>
+						<strong>API Method: GET /game/state/:gameId</strong>
+						<p>Retrieves the current state of the game corresponding to the <tt>gameId</tt> parameter.</p>
 					</section>
 				</div>
 				<!-- End Right Column -->
