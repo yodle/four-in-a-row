@@ -18,8 +18,8 @@ var COLS = 7;
 var PORT = 3000;
 
 var ais = {
-    1: {url:'http://localhost:3001/ai/random/move'},
-    2: {url:'http://localhost:3001/ai/twostep/move'}
+    1: {url:'http://localhost:3001/ai/random'},
+    2: {url:'http://localhost:3001/ai/twostep'}
 }
 // Initialization
 app.configure(function(){
@@ -88,7 +88,6 @@ function findGame(gameId, callback) {
 };
 
 app.all('/game/move/:gameId', function(req, res) {
-    console.log('got request');
 
     var gameId = req.params.gameId;
     var move = req.body.move || req.query.move;
@@ -103,16 +102,10 @@ app.all('/game/move/:gameId', function(req, res) {
             return;
         }
         gameSpec = game.deserialize(gameSpec);
+
         var moveResult = gameSpec.move(move); // make the player's move
         if(moveResult.failed) {
             res.end(errorResponse(moveResult.message));
-            return;
-        }
-        if(gameSpec.gameOver) {
-            //Player wins!
-            gameDb.update(gameId, gameSpec, function(game) {
-                res.end(makeJsonp(jsonp, JSON.stringify(game)));
-            });
             return;
         }
 
@@ -120,7 +113,6 @@ app.all('/game/move/:gameId', function(req, res) {
         var callback = function(result) {
             if(result.success) {
                 var moveResult = gameSpec.move(result.move); // make the AI move
-                console.log('result is: ' + JSON.stringify(moveResult));
                 if(moveResult.failed) {
                     res.end(errorResponse("something fishy is going on with your opponent, we're calling the game a draw"));
                     return;
@@ -134,7 +126,17 @@ app.all('/game/move/:gameId', function(req, res) {
                 return; 
             }
         };
-        var ai = new computerplayer.ComputerPlayer(aiSpec.url, game.turn, callback);
+        var ai = new computerplayer.ComputerPlayer(aiSpec.url, gameSpec.turn, callback);
+
+        if(gameSpec.gameOver) {
+            //Player wins!
+            gameDb.update(gameId, gameSpec, function(game) {
+                ai.endGame(gameSpec);
+                res.end(makeJsonp(jsonp, JSON.stringify(game)));
+            });
+            return;
+        }
+
         ai.move('', gameSpec);
     });
 });

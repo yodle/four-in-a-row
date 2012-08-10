@@ -14,9 +14,9 @@ var Game = function(rows, cols, humanPlayer, nickname, ai) {
     this.ai = ai;
 
     this.board = Utils.initBoard(
-	this.ROWS,
-	this.COLS,
-	function() { return Utils.Players.EMPTY; }
+        this.ROWS,
+        this.COLS,
+        function() { return Utils.Players.EMPTY; }
     );
 };
 
