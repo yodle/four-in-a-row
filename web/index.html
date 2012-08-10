@@ -98,10 +98,10 @@
 						    <thead><tr><td>Key</td><td>Value</td></tr></thead>
 						    <tbody>
 						      <tr><td>ROWS</td><td>The number of rows in the game board, always 6</td>
-						      <tr><td>COLS</td><td>The number of columns in the game board, always 6</td>
+						      <tr><td>COLS</td><td>The number of columns in the game board, always 7</td>
 						      <tr><td>_id</td><td>The unique game identifier, used in the other API methods</td>
 						      <tr><td>humanPlayer&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Your player number (1 or 2), corresponding to the turn order</td>
-						      <tr><td>gameOver</td><td>True if the game is over</td>
+						      <tr><td>gameOver</td><td>0 if the game is not over, otherwise the winner's player number</td>
 						      <tr><td>nickname</td><td>The nickname you supplied to the init API, used for the leaderboard</td>
 						      <tr><td>turn</td><td>Whose turn it is - will always be your player number except if the opponent AI is thinking during a request to get the game state</td>
 						      <tr><td>moves</td><td>How many moves have been played in the current game</td>
