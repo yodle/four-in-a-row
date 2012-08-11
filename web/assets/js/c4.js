@@ -1,6 +1,4 @@
 $(document).ready(function() {
-
-
 	var baseGameServerUrl = "http://localhost:3000/game";
 	var gameInitUrl = baseGameServerUrl + "/init";
 	var moveUrl = baseGameServerUrl + "/move";
@@ -9,6 +7,10 @@ $(document).ready(function() {
 	// must have a 'getNextMove' function.
 	var aiObject;
 
+	var isPlayingManually;
+
+	var isGameInProgress = false;
+
 	/* Mobile Glboal Nav */
 	$("#mGlobalNav select").on("change", function() {
 		if ($(this).val() != "") {
@@ -16,15 +18,9 @@ $(document).ready(function() {
 		}
 	});
 
-
-	var Players = {
-		EMPTY: 0,
-		P1: 1,
-		P2: 2
-	}    
-
 	var ROWS = 6;
 	var COLS = 7;
+
 
 
 	/* returns the lowest row index with a piece for given col */
@@ -33,7 +29,7 @@ $(document).ready(function() {
 		var rows = targetCol.length;
 		var highestFilledRow = rows;
 		for(var i=0; i<rows; i++) {
-			if(targetCol[i] != Players.EMPTY) {
+			if(targetCol[i] != 0) {
 				highestFilledRow = i;
 				break;
 			}
@@ -62,40 +58,52 @@ $(document).ready(function() {
 
 		var didWeWin = (data.humanPlayer == data.gameOver);
 
-		var lastMoveAnimationFinished = function() {
-			if (!data.gameOver) {
-				var moveColumn = aiObject.getNextMove(data.humanPlayer, data.board, data.moveList);
-
-				moveArgsData = {
-					move: moveColumn
-				};
-
-				targetRow = highestFilledRow(data.board, moveColumn) - 1;
-				thisMove = { 
-					row: targetRow, 
-					col: moveColumn, 
-					player: data.humanPlayer, 
-					moves: data.moves + 1
-				};
-
-				var thisMoveAnimationFinished = function() {
-					// Post move to server and expect json resonse in callback
-					var url = moveUrl + '/' + data._id;
-					$.ajax({
-						type: "GET",
-						url: url,
-						data: moveArgsData,
-						jsonp: "jsonp",
-						success: gameResponseCallback,
-						type: "jsonp",
-						dataType: "jsonp"
-					});
-				}
-
-				// Update game UI with last our move
-				GAME_UI.dropPiece(thisMove, thisMoveAnimationFinished);
+		var makeNextMove = function(manuallyChosenMove) {
+			var moveColumn = 0;
+			if (isPlayingManually) {
+				moveColumn = manuallyChosenMove;
 			}
 			else {
+				moveColumn = aiObject.getNextMove(
+						data.humanPlayer, 
+						data.board, 
+						data.moveList
+					);
+			}
+
+			moveArgsData = {
+				move: moveColumn
+			};
+
+			targetRow = highestFilledRow(data.board, moveColumn) - 1;
+			thisMove = { 
+				row: targetRow, 
+				col: moveColumn, 
+				player: data.humanPlayer, 
+				moves: data.moves + 1
+			};
+
+			var thisMoveAnimationFinished = function() {
+				// Post move to server and expect json resonse in callback
+				var url = moveUrl + '/' + data._id;
+				$.ajax({
+					type: "GET",
+					url: url,
+					data: moveArgsData,
+					jsonp: "jsonp",
+					success: gameResponseCallback,
+					type: "jsonp",
+					dataType: "jsonp"
+				});
+			}
+
+			// Update game UI with last our move
+			GAME_UI.dropPiece(thisMove, thisMoveAnimationFinished);
+		};
+
+		if (data.gameOver) { 
+				isGameInProgress = false;
+
 				// Game is over.
 				if (didWeWin) {
 					endGame('You won!', didWeWin);
@@ -103,15 +111,25 @@ $(document).ready(function() {
 				else {
 					endGame('You lost!', didWeWin);
 				}
-			}
-		};
-
-		if (data.lastMove && !didWeWin) {
-			// Update game UI with last move
-			GAME_UI.dropPiece(data.lastMove, lastMoveAnimationFinished);
 		}
 		else {
-			lastMoveAnimationFinished();
+			if (data.lastMove) {
+				// Update game UI with last move
+				GAME_UI.dropPiece(
+						data.lastMove, 
+						makeNextMove, 
+						isPlayingManually
+					);
+			}
+			else {
+				// Must be first move
+				if (isPlayingManually) {
+					GAME_UI.waitForManualMove(makeNextMove);
+				}
+				else {
+					makeNextMove();
+				}
+			}
 		}
 	};
 
@@ -120,16 +138,30 @@ $(document).ready(function() {
 	 * User sumbits form to start game
 	 */
 	$("#inputCode").on("submit", function(){
-		/* Value of textarea - Remove variable if you won't use it more than once */
-		var codeInput = $("#codeInput").val();
+		// Keep track of game in progress to prevent overlapping games being triggered
+		if (isGameInProgress) {
+			return false;
+		}
+		else {
+			isGameInProgress = true;
+		}
 
 		/* Difficulty chosen */
 		var difficulty = $("#difficultySelect option:selected").val();
 
-		// Eval the user input function and get their object
-		var userCodeInput = editor.getSession().getValue();
-		aiObject = eval(userCodeInput);
+		isPlayingManually = $("#playManuallyCheck").is(":checked");
 
+
+		if (!isPlayingManually) {
+			/* Value of textarea - Remove variable if you won't use it more than once */
+			var codeInput = $("#codeInput").val();
+
+			// Eval the user input function and get their object
+			var userCodeInput = editor.getSession().getValue();
+			aiObject = eval(userCodeInput);
+		}
+
+		// TODO - get from user input
 		var gameInitData = {
 			nickname: 'kurt'
 		};
