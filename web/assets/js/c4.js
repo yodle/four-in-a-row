@@ -191,7 +191,7 @@ $(document).ready(function() {
 	var JavaScriptMode = require("ace/mode/javascript").Mode;
 	editor.getSession().setMode(new JavaScriptMode());
 	editor.setShowPrintMargin(false);
-	editor.setTheme("ace/theme/solarized_dark");
+	editor.setTheme("ace/theme/solarized_light");
 	editor.getSession().setValue(
 			"// Code must evalutate to an object containing the 'getNextMove' function.\n" +
 			"(function() {\n" +
