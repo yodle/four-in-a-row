@@ -337,4 +337,26 @@ div #editor {
 	position: relative;
 	height: 400px;
 	width: 100%;
+	font-size: 14px;
+}
+
+div #playerPieceBackground {
+	background-image: url(/assets/images/game/empty.png);
+	height: 64px;
+	width: 64px;
+	background-repeat: no-repeat;
+}
+
+div .player1Piece {
+	background-image: url(/assets/images/game/player1.png);
+	height: 64px;
+	width: 64px;
+	background-repeat: no-repeat;
+}
+
+div .player2Piece {
+	background-image: url(/assets/images/game/player2.png);
+	height: 64px;
+	width: 64px;
+	background-repeat: no-repeat;
 }

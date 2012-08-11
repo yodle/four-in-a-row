@@ -90,19 +90,29 @@
 				<!-- Sidebar -->
 				<aside class="main-col6 tablet-col4 clearfix border-left">
 					<section class="module listing">
-						<form id="inputCode" action="#">
-							<div class="formfield col6 tablet-col4 no-gutter">
-							<fieldset class="formfield">
-								<legend>Difficulty</legend>
-									<label><input type="radio" name="difficulty" value="1">Level 1 (Easiest)</label>
-									<label><input type="radio" name="difficulty" value="2">Level 2</label>
-									<label><input type="radio" name="difficulty" value="3">Level 3</label>
-									<label><input type="radio" name="difficulty" value="4">Level 4</label>
-									<label><input type="radio" name="difficulty" value="5">Level 5</label>
-									<label><input type="radio" name="difficulty" value="6">Level 6 (Hardest)</label>
-							</fieldset>
-							<input type="submit" class="primaryButton button" value="Run">
-						</form>
+						<div class="clearfix">
+							<form id="inputCode" action="#" >
+								<div class="formfield col6 tablet-col4 no-gutter">
+									<fieldset class="formfield">
+										<legend>Difficulty</legend>
+										<select id="difficultySelect">
+											<option value="1">Level 1 (Easiest)</option>
+											<option value="2">Level 2</option>
+											<option value="3">Level 3</option>
+											<option value="4">Level 4</option>
+											<option value="5">Level 5</option>
+											<option value="6">Level 6 (Hardest)</option>
+										</select>
+									</fieldset>
+									<input type="submit" class="primaryButton button" value="Run"/>
+							</form>
+						</div>
+						<div id="playedPieceContainer">
+							<span>Your Piece</span>
+							<div id="playerPieceBackground" >
+								<div id="playerPiece" >
+							<div>
+						</div>
 					</section>
 				</aside>
 				<!-- End Sidebar -->

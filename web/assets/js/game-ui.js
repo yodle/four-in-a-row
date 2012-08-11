@@ -26,6 +26,11 @@ var GAME_UI = (function() {
     var squareSize = 64;
 
 
+	var baseImageUrl = "assets/images/game";
+	var emptyPngPath = baseImageUrl + "/empty.png";
+	var player1PngPath = baseImageUrl + "/player1.png";
+	var player2PngPath = baseImageUrl + "/player2.png";
+
     //ui state    
     var ui = {};
 
@@ -54,6 +59,9 @@ var GAME_UI = (function() {
 
 
     gameUiObj = {};
+	gameUiObj.player1PngPath = player1PngPath;
+	gameUiObj.player2PngPath = player2PngPath;
+
 
     gameUiObj.initBoard = function(rows, cols) {
         this.rows = rows;
@@ -209,20 +217,19 @@ var GAME_UI = (function() {
     };
 
     gameUiObj.init =  function() {
-        var baseImageUrl = "assets/images/game";
-        ui.boardSquare = new $.gameQuery.Animation({ imageURL: baseImageUrl + "/empty.png",
+        ui.boardSquare = new $.gameQuery.Animation({ imageURL: emptyPngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
             offsety: 0});
 
-        ui.p1Piece = new $.gameQuery.Animation({ imageURL: baseImageUrl + "/player1.png",
+        ui.p1Piece = new $.gameQuery.Animation({ imageURL: player1PngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
             offsety: 0});
 
-        ui.p2Piece = new $.gameQuery.Animation({ imageURL: baseImageUrl + "/player2.png",
+        ui.p2Piece = new $.gameQuery.Animation({ imageURL: player2PngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
