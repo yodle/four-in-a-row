@@ -1,6 +1,4 @@
 $(window).resize(function() {
-
-
     if (GAME_UI.hasSizeChanged($(window).width())) {
         GAME_UI.resizeBoard();
     }
@@ -32,6 +30,7 @@ var GAME_UI = (function() {
 	var player2PngPath = baseImageUrl + "/player2.png";
 
 	var uiFinishedCallback = null;
+	var lastData = null;
 	var isWaitingForAnimation = false;
 
     //ui state    
@@ -39,9 +38,10 @@ var GAME_UI = (function() {
 
 	var makeManualMove = function(col) {
 		if (!isWaitingForAnimation && uiFinishedCallback) {
-			uiFinishedCallback(col);
+			uiFinishedCallback(lastData, col);
 			// Clear out the callback so we don't re-use it on accident.
 			uiFinishedCallback = null;
+			currentMoveData = null;
 		}
 	}
 
@@ -65,7 +65,8 @@ var GAME_UI = (function() {
 	gameUiObj.player1PngPath = player1PngPath;
 	gameUiObj.player2PngPath = player2PngPath;
 
-	gameUiObj.waitForManualMove = function(callback) {
+	gameUiObj.waitForManualMove = function(data, callback) {
+		lastData = data;
 		uiFinishedCallback = callback;
 	}
 
@@ -171,7 +172,8 @@ var GAME_UI = (function() {
         $.playground().startGame();
     };
 
-    gameUiObj.dropPiece = function(move, callback, isPlayingManually) {
+    gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
+		var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
         var curPieceId = move.moves;
         var moveId = "move" + curPieceId + "-" + move.row + "x" + move.col;
@@ -222,10 +224,11 @@ var GAME_UI = (function() {
                 currentSprite.css("top", bottomOfCol);
                 var animEnd = (new Date().getTime() - animStart);
 				if (isPlayingManually) {
+					lastData = data;
 					uiFinishedCallback = callback;
 				}
 				else {
-					callback();
+					callback(data);
 				}
 
                 console.log("animation finished in: " + animEnd + "ms, final velocity: " + posAndVelocity.velocity + ", avgMove: " + average(posdiffs).mean + ", avgDt: " + average(dts).mean + ", steps: " + dts.length);

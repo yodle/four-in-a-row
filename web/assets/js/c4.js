@@ -2,14 +2,11 @@ $(document).ready(function() {
 	var baseGameServerUrl = "http://localhost:3000/game";
 	var gameInitUrl = baseGameServerUrl + "/init";
 	var moveUrl = baseGameServerUrl + "/move";
-
-	// This will be the user defined object which 
-	// must have a 'getNextMove' function.
-	var aiObject;
-
+	var ROWS = 6;
+	var COLS = 7;
 	var isPlayingManually;
-
 	var isGameInProgress = false;
+	var aiObject;
 
 	/* Mobile Glboal Nav */
 	$("#mGlobalNav select").on("change", function() {
@@ -18,13 +15,8 @@ $(document).ready(function() {
 		}
 	});
 
-	var ROWS = 6;
-	var COLS = 7;
-
-
-
 	/* returns the lowest row index with a piece for given col */
-	function highestFilledRow(board, col) {
+	var highestFilledRow = function(board, col) {
 		var targetCol = board[col];
 		var rows = targetCol.length;
 		var highestFilledRow = rows;
@@ -37,10 +29,75 @@ $(document).ready(function() {
 		return highestFilledRow;
 	};
 
+	var makeJsonpAjaxRequest = function(url, data, callback) {
+		$.ajax({
+			type: "GET",
+			url: url,
+			data: data,
+			jsonp: "jsonp",
+			success: callback,
+			type: "jsonp",
+			dataType: "jsonp"
+		});
+	};
+
+	var animateHumanMoveAndSendToServer = function(data, column) {
+		moveArgsData = {
+			move: column
+		};
+
+		targetRow = highestFilledRow(data.board, column) - 1;
+		data.lastMove = { 
+			row: targetRow, 
+			col: column, 
+			player: data.humanPlayer, 
+			moves: data.moves + 1
+		};
+
+		var thisMoveAnimationFinished = function() {
+			// Post move to server and expect json resonse in callback
+			var url = moveUrl + '/' + data._id;
+			makeJsonpAjaxRequest(url, moveArgsData, gameResponseCallback);
+		}
+
+		// Update game UI with last our move
+		GAME_UI.dropPiece(data, thisMoveAnimationFinished);
+	};
+
+	var makeNextMove = function(data, manuallyChosenMove) {
+		if (data.gameOver) { 
+			isGameInProgress = false;
+
+			var didWeWin = (data.humanPlayer == data.gameOver);
+			// Game is over.
+			if (didWeWin) {
+				endGame('You won!', didWeWin);
+			}
+			else {
+				endGame('You lost!', didWeWin);
+			}
+		}
+		else {
+			var moveColumn = 0;
+			if (isPlayingManually) {
+				moveColumn = manuallyChosenMove;
+			}
+			else {
+				moveColumn = aiObject.getNextMove(
+					data.humanPlayer, 
+					data.board, 
+					data.moveList
+				);
+			}
+
+			animateHumanMoveAndSendToServer(data, moveColumn);
+		}
+	};
+
 	/**
 	 * Callback from the server when it finish processing out move/init.
 	 */
-	function gameResponseCallback(data) {
+	var gameResponseCallback = function(data) {
 		// Make sure the page is displaying the correct player piece to
 		// indicate the human player
 		var piecePng = "";
@@ -55,80 +112,20 @@ $(document).ready(function() {
 				.addClass("player2Piece");
 		}
 
-
-		var didWeWin = (data.humanPlayer == data.gameOver);
-
-		var makeNextMove = function(manuallyChosenMove) {
-			var moveColumn = 0;
-			if (isPlayingManually) {
-				moveColumn = manuallyChosenMove;
-			}
-			else {
-				moveColumn = aiObject.getNextMove(
-						data.humanPlayer, 
-						data.board, 
-						data.moveList
-					);
-			}
-
-			moveArgsData = {
-				move: moveColumn
-			};
-
-			targetRow = highestFilledRow(data.board, moveColumn) - 1;
-			thisMove = { 
-				row: targetRow, 
-				col: moveColumn, 
-				player: data.humanPlayer, 
-				moves: data.moves + 1
-			};
-
-			var thisMoveAnimationFinished = function() {
-				// Post move to server and expect json resonse in callback
-				var url = moveUrl + '/' + data._id;
-				$.ajax({
-					type: "GET",
-					url: url,
-					data: moveArgsData,
-					jsonp: "jsonp",
-					success: gameResponseCallback,
-					type: "jsonp",
-					dataType: "jsonp"
-				});
-			}
-
-			// Update game UI with last our move
-			GAME_UI.dropPiece(thisMove, thisMoveAnimationFinished);
-		};
-
-		if (data.gameOver) { 
-				isGameInProgress = false;
-
-				// Game is over.
-				if (didWeWin) {
-					endGame('You won!', didWeWin);
-				}
-				else {
-					endGame('You lost!', didWeWin);
-				}
+		if (data.lastMove && data.gameOver != data.humanPlayer) {
+			// Update game UI with last move
+			GAME_UI.dropPiece(
+					data, 
+					makeNextMove, 
+					isPlayingManually
+				);
 		}
 		else {
-			if (data.lastMove) {
-				// Update game UI with last move
-				GAME_UI.dropPiece(
-						data.lastMove, 
-						makeNextMove, 
-						isPlayingManually
-					);
+			if (isPlayingManually) {
+				GAME_UI.waitForManualMove(data, makeNextMove);
 			}
 			else {
-				// Must be first move
-				if (isPlayingManually) {
-					GAME_UI.waitForManualMove(makeNextMove);
-				}
-				else {
-					makeNextMove();
-				}
+				makeNextMove(data);
 			}
 		}
 	};
@@ -151,7 +148,6 @@ $(document).ready(function() {
 
 		isPlayingManually = $("#playManuallyCheck").is(":checked");
 
-
 		if (!isPlayingManually) {
 			/* Value of textarea - Remove variable if you won't use it more than once */
 			var codeInput = $("#codeInput").val();
@@ -173,15 +169,7 @@ $(document).ready(function() {
 
 		// Post to the server to start the game, and expect json response to callback
 		var url = gameInitUrl + '/' + difficulty;
-		$.ajax({
-			type: "GET",
-			url: url,
-			data: gameInitData,
-			jsonp: "jsonp",
-			success: gameResponseCallback,
-			type: "jsonp",
-			dataType: "jsonp"
-		});
+		makeJsonpAjaxRequest(url, gameInitUrl, gameResponseCallback);
 
 		// All logic is done already, don't submit to this page...
 		return false;
@@ -190,7 +178,7 @@ $(document).ready(function() {
 	/**
 	 * Displays message lightbox with results of game
 	 */
-	function endGame(message, didWeWin) {
+	var endGame = function(message, didWeWin) {
 		/* Open Lightbox */
 		yodle.ui.lightbox.open('#gameStatusModal');
 
@@ -207,10 +195,7 @@ $(document).ready(function() {
 				.removeClass("success")
 				.addClass("error");
 		}
-
-
-
-	}
+	};
 
 	// Initialize the game ui 
 	GAME_UI.init();
@@ -246,5 +231,5 @@ $(document).ready(function() {
 			"         }\n" +
 			"       }\n" +
 			"})();\n"
-			);
+		);
 });
