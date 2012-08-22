@@ -149,17 +149,15 @@ $(document).ready(function() {
 		isPlayingManually = $("#playManuallyCheck").is(":checked");
 
 		if (!isPlayingManually) {
-			/* Value of textarea - Remove variable if you won't use it more than once */
-			var codeInput = $("#codeInput").val();
-
 			// Eval the user input function and get their object
 			var userCodeInput = editor.getSession().getValue();
 			aiObject = eval(userCodeInput);
 		}
 
 		// TODO - get from user input
+        var nicknameValue = $("#nicknameInput").val();
 		var gameInitData = {
-			nickname: 'kurt'
+			nickname: nicknameValue
 		};
 
 		// Init game board
