@@ -19,9 +19,9 @@ var PORT = 3000;
 
 var ais = {
     1: {url:'http://localhost:3001/ai/random'},
-    2: {url:'http://localhost:3001/ai/twostep'}
+    2: {url:'http://localhost:3001/ai/twostep'},
     3: {url:'http://localhost:3001/ai/random'},
-    4: {url:'http://localhost:3001/ai/twostep'}
+    4: {url:'http://localhost:3001/ai/twostep'},
     5: {url:'http://localhost:3001/ai/random'},
     6: {url:'http://localhost:3001/ai/twostep'}
 }
