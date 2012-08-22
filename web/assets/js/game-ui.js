@@ -1,6 +1,4 @@
 $(window).resize(function() {
-
-
     if (GAME_UI.hasSizeChanged($(window).width())) {
         GAME_UI.resizeBoard();
     }
@@ -26,17 +24,27 @@ var GAME_UI = (function() {
     var squareSize = 64;
 
 
+	var baseImageUrl = "assets/images/game";
+	var emptyPngPath = baseImageUrl + "/empty.png";
+	var player1PngPath = baseImageUrl + "/player1.png";
+	var player2PngPath = baseImageUrl + "/player2.png";
+
+	var uiFinishedCallback = null;
+	var lastData = null;
+	var isWaitingForAnimation = false;
+
     //ui state    
     var ui = {};
 
-    /* 
-     * return a function which will emit the correct 'move' message for <col> on <socket>
-     */
-    var clickFnFor = function(col, makeMove) {
-        return function(e) {
-            makeMove(col);
-        }
-    };
+	var makeManualMove = function(col) {
+		if (!isWaitingForAnimation && uiFinishedCallback) {
+			uiFinishedCallback(lastData, col);
+			// Clear out the callback so we don't re-use it on accident.
+			uiFinishedCallback = null;
+			currentMoveData = null;
+		}
+	}
+
 
     /*
      * return the sprite for piece for <player>
@@ -54,6 +62,13 @@ var GAME_UI = (function() {
 
 
     gameUiObj = {};
+	gameUiObj.player1PngPath = player1PngPath;
+	gameUiObj.player2PngPath = player2PngPath;
+
+	gameUiObj.waitForManualMove = function(data, callback) {
+		lastData = data;
+		uiFinishedCallback = callback;
+	}
 
     gameUiObj.initBoard = function(rows, cols) {
         this.rows = rows;
@@ -138,9 +153,17 @@ var GAME_UI = (function() {
                     posx: j * spriteWidth, 
                     posy: i * spriteHeight
                 });
-
                 $('#'+currentSquare).css({ 'background-size' : '100%' } );
 
+				// Create a closure for the callback so it can hold
+				// onto the column variable
+				var clickCallback = (function(col) {
+					return function() {
+						makeManualMove(col);
+					}
+				})(j);
+
+				$('#'+currentSquare).click(clickCallback);
             }
         }
     };
@@ -149,7 +172,8 @@ var GAME_UI = (function() {
         $.playground().startGame();
     };
 
-    gameUiObj.dropPiece = function(move, animFinishedCallback) {
+    gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
+		var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
         var curPieceId = move.moves;
         var moveId = "move" + curPieceId + "-" + move.row + "x" + move.col;
@@ -199,7 +223,13 @@ var GAME_UI = (function() {
             else {
                 currentSprite.css("top", bottomOfCol);
                 var animEnd = (new Date().getTime() - animStart);
-                animFinishedCallback();
+				if (isPlayingManually) {
+					lastData = data;
+					uiFinishedCallback = callback;
+				}
+				else {
+					callback(data);
+				}
 
                 console.log("animation finished in: " + animEnd + "ms, final velocity: " + posAndVelocity.velocity + ", avgMove: " + average(posdiffs).mean + ", avgDt: " + average(dts).mean + ", steps: " + dts.length);
                 return true;
@@ -209,20 +239,19 @@ var GAME_UI = (function() {
     };
 
     gameUiObj.init =  function() {
-        var baseImageUrl = "assets/images/game";
-        ui.boardSquare = new $.gameQuery.Animation({ imageURL: baseImageUrl + "/empty.png",
+        ui.boardSquare = new $.gameQuery.Animation({ imageURL: emptyPngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
             offsety: 0});
 
-        ui.p1Piece = new $.gameQuery.Animation({ imageURL: baseImageUrl + "/player1.png",
+        ui.p1Piece = new $.gameQuery.Animation({ imageURL: player1PngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
             offsety: 0});
 
-        ui.p2Piece = new $.gameQuery.Animation({ imageURL: baseImageUrl + "/player2.png",
+        ui.p2Piece = new $.gameQuery.Animation({ imageURL: player2PngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
