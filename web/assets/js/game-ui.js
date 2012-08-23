@@ -24,26 +24,26 @@ var GAME_UI = (function() {
     var squareSize = 64;
 
 
-	var baseImageUrl = "assets/images/game";
-	var emptyPngPath = baseImageUrl + "/empty.png";
-	var player1PngPath = baseImageUrl + "/player1.png";
-	var player2PngPath = baseImageUrl + "/player2.png";
+    var baseImageUrl = "assets/images/game";
+    var emptyPngPath = baseImageUrl + "/empty.png";
+    var player1PngPath = baseImageUrl + "/player1.png";
+    var player2PngPath = baseImageUrl + "/player2.png";
 
-	var uiFinishedCallback = null;
-	var lastData = null;
-	var isWaitingForAnimation = false;
+    var uiFinishedCallback = null;
+    var lastData = null;
+    var isWaitingForAnimation = false;
 
     //ui state    
     var ui = {};
 
-	var makeManualMove = function(col) {
-		if (!isWaitingForAnimation && uiFinishedCallback) {
-			uiFinishedCallback(lastData, col);
-			// Clear out the callback so we don't re-use it on accident.
-			uiFinishedCallback = null;
-			currentMoveData = null;
-		}
-	}
+    var makeManualMove = function(col) {
+        if (!isWaitingForAnimation && uiFinishedCallback) {
+            uiFinishedCallback(lastData, col);
+            // Clear out the callback so we don't re-use it on accident.
+            uiFinishedCallback = null;
+            currentMoveData = null;
+        }
+    }
 
 
     /*
@@ -62,13 +62,13 @@ var GAME_UI = (function() {
 
 
     gameUiObj = {};
-	gameUiObj.player1PngPath = player1PngPath;
-	gameUiObj.player2PngPath = player2PngPath;
+    gameUiObj.player1PngPath = player1PngPath;
+    gameUiObj.player2PngPath = player2PngPath;
 
-	gameUiObj.waitForManualMove = function(data, callback) {
-		lastData = data;
-		uiFinishedCallback = callback;
-	}
+    gameUiObj.waitForManualMove = function(data, callback) {
+        lastData = data;
+        uiFinishedCallback = callback;
+    }
 
     gameUiObj.initBoard = function(rows, cols) {
         this.rows = rows;
@@ -105,7 +105,7 @@ var GAME_UI = (function() {
 
     gameUiObj.resizeBoard = function() {
         gameUiObj.calculateBoardSize();
-        
+
 
         $("#boardsquares").children().each(function() {
             $(this).width(spriteWidth);
@@ -132,7 +132,7 @@ var GAME_UI = (function() {
 
             $(this).css({ top : row, left : column });
         });
-        
+
 
     };
 
@@ -140,7 +140,7 @@ var GAME_UI = (function() {
     gameUiObj.resetBoard = function() {
         ui.boardLayer.empty();
         ui.pieceLayer.empty();
-        
+
         gameUiObj.calculateBoardSize();
 
         for(var i = 0; i < this.rows; i++) {
@@ -155,15 +155,15 @@ var GAME_UI = (function() {
                 });
                 $('#'+currentSquare).css({ 'background-size' : '100%' } );
 
-				// Create a closure for the callback so it can hold
-				// onto the column variable
-				var clickCallback = (function(col) {
-					return function() {
-						makeManualMove(col);
-					}
-				})(j);
+                // Create a closure for the callback so it can hold
+                // onto the column variable
+                var clickCallback = (function(col) {
+                    return function() {
+                        makeManualMove(col);
+                    }
+                })(j);
 
-				$('#'+currentSquare).click(clickCallback);
+                $('#'+currentSquare).click(clickCallback);
             }
         }
     };
@@ -173,7 +173,7 @@ var GAME_UI = (function() {
     };
 
     gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
-		var move = data.lastMove;
+        var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
         var curPieceId = move.moves;
         var moveId = "move" + curPieceId + "-" + move.row + "x" + move.col;
@@ -185,7 +185,7 @@ var GAME_UI = (function() {
             posy: -spriteHeight 
         });
         var bottomOfCol = move.row * spriteHeight;
-        
+
         var currentSprite = $("#"+moveId);
         currentSprite.css({ 'background-size' : '100%' } );
 
@@ -223,13 +223,13 @@ var GAME_UI = (function() {
             else {
                 currentSprite.css("top", bottomOfCol);
                 var animEnd = (new Date().getTime() - animStart);
-				if (isPlayingManually) {
-					lastData = data;
-					uiFinishedCallback = callback;
-				}
-				else {
-					callback(data);
-				}
+                if (isPlayingManually && !data.gameOver) {
+                    lastData = data;
+                    uiFinishedCallback = callback;
+                }
+                else {
+                    callback(data);
+                }
 
                 console.log("animation finished in: " + animEnd + "ms, final velocity: " + posAndVelocity.velocity + ", avgMove: " + average(posdiffs).mean + ", avgDt: " + average(dts).mean + ", steps: " + dts.length);
                 return true;
