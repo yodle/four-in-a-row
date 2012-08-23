@@ -126,7 +126,7 @@ app.all('/game/move/:gameId', function(req, res) {
                 });
             }
             else {
-                res.end(makeJsonp(jsonp, errorResponse("opponent is taking a break, try again later\n" + result.error));
+                res.end(makeJsonp(jsonp, errorResponse("opponent is taking a break, try again later\n" + result.error)));
                 return; 
             }
         };
