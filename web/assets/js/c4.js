@@ -66,8 +66,6 @@ $(document).ready(function() {
 
     var makeNextMove = function(data, manuallyChosenMove) {
         if (data.error || data.gameOver) { 
-            isGameInProgress = false;
-
             var didWeWin = (data.error == undefined) && (data.humanPlayer == data.gameOver);
             // Game is over.
             var msg = "";
@@ -95,11 +93,15 @@ $(document).ready(function() {
                 moveColumn = manuallyChosenMove;
             }
             else {
-                moveColumn = aiObject.getNextMove(
-                        data.humanPlayer, 
-                        data.board, 
-                        data.moveList
-                        );
+                try {
+                    moveColumn = aiObject.getNextMove(data);
+                }
+                catch (error) {
+                    var msg = error.name + " occurred evaluating getNextMove function, error message: " + error.message;
+                    endGame(msg, false);
+                    // don't send any move, let game be over
+                    return;
+                }
             }
 
             animateHumanMoveAndSendToServer(data, moveColumn);
@@ -148,7 +150,7 @@ $(document).ready(function() {
     /**
      * User sumbits form to start game
      */
-    $("#inputCode").on("submit", function(){
+    $("#inputCode").on("submit", function() {
         // Keep track of game in progress to prevent overlapping games being triggered
         if (isGameInProgress) {
             return false;
@@ -157,39 +159,50 @@ $(document).ready(function() {
             isGameInProgress = true;
         }
 
-    /* Difficulty chosen */
-    var difficulty = $("#difficultySelect option:selected").val();
+        /* Difficulty chosen */
+        var difficulty = $("#difficultySelect option:selected").val();
 
-    isPlayingManually = $("#playManuallyCheck").is(":checked");
+        isPlayingManually = $("#playManuallyCheck").is(":checked");
 
-    if (!isPlayingManually) {
-        // Eval the user input function and get their object
-        var userCodeInput = editor.getSession().getValue();
-        aiObject = eval(userCodeInput);
-    }
+        if (!isPlayingManually) {
+            // Eval the user input function and get their object
+            var userCodeInput = editor.getSession().getValue();
 
-    var nicknameValue = $("#nicknameInput").val();
-    var gameInitData = {
-        nickname: nicknameValue
-    };
+            try {
+                aiObject = eval(userCodeInput);
+            }
+            catch (error) {
+                var msg = error.name + " occurred evaluating input code, error message: " + error.message;
+                endGame(msg, false);
+                // don't init game or submit form
+                return false;
+            }
+        }
 
-    // Init game board
-    GAME_UI.initBoard(ROWS, COLS);
-    GAME_UI.resetBoard();
-    GAME_UI.startGame();
+        var nicknameValue = $("#nicknameInput").val();
+        var gameInitData = {
+            nickname: nicknameValue
+        };
 
-    // Post to the server to start the game, and expect json response to callback
-    var url = gameInitUrl + '/' + difficulty;
-    makeJsonpAjaxRequest(url, gameInitUrl, gameResponseCallback);
+        // Init game board
+        GAME_UI.initBoard(ROWS, COLS);
+        GAME_UI.resetBoard();
+        GAME_UI.startGame();
 
-    // All logic is done already, don't submit to this page...
-    return false;
+        // Post to the server to start the game, and expect json response to callback
+        var url = gameInitUrl + '/' + difficulty;
+        makeJsonpAjaxRequest(url, gameInitUrl, gameResponseCallback);
+
+        // All logic is done already, don't submit to this page...
+        return false;
     });
 
     /**
      * Displays message lightbox with results of game
      */
     var endGame = function(message, didWeWin) {
+        isGameInProgress = false;
+
         /* Open Lightbox */
         yodle.ui.lightbox.open('#gameStatusModal');
 
@@ -223,24 +236,26 @@ $(document).ready(function() {
     editor.getSession().setValue(
             "// Code must evalutate to an object containing the 'getNextMove' function.\n" +
             "(function() {\n" +
-            "    return {\n" +
-            "         /**\n" +
-            "          * Gets the next move from the client-side AI.\n" +
-            "          * \n" +
-            "          * @playerNumber Either a 1 or a 2, indicating which number\n" +
-            "          *     represents the client-side player on the board.\n" +
-            "          * @board The current board state; a two-dimensional array with columns\n" +
-            "          *     (left-to-right) on the first dimension\n" + 
-            "          *     and rows (top to bottom) on the second.\n" +
-            "          * @moveList An array containing the move history\n" + 
-            "          *     in ascending chronological order.\n" +
-            "          */\n" +
-            "         getNextMove: function(playerNumber, board, moveList) { \n" +
-            "             // Instead of evaluating the board just\n" +
-            "             // return a random move (0-6 are valid columns)\n" +
-            "             return Math.floor(Math.random() * 6);\n" +
-            "         }\n" +
-            "       }\n" +
+            "\treturn {\n" +
+            "\t\t/**\n" +
+            "\t\t * Gets the next move from the client-side AI.\n" +
+            "\t\t * \n" +
+            "\t\t * @data The standard JSON response as defined in the documentation.\n" +
+            "\t\t */\n" +
+            "\t\tgetNextMove: function(data) { \n" +
+            "\t\t\t// Either a 1 or a 2, indicating which number\n" +
+            "\t\t\t// represents the client-side player on the board.\n" +
+            "\t\t\tvar playerNumber = data.playerNumber;\n" +
+            "\t\t\t\n" +
+            "\t\t\t// The current board state; a two-dimensional array with columns\n" +
+            "\t\t\t// (left-to-right) on the first dimension.\n" +
+            "\t\t\tvar board = data.playerNumber;\n" +
+            "\t\t\t\n" +
+            "\t\t\t// Instead of evaluating the board just\n" +
+            "\t\t\t// return a random move (0-6 are valid columns)\n" +
+            "\t\t\treturn Math.floor(Math.random() * 6);\n" +
+            "\t\t}\n" +
+            "\t};\n" +
             "})();\n"
             );
 });
