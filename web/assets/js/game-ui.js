@@ -10,7 +10,7 @@ var GAME_UI = (function() {
     var P1 = 1;
     var P2 = 2;
 
-    var $board = $('#c4-board');
+    var $board = $('#board');
     //ui constants
     //var HEIGHT = $board.height();
     //var WIDTH = $board.width();
