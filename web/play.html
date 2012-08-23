@@ -13,7 +13,7 @@
 
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="assets/css/reset-start.css">
-	<link rel="stylesheet" href="assets/css/c4.css">
+	<link rel="stylesheet" href="assets/css/four-in-a-row.css">
 	<link rel="stylesheet" href="assets/css/956.css">
 	<link rel="stylesheet" href="assets/css/reset-end.css">
 
@@ -78,11 +78,7 @@
 				<!-- Main Content -->
 				<div class="main-col6 tablet-col5 clearfix border-right">
 					<section id="game-board" class="module mediablock">
-						<div id="c4-board" class="clearfix;"></div>
-						<div id="c4-moves">
-							<div id="move1" class="p1"></div>
-							<div id="move2" class="p2"></div>
-						</div>
+						<div id="board" class="clearfix;"></div>
 					</section>
 				</div>
 				<!-- End Main Content -->
@@ -108,7 +104,7 @@
 										</select>
 
 										<label forId="playManuallyCheck">
-											Play by hand?
+											Play by hand? (click column to make move)
 										</label>
 										<input id="playManuallyCheck" type="checkbox" />
 										</input>
@@ -204,14 +200,13 @@
 	<div class="statusMessage">
 		<strong>You Win!</strong>
 		<p class="message"></p>
-		<p>Maybe you can work at Yodle. Email your resume to <a href="mailto:emailaddress">EmailAddress</a>.</p>
 	</div>
 </div>
 
 <!-- Javascript -->
 <script src="assets/js/jquery.gamequery-0.5.1.js"></script>
 <script src="assets/js/game-ui.js"></script>
-<script src="assets/js/c4.js"></script>
+<script src="assets/js/four-in-a-row.js"></script>
 
 <!-- Yodle Modal -->
 <script src="assets/yodle/ui/modal/modal.js"></script>

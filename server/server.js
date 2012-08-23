@@ -68,7 +68,7 @@ app.all('/game/init/:ailevel', function(req, res) {
     var jsonp = req.query.jsonp;
 
     if (isNaN(ai) || ai < 1 || ai > 6) {
-        res.end(errorResponse('ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest'));
+        res.end(makeJsonp(jsonp, errorResponse('ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest')));
     }
     else
     {
@@ -95,21 +95,21 @@ app.all('/game/move/:gameId', function(req, res) {
 
     var gameId = req.params.gameId;
     var move = req.body.move || req.query.move;
+    var jsonp = req.query.jsonp;
     if(typeof(move) === 'undefined') {
-        res.end(errorResponse('Must specify a "move" parameter'));
+        res.end(makeJsonp(jsonp, errorResponse('Must specify a "move" parameter')));
         return;
     }
-    var jsonp = req.query.jsonp;
     findGame(gameId, function(gameSpec) {
         if(gameSpec === null) {
-            res.end(errorResponse('Invalid GameId: ' + gameId));
+            res.end(makeJsonp(jsonp, errorResponse('Invalid GameId: ' + gameId)));
             return;
         }
         gameSpec = game.deserialize(gameSpec);
 
         var moveResult = gameSpec.move(move); // make the player's move
         if(moveResult.failed) {
-            res.end(errorResponse(moveResult.message));
+            res.end(makeJsonp(jsonp, errorResponse(moveResult.message)));
             return;
         }
 
@@ -118,7 +118,7 @@ app.all('/game/move/:gameId', function(req, res) {
             if(result.success) {
                 var moveResult = gameSpec.move(result.move); // make the AI move
                 if(moveResult.failed) {
-                    res.end(errorResponse("something fishy is going on with your opponent, we're calling the game a draw"));
+                    res.end(makeJsonp(jsonp, errorResponse("something fishy is going on with your opponent, we're calling the game a draw")));
                     return;
                 }
                 gameDb.update(gameId, gameSpec, function(game) {
@@ -126,7 +126,7 @@ app.all('/game/move/:gameId', function(req, res) {
                 });
             }
             else {
-                res.end(errorResponse("opponent is taking a break, try again later\n" + result.error));
+                res.end(makeJsonp(jsonp, errorResponse("opponent is taking a break, try again later\n" + result.error)));
                 return; 
             }
         };
