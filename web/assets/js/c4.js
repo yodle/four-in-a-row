@@ -74,7 +74,11 @@ $(document).ready(function() {
             if (data.error != undefined) {
                 msg = data.error;
             }
+            else if (data.message) {
+                msg = data.message;
+            }
             else {
+                // For some reason we didn't get message in the data, use default win/loss message.
                 if (didWeWin) {
                     msg = "You won!";
                 }
