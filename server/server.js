@@ -8,6 +8,7 @@ var mongo = require('mongodb');
 var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {auto_reconnect: true}), {});
 
 var gamedb = require('./gamedb');
+var messagesdb = require('./aidb');
 var game = require('./game');
 var computerplayer = require('./computer_player');
 var Utils = require('./utils');
@@ -19,9 +20,9 @@ var PORT = 3000;
 
 var ais = {
     1: {url:'http://localhost:3001/ai/random'},
-    2: {url:'http://localhost:3001/ai/twostep'}
+    2: {url:'http://localhost:3001/ai/twostep'},
     3: {url:'http://localhost:3001/ai/random'},
-    4: {url:'http://localhost:3001/ai/twostep'}
+    4: {url:'http://localhost:3001/ai/twostep'},
     5: {url:'http://localhost:3001/ai/random'},
     6: {url:'http://localhost:3001/ai/twostep'}
 }
@@ -47,6 +48,7 @@ app.use(express.bodyParser());
 
 db.open(function(err, client) { if (err) {throw err;} });
 gameDb = new gamedb.GameDb(db);
+messagesDb = new messagesdb.MessagesDb(db);
 
 makeJsonp = function(jsonp, body) {
     if(jsonp) {
@@ -92,7 +94,6 @@ function findGame(gameId, callback) {
 };
 
 app.all('/game/move/:gameId', function(req, res) {
-
     var gameId = req.params.gameId;
     var move = req.body.move || req.query.move;
     if(typeof(move) === 'undefined') {
@@ -122,6 +123,14 @@ app.all('/game/move/:gameId', function(req, res) {
                     return;
                 }
                 gameDb.update(gameId, gameSpec, function(game) {
+		    // AI wins!
+		    if (gameSpec.gameOver) { 
+			messagesDb.find(gameSpec.ai, true, function(result) {
+			    res.end(makeJsonp(jsonp, result));
+			    ai.endGame(gameSpec);
+			    return;
+			});
+		    }
                     res.end(makeJsonp(jsonp, JSON.stringify(game)));
                 });
             }
@@ -136,7 +145,9 @@ app.all('/game/move/:gameId', function(req, res) {
             //Player wins!
             gameDb.update(gameId, gameSpec, function(game) {
                 ai.endGame(gameSpec);
-                res.end(makeJsonp(jsonp, JSON.stringify(game)));
+		messagesDb.find(gameSpec.ai, false, function(result) {
+		    res.end(makeJsonp(result));
+		});
             });
             return;
         }
