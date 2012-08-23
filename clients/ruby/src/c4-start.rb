@@ -1,3 +1,3 @@
 require 'c4-client'
 
-C4Client.connect()
+C4Client.start()
