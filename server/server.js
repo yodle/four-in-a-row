@@ -21,7 +21,7 @@ var ais = {
     1: {url:'http://localhost:3001/ai/random'},
     2: {url:'http://localhost:3001/ai/twostep'},
     3: {url:'http://localhost:3003/minimax'},
-    4: {url:'http://localhost:3001/ai/twostep'},
+    4: {url:'http://localhost:3002/game'},
     5: {url:'http://localhost:3001/ai/random'},
     6: {url:'http://localhost:3001/ai/twostep'}
 }
