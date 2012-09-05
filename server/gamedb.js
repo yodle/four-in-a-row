@@ -9,6 +9,7 @@ GameDb.prototype.init = function(game, callback) {
             col.insert(game, {safe:true}, function() { callback(game._id); });
         });
     });
+
 };
 
 GameDb.prototype.update = function(id, game, callback) {
