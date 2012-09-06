@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var baseGameServerUrl = "http://localhost:3000/game";
+    var baseGameServerUrl = "http://10.3.0.60:3000/game";
     var gameInitUrl = baseGameServerUrl + "/init";
     var moveUrl = baseGameServerUrl + "/move";
     var ROWS = 6;

@@ -76,7 +76,7 @@
 					<h1>Play Game</h1>
 				</header>
 				<!-- Main Content -->
-				<div class="main-col6 tablet-col5 clearfix border-right">
+				<div class="main-col8 tablet-col6 clearfix border-right">
 					<section id="game-board" class="module mediablock">
 						<div id="board" class="clearfix;"></div>
 					</section>
@@ -84,39 +84,43 @@
 				<!-- End Main Content -->
 
 				<!-- Sidebar -->
-				<aside class="main-col6 tablet-col4 clearfix border-left">
+				<aside class="main-col4 tablet-col3 clearfix border-left">
+					<section class="module">
+						<h3>Need Help?</h3>
+						<p>Check out the <a href="index.html">rules</a> page.</p>
+					</section>
 					<section class="module listing">
 						<div class="clearfix">
 							<form id="inputCode" action="#" >
-								<div class="formfield col6 tablet-col4 no-gutter">
-									<fieldset class="formfield">
-                                        <label forId="nicknameInput">Nickname</label>
-                                        <input id="nicknameInput" type="text" value="Anonymous" />
-
-										<label>Difficulty</label>
-										<select id="difficultySelect">
-											<option value="1">Level 1 (Easiest)</option>
-											<option value="2">Level 2</option>
-											<option value="3">Level 3</option>
-											<option value="4">Level 4</option>
-											<option value="5">Level 5</option>
-											<option value="6">Level 6 (Hardest)</option>
-										</select>
-
-										<label forId="playManuallyCheck">
-											Play by hand? (click column to make move)
-										</label>
+								<div class="formfield main-col4 no-gutter">
+									<label forId="nicknameInput">Nickname</label>
+                                    <input id="nicknameInput" type="text" value="Anonymous" />
+								</div>
+								<div class="formfield main-col4 no-gutter">
+									<label>Difficulty</label>
+									<select id="difficultySelect">
+										<option value="1">Level 1 (Easiest)</option>
+										<option value="2">Level 2</option>
+										<option value="3">Level 3</option>
+										<option value="4">Level 4</option>
+										<option value="5">Level 5</option>
+										<option value="6">Level 6 (Hardest)</option>
+									</select>
+								</div>
+								<fieldset class="formfield main-col4 no-gutter">
+									<label forId="playManuallyCheck">
 										<input id="playManuallyCheck" type="checkbox" />
-										</input>
-									</fieldset>
-									<input type="submit" class="primaryButton button" value="Run"/>
+										<strong>Play manually</strong> (Click-by-click)
+									</label>
+									</input>
+								</fieldset>
+								<input type="submit" class="primaryButton button" value="Run"/>
 							</form>
 						</div>
-						<div id="playedPieceContainer">
-							<span>Your Piece</span>
-							<div id="playerPieceBackground" >
-								<div id="playerPiece" >
-							<div>
+						<div class="play-legend">
+							<h3>Legend</h3>
+							<div class="your-piece"><span class="piece"></span>= You</div>
+							<div class="ai-piece"><span class="piece"></span>= AI</div>
 						</div>
 					</section>
 				</aside>
@@ -125,7 +129,7 @@
 			</div> <!-- End container 12 -->
 
 			<div class="container_12 clearfix">
-				<h3>Input Code</h3>
+				<h2>Input Code</h2>
 				<!-- Code editor -->
 				<div id="editor"></div>
 			</div>
