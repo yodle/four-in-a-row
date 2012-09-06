@@ -125,13 +125,14 @@ app.all('/game/move/:gameId', function(req, res) {
                 gameDb.update(gameId, gameSpec, function(game) {
 		    // AI wins!
 		    if (gameSpec.gameOver) { 
-			messagesDb.find(gameSpec.ai, true, function(result) {
-			    res.end(makeJsonp(jsonp, result));
-			    ai.endGame(gameSpec);
-			    return;
+			ai.endGame(gameSpec);
+			messagesDb.find(gameSpec.ai, gameSpec.moves, false, false, function(result) {
+			    res.end(makeJsonp(jsonp, JSON.stringify(result)));
 			});
+			return;
+		    } else {
+			res.end(makeJsonp(jsonp, JSON.stringify(game)));
 		    }
-                    res.end(makeJsonp(jsonp, JSON.stringify(game)));
                 });
             }
             else {
@@ -145,11 +146,11 @@ app.all('/game/move/:gameId', function(req, res) {
             //Player wins!
             gameDb.update(gameId, gameSpec, function(game) {
                 ai.endGame(gameSpec);
-		messagesDb.find(gameSpec.ai, false, function(result) {
-		    res.end(makeJsonp(result));
+		messagesDb.find(gameSpec.ai, gameSpec.moves, false, false, function(result) {
+		    res.end(makeJsonp(jsonp, JSON.stringify(result)));
 		});
+		return;
             });
-            return;
         }
 
         ai.move('', gameSpec);
