@@ -25,6 +25,7 @@ Game.prototype.move = function(col) {
         return { failed: true, message: "The game has ended already" }; 
     }
     if(!Utils.isLegalMove(this.board, col)) {
+        this.gameOver = this._advanceTurn(this.turn);
         return { failed: true, message: "(" + col + ") is an invalid move" };
     }
      
@@ -34,7 +35,7 @@ Game.prototype.move = function(col) {
         this.moves = this.moves + 1;
         this.board[col][target] = this.turn;
         this.lastMove = { row: target, col: col, player: this.turn, moves: this.moves };
-        this._advanceTurn();
+        this.turn = this._advanceTurn(this.turn);
 
         var winner = Utils.checkWin(this.board);
         if (winner) {
@@ -43,12 +44,13 @@ Game.prototype.move = function(col) {
         return { failed: false };
     }
 
+    this.gameOver = this._advanceTurn(this.turn);
     return { failed: true, message: "(" + col + ") is an invalid move" };
 };
 
-Game.prototype._advanceTurn = function() {
-    if(this.turn == Utils.Players.P1) { this.turn = Utils.Players.P2 }
-    else if(this.turn == Utils.Players.P2) { this.turn = Utils.Players.P1; }
+Game.prototype._advanceTurn = function(currentTurn) {
+    if(currentTurn == Utils.Players.P1) { return Utils.Players.P2; }
+    else if(currentTurn == Utils.Players.P2) { return Utils.Players.P1; }
 };
 
 exports.deserialize = function(game) {
