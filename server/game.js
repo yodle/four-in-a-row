@@ -36,7 +36,6 @@ Game.prototype.move = function(col) {
         this.moves = this.moves + 1;
         this.board[col][target] = this.turn;
         this.lastMove = { row: target, col: col, player: this.turn, moves: this.moves };
-        console.log(JSON.stringify(this.lastMove));
         this.turn = this._advanceTurn(this.turn);
 
         var winner = Utils.checkWin(this.board);

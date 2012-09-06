@@ -77,7 +77,7 @@ app.all('/game/init/:ailevel', function(req, res) {
     var ai = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || req.query.nickname || 'anonymous';
     var scaffold = req.body.scaffold || 'none';
-    var isPlayingManually = req.query.isPlayingManually || false;
+    var isPlayingManually = (req.query.isPlayingManually === "true") || false;
     var jsonp = req.query.jsonp;
 
     if (isNaN(ai) || ai < 1 || ai > 6) {
