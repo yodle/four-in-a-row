@@ -37,7 +37,7 @@ private
   def self.connect
     begin
       uri = URI.parse('http://localhost:3000/game/init/3')
-      res = Net::HTTP.post_form(uri, 'nickname' => 'peterpeterpumpkineater')
+      res = Net::HTTP.post_form(uri, 'nickname' => 'peterpeterpumpkineater', 'scaffold' => 'ruby')
       res.body
     rescue Exception => e
       puts 'There was an error connecting to the server: '
