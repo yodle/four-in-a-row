@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var baseGameServerUrl = "http://10.3.0.60:3000/game";
+    var baseGameServerUrl = "http://localhost:3000/game";
     var gameInitUrl = baseGameServerUrl + "/init";
     var moveUrl = baseGameServerUrl + "/move";
     var ROWS = 6;
@@ -181,7 +181,8 @@ $(document).ready(function() {
 
         var nicknameValue = $("#nicknameInput").val();
         var gameInitData = {
-            nickname: nicknameValue
+            nickname: nicknameValue,
+            isPlayingManually: isPlayingManually
         };
 
         // Init game board
@@ -191,7 +192,7 @@ $(document).ready(function() {
 
         // Post to the server to start the game, and expect json response to callback
         var url = gameInitUrl + '/' + difficulty;
-        makeJsonpAjaxRequest(url, gameInitUrl, gameResponseCallback);
+        makeJsonpAjaxRequest(url, gameInitData, gameResponseCallback);
 
         // All logic is done already, don't submit to this page...
         return false;

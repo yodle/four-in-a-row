@@ -5,7 +5,7 @@ var express = require('express');
 var app = module.exports = express.createServer();
 var http = require('http');
 var mongo = require('mongodb');
-var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {auto_reconnect: true}), {});
+var db = new mongo.Db('mydb', new mongo.Server('10.3.0.60', 27017, {auto_reconnect: true}), {});
 
 var gamedb = require('./gamedb');
 var messagesdb = require('./aidb');
@@ -61,12 +61,23 @@ makeJsonp = function(jsonp, body) {
 
 var errorResponse = function(error, gameSpec) {
     return JSON.stringify({'error': error});
-}
+};
+
+var choosePlayer = function() {
+    if(Math.random() < 0.5) {
+        return Utils.Players.P1;
+    }
+    else {
+        return Utils.Players.P2;
+    }
+};
 
 // Routes
 app.all('/game/init/:ailevel', function(req, res) {
     var ai = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || req.query.nickname || 'anonymous';
+    var scaffold = req.body.scaffold || 'none';
+    var isPlayingManually = req.query.isPlayingManually || false;
     var jsonp = req.query.jsonp;
 
     if (isNaN(ai) || ai < 1 || ai > 6) {
@@ -74,23 +85,48 @@ app.all('/game/init/:ailevel', function(req, res) {
     }
     else
     {
-	var theGame = game.newGame(ROWS, COLS, Utils.Players.P1, nickname, ai); // TODO: WML: hard-coded P1
-	gameDb.init(
-	    theGame, 
-	    function(game){
-            res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
-	    }
-	);
+
+        var player = choosePlayer();
+        var theGame = game.newGame(ROWS, COLS, player, nickname, ai, isPlayingManually);
+
+        if(player == Utils.Players.P2) {
+            var callback = function(result) {
+                if(result.success) {
+                    var moveResult = theGame.move(result.move); // make the AI move
+
+                    gameDb.init(
+                            theGame, 
+                            function(gameId){
+                                res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
+                            }
+                            );
+                }
+            }
+
+            var aiSpec = ais[ai];
+            var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
+            ai.move('', theGame);
+        }
+        else {
+            var theGame = game.newGame(ROWS, COLS, Utils.Players.P1, nickname, ai); // TODO: WML: hard-coded P1
+            gameDb.init(
+                    theGame, 
+                    function(game){
+                        res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
+                    });
+
+        }
+
     }
 });
 
 function findGame(gameId, callback) {
     gameDb.findGame(
-        gameId,
-        function(game) {
-            callback(game);
-        }
-    );
+            gameId,
+            function(game) {
+                callback(game);
+            }
+            );
 };
 
 app.all('/game/move/:gameId', function(req, res) {
@@ -123,16 +159,17 @@ app.all('/game/move/:gameId', function(req, res) {
                     return;
                 }
                 gameDb.update(gameId, gameSpec, function(game) {
-		    // AI wins!
-		    if (gameSpec.gameOver) { 
-			ai.endGame(gameSpec);
-			messagesDb.find(gameSpec.ai, gameSpec.moves, false, false, function(result) {
-			    res.end(makeJsonp(jsonp, JSON.stringify(result)));
-			});
-			return;
-		    } else {
-			res.end(makeJsonp(jsonp, JSON.stringify(game)));
-		    }
+                    // AI wins!
+                    if (gameSpec.gameOver) { 
+                        ai.endGame(gameSpec);
+                        messagesDb.find(gameSpec.ai, gameSpec.moves, false, gameSpec.isPlayingManually, function(result) {
+                            gameSpec.message = result.message;
+                            res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
+                        });
+                        return;
+                    } else {
+                        res.end(makeJsonp(jsonp, JSON.stringify(game)));
+                    }
                 });
             }
             else {
@@ -146,10 +183,11 @@ app.all('/game/move/:gameId', function(req, res) {
             //Player wins!
             gameDb.update(gameId, gameSpec, function(game) {
                 ai.endGame(gameSpec);
-		messagesDb.find(gameSpec.ai, gameSpec.moves, false, false, function(result) {
-		    res.end(makeJsonp(jsonp, JSON.stringify(result)));
-		});
-		return;
+                messagesDb.find(gameSpec.ai, gameSpec.moves, true, gameSpec.isPlayingManually, function(result) {
+                    gameSpec.message = result.message;
+                    res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
+                });
+                return;
             });
         }
 

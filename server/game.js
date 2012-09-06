@@ -1,6 +1,6 @@
 var Utils = require('./utils');
 
-var Game = function(rows, cols, humanPlayer, nickname, ai) {
+var Game = function(rows, cols, humanPlayer, nickname, ai, isPlayingManually) {
     this.ROWS = rows;
     this.COLS = cols;
 
@@ -12,6 +12,7 @@ var Game = function(rows, cols, humanPlayer, nickname, ai) {
     this.moveList = [];
     this.lastMove = null;
     this.ai = ai;
+    this.isPlayingManually = isPlayingManually;
 
     this.board = Utils.initBoard(
         this.ROWS,
@@ -35,6 +36,7 @@ Game.prototype.move = function(col) {
         this.moves = this.moves + 1;
         this.board[col][target] = this.turn;
         this.lastMove = { row: target, col: col, player: this.turn, moves: this.moves };
+        console.log(JSON.stringify(this.lastMove));
         this.turn = this._advanceTurn(this.turn);
 
         var winner = Utils.checkWin(this.board);
@@ -54,7 +56,7 @@ Game.prototype._advanceTurn = function(currentTurn) {
 };
 
 exports.deserialize = function(game) {
-    var that = new Game(game.ROWS, game.COLS, game.humanPlayer, game.nickname, game.ai);
+    var that = new Game(game.ROWS, game.COLS, game.humanPlayer, game.nickname, game.ai, game.isPlayingManually);
     that.gameOver = game.gameOver;
     that.turn = game.turn;
     that.moves = game.moves;
@@ -65,6 +67,6 @@ exports.deserialize = function(game) {
     return that;
 };
 
-exports.newGame = function(rows, cols, humanPlayer, nickname, ai) {
-    return new Game(rows, cols, humanPlayer, nickname, ai);
+exports.newGame = function(rows, cols, humanPlayer, nickname, ai, isPlayingManually) {
+    return new Game(rows, cols, humanPlayer, nickname, ai, isPlayingManually);
 };
