@@ -1,9 +1,10 @@
 package game
 
-import "net/http"
-//import "encoding/json"
-import "io"
-import "net/url"
+import (
+	"io"
+	"net/http"
+	"net/url"
+)
 
 const (
 	SERVER = "http://TODO-SERVER-ADDR/api/"
@@ -32,34 +33,33 @@ type Game struct {
 }
 
 func New(nickname string, aiLevel int) *Game {
-    return &Game{nickname, aiLevel}
+	return &Game{nickname, aiLevel}
 }
 
 func convertMapToUrlValues(data map[string]string) url.Values {
-    v := url.Values{}
-    for key, value := range data {
-        v.Add(key, value)
-    }
-    return v
+	v := url.Values{}
+	for key, value := range data {
+		v.Add(key, value)
+	}
+	return v
 }
 
 func getGameStateFromReader(reader io.Reader) *GameState {
-    return nil
+	return nil
 }
 
 func callApi(method string, data map[string]string) *GameState {
-    target := SERVER + method
-    formData := convertMapToUrlValues(data)
+	target := SERVER + method
+	formData := convertMapToUrlValues(data)
 
-    resp, _ := http.PostForm(target, formData)
-    defer resp.Body.Close()
-    
-    return getGameStateFromReader(resp.Body)
+	resp, _ := http.PostForm(target, formData)
+	defer resp.Body.Close()
+
+	return getGameStateFromReader(resp.Body)
 }
 
 func (game *Game) Init() *GameState {
-    method := "init/" + string(game.aiLevel)
-    data := map[string] string { "nickname": game.nickname }
-    return callApi(method, data)
+	method := "init/" + string(game.aiLevel)
+	data := map[string]string{"nickname": game.nickname}
+	return callApi(method, data)
 }
-
