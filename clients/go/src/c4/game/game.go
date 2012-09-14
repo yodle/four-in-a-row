@@ -1,19 +1,15 @@
 package game
 
 import (
-	"io"
-	"net/http"
-	"net/url"
+	"encoding/json"
 )
 
-const (
-	SERVER = "http://TODO-SERVER-ADDR/api/"
-)
+const SERVER = "http://TODO-SERVER-ADDR/api/"
 
 type GameState struct {
-	Rows        int
-	Cols        int
-	Id          int
+	Rows        int    `json:"ROWS"`
+	Cols        int    `json:"COLS"`
+	Id          string `json:"_id"`
 	HumanPlayer int
 	GameOver    int
 	Nickname    string
@@ -28,38 +24,40 @@ type GameState struct {
 }
 
 type Game struct {
-	nickname string
-	aiLevel  int
+	restClient *RestClient
+	nickname   string
+	aiLevel    int
 }
 
-func New(nickname string, aiLevel int) *Game {
-	return &Game{nickname, aiLevel}
+func NewGame(nickname string, aiLevel int) *Game {
+	restClient := NewRestClient(SERVER)
+	return &Game{restClient, nickname, aiLevel}
 }
 
-func convertMapToUrlValues(data map[string]string) url.Values {
-	v := url.Values{}
-	for key, value := range data {
-		v.Add(key, value)
-	}
-	return v
+func getGameStateFromString(s string) *GameState {
+	result := &GameState{}
+	json.Unmarshal([]byte(s), result)
+	return result
 }
 
-func getGameStateFromReader(reader io.Reader) *GameState {
-	return nil
-}
-
-func callApi(method string, data map[string]string) *GameState {
-	target := SERVER + method
-	formData := convertMapToUrlValues(data)
-
-	resp, _ := http.PostForm(target, formData)
-	defer resp.Body.Close()
-
-	return getGameStateFromReader(resp.Body)
+func (game *Game) prepareInit() (method string, data map[string]string) {
+	method = "init/" + string(game.aiLevel)
+	data = map[string]string{"nickname": game.nickname}
+	return method, data
 }
 
 func (game *Game) Init() *GameState {
-	method := "init/" + string(game.aiLevel)
-	data := map[string]string{"nickname": game.nickname}
-	return callApi(method, data)
+	method, data := game.prepareInit()
+	return getGameStateFromString(game.restClient.Call(method, data))
+}
+
+func (game *Game) prepareMove(column int) (method string, data map[string]string) {
+	method = "move/" + game.Id
+	data = map[string]string{"move": column}
+	return method, data
+}
+
+func (game *Game) Move(column int) *GameState {
+	method, data := game.prepareMove(column)
+	return getGameStateFromString(game.restClient.call(method, data))
 }
