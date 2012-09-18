@@ -2,6 +2,7 @@ package game
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 	"net/url"
 )
@@ -35,16 +36,41 @@ func (client *RestClient) getApiTarget(method string) string {
 	return baseUrl + "/" + method
 }
 
-func executeCall(target string, formData url.Values) string {
-	resp, _ := http.PostForm(target, formData)
-	defer resp.Body.Close()
+func getStringFromHttpResponse(resp *http.Response) string {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(resp.Body)
 	return buf.String()
 }
 
-func (client *RestClient) Call(method string, data map[string]string) string {
+func executePost(target string, formData url.Values) string {
+	resp, err := http.PostForm(target, formData)
+	defer resp.Body.Close()
+
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+
+	return getStringFromHttpResponse(resp)
+}
+
+func (client *RestClient) Post(method string, data map[string]string) string {
 	target := client.getApiTarget(method)
 	formData := convertMapToUrlValues(data)
-	return executeCall(target, formData)
+	return executePost(target, formData)
+}
+
+func executeGet(target string) string {
+	resp, err := http.Get(target)
+	defer resp.Body.Close()
+
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+
+	return getStringFromHttpResponse(resp)
+}
+
+func (client *RestClient) Get(method string) string {
+	target := client.getApiTarget(method)
+	return executeGet(target)
 }

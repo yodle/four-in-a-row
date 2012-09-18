@@ -6,14 +6,36 @@ import (
 	"testing"
 )
 
+var nickname = "testnick"
+var aiLevel = 123
+
 func TestGameNewSetsNickNameAndAiLevel(t *testing.T) {
-	var nickname = "testnick"
-	game := NewGame(nickname, 123)
+	game := NewGame(nickname, aiLevel)
 	if game.nickname != nickname {
 		t.Errorf("Game.New did not properly set the AI nickname. Expected '%s', Got '%s'", nickname, game.nickname)
 	}
 	if game.aiLevel != 123 {
-		t.Errorf("Game.New did not properly set the AI level. Expected '%d', Got '%d'", 123, game.aiLevel)
+		t.Errorf("Game.New did not properly set the AI level. Expected '%d', Got '%d'", aiLevel, game.aiLevel)
+	}
+}
+
+func TestGamePrepareInitWorks(t *testing.T) {
+	game := NewGame(nickname, aiLevel)
+	game.aiLevel = aiLevel
+	game.nickname = nickname
+	method, data := game.prepareInit()
+
+	expectedMethod := fmt.Sprintf("init/%d", aiLevel)
+	if method != expectedMethod {
+		t.Errorf("Game.prepareInit did not return proper method. Expected '%s', Got '%s'", expectedMethod, method)
+	}
+
+	if len(data) != 1 {
+		t.Errorf("Game.prepareInit did not return the right # of items in map.  Expected '1', Got '%d'", len(data))
+	}
+
+	if data["nickname"] != nickname {
+		t.Errorf("Game.prepareInit did not return the proper nickname in map.  Expected '%s', Got '%s'", nickname, data["nickname"])
 	}
 }
 
