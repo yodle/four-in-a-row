@@ -2,7 +2,7 @@ package game
 
 import (
 	"bytes"
-	"fmt"
+	"strconv"
 	"testing"
 )
 
@@ -23,7 +23,7 @@ func TestGamePrepareInitWorks(t *testing.T) {
 	game := NewGame(nickname, aiLevel)
 	method, data := game.prepareInit()
 
-	expectedMethod := fmt.Sprintf("init/%d", aiLevel)
+	expectedMethod := "init/" + strconv.Itoa(aiLevel)
 	if method != expectedMethod {
 		t.Errorf("Game.prepareInit did not return proper method. Expected '%s', Got '%s'", expectedMethod, method)
 	}
@@ -53,7 +53,7 @@ func TestGamePrepareMoveWorks(t *testing.T) {
 		t.Errorf("Game.prepareMove did not return the right # of items in map.  Expected '1', Got '%d'", len(data))
 	}
 
-	expectedMove := fmt.Sprintf("%d", column)
+	expectedMove := strconv.Itoa(column)
 	if data["move"] != expectedMove {
 		t.Errorf("Game.prepareMove did not return the proper move in map.  Expected '%s', Got '%s'", expectedMove, data["move"])
 	}
@@ -71,7 +71,7 @@ func TestGameInitWorks(t *testing.T) {
 		t.Errorf("Game.Init did not properly invoke 'Post' method on restClient")
 	}
 
-	expectedMethodParam := fmt.Sprintf("init/%d", aiLevel)
+	expectedMethodParam := "init/" + strconv.Itoa(aiLevel)
 	if mockRestClient.methodParam != expectedMethodParam {
 		t.Errorf("Game.Init did not send proper rest method to restClient.Post.  Expected '%s', Got '%s'", expectedMethodParam, mockRestClient.methodParam)
 	}
@@ -103,7 +103,7 @@ func TestGameMoveWorks(t *testing.T) {
 		t.Errorf("Game.Move did not properly invoke 'Post' method on restClient")
 	}
 
-	expectedMethodParam := fmt.Sprintf("move/%s", game.gameId)
+	expectedMethodParam := "move/" + game.gameId
 	if mockRestClient.methodParam != expectedMethodParam {
 		t.Errorf("Game.Move did not send proper rest method to restClient.Post.  Expected '%s', Got '%s'", expectedMethodParam, mockRestClient.methodParam)
 	}
@@ -112,7 +112,7 @@ func TestGameMoveWorks(t *testing.T) {
 		t.Errorf("Game.Move did not send properly sized data map to restClient.Post.  Expected '1', Got '%d'", len(mockRestClient.dataParam))
 	}
 
-	expectedMove := fmt.Sprintf("%d", column)
+	expectedMove := strconv.Itoa(column)
 	if mockRestClient.dataParam["move"] != expectedMove {
 		t.Errorf("Game.Move did not send proper value for 'move' in data map.  Expected '%s', Got '%s'", expectedMove, mockRestClient.dataParam["move"])
 	}
@@ -131,7 +131,7 @@ func TestGameStateWorks(t *testing.T) {
 		t.Errorf("Game.State did not properly invoke 'Get' method on restClient")
 	}
 
-	expectedMethodParam := fmt.Sprintf("state/%s", game.gameId)
+	expectedMethodParam := "state/" + game.gameId
 	if mockRestClient.methodParam != expectedMethodParam {
 		t.Errorf("Game.State did not send proper rest method to restClient.Get.  Expected '%s', Got '%s'", expectedMethodParam, mockRestClient.methodParam)
 	}
@@ -184,7 +184,7 @@ func verifyGameStateIntegerMatrix(t *testing.T, method string, field string, exp
 	}
 
 	for i := range expected {
-		subarrayName := fmt.Sprintf("%s sub-array #%d", field, i)
+		subarrayName := field + " sub-array #" + strconv.Itoa(i)
 		verifyGameStateIntegerArray(t, method, subarrayName, expected[i], actual[i])
 	}
 }
@@ -210,7 +210,7 @@ func getStringOfIntegerArray(array []int) string {
 
 	buffer.WriteString("[")
 	for i := range array {
-		buffer.WriteString(sep + fmt.Sprintf("%d", array[i]))
+		buffer.WriteString(sep + strconv.Itoa(array[i]))
 		sep = " "
 	}
 	buffer.WriteString("]")

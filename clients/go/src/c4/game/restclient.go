@@ -15,6 +15,39 @@ func NewRestClient(serverBaseUrl string) *RestClient {
 	return &RestClient{serverBaseUrl}
 }
 
+func (client *RestClient) Get(method string) string {
+	target := client.getApiTarget(method)
+	return executeGet(target)
+}
+
+func (client *RestClient) Post(method string, data map[string]string) string {
+	target := client.getApiTarget(method)
+	formData := convertMapToUrlValues(data)
+	return executePost(target, formData)
+}
+
+func executeGet(target string) string {
+	resp, err := http.Get(target)
+	defer resp.Body.Close()
+
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+
+	return getStringFromHttpResponse(resp)
+}
+
+func executePost(target string, formData url.Values) string {
+	resp, err := http.PostForm(target, formData)
+	defer resp.Body.Close()
+
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+
+	return getStringFromHttpResponse(resp)
+}
+
 func convertMapToUrlValues(data map[string]string) url.Values {
 	v := url.Values{}
 	for key, value := range data {
@@ -40,37 +73,4 @@ func getStringFromHttpResponse(resp *http.Response) string {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(resp.Body)
 	return buf.String()
-}
-
-func executePost(target string, formData url.Values) string {
-	resp, err := http.PostForm(target, formData)
-	defer resp.Body.Close()
-
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-
-	return getStringFromHttpResponse(resp)
-}
-
-func (client *RestClient) Post(method string, data map[string]string) string {
-	target := client.getApiTarget(method)
-	formData := convertMapToUrlValues(data)
-	return executePost(target, formData)
-}
-
-func executeGet(target string) string {
-	resp, err := http.Get(target)
-	defer resp.Body.Close()
-
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-
-	return getStringFromHttpResponse(resp)
-}
-
-func (client *RestClient) Get(method string) string {
-	target := client.getApiTarget(method)
-	return executeGet(target)
 }

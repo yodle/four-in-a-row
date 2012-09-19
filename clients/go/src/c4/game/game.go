@@ -2,7 +2,7 @@ package game
 
 import (
 	"encoding/json"
-	"fmt"
+	"strconv"
 )
 
 const SERVER = "http://localhost:3000/game/"
@@ -41,29 +41,11 @@ func NewGame(nickname string, aiLevel int) *Game {
 	return &Game{restClient, nickname, aiLevel, ""}
 }
 
-func getGameStateFromString(s string) *GameState {
-	result := &GameState{}
-	json.Unmarshal([]byte(s), result)
-	return result
-}
-
-func (game *Game) prepareInit() (method string, data map[string]string) {
-	method = "init/" + fmt.Sprintf("%d", game.aiLevel)
-	data = map[string]string{"nickname": game.nickname}
-	return method, data
-}
-
 func (game *Game) Init() *GameState {
 	method, data := game.prepareInit()
 	gameState := getGameStateFromString(game.restClient.Post(method, data))
 	game.gameId = gameState.Id
 	return gameState
-}
-
-func (game *Game) prepareMove(column int) (method string, data map[string]string) {
-	method = "move/" + game.gameId
-	data = map[string]string{"move": fmt.Sprintf("%d", column)}
-	return method, data
 }
 
 func (game *Game) Move(column int) *GameState {
@@ -74,4 +56,22 @@ func (game *Game) Move(column int) *GameState {
 func (game *Game) State() *GameState {
 	method := "state/" + game.gameId
 	return getGameStateFromString(game.restClient.Get(method))
+}
+
+func getGameStateFromString(s string) *GameState {
+	result := &GameState{}
+	json.Unmarshal([]byte(s), result)
+	return result
+}
+
+func (game *Game) prepareInit() (method string, data map[string]string) {
+	method = "init/" + strconv.Itoa(game.aiLevel)
+	data = map[string]string{"nickname": game.nickname}
+	return method, data
+}
+
+func (game *Game) prepareMove(column int) (method string, data map[string]string) {
+	method = "move/" + game.gameId
+	data = map[string]string{"move": strconv.Itoa(column)}
+	return method, data
 }
