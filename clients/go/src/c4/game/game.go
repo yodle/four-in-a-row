@@ -25,10 +25,15 @@ type GameState struct {
 }
 
 type Game struct {
-	restClient *RestClient
+	restClient Rester
 	nickname   string
 	aiLevel    int
 	gameId     string
+}
+
+type Rester interface {
+	Post(method string, data map[string]string) string
+	Get(method string) string
 }
 
 func NewGame(nickname string, aiLevel int) *Game {

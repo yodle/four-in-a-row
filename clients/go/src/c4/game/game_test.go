@@ -59,6 +59,84 @@ func TestGamePrepareMoveWorks(t *testing.T) {
 	}
 }
 
+func TestGameInitWorks(t *testing.T) {
+	game := NewGame(nickname, aiLevel)
+	mockRestClient := &MockRestClient{}
+	mockRestClient.resultToSend = "{\"_id\": \"abc123\"}"
+	game.restClient = mockRestClient
+
+	game.Init()
+
+	if mockRestClient.funcCalled != "Post" {
+		t.Errorf("Game.Init did not properly invoke 'Post' method on restClient")
+	}
+
+	expectedMethodParam := fmt.Sprintf("init/%d", aiLevel)
+	if mockRestClient.methodParam != expectedMethodParam {
+		t.Errorf("Game.Init did not send proper rest method to restClient.Post.  Expected '%s', Got '%s'", expectedMethodParam, mockRestClient.methodParam)
+	}
+
+	if len(mockRestClient.dataParam) != 1 {
+		t.Errorf("Game.Init did not send properly sized data map to restClient.Post.  Expected '1', Got '%d'", len(mockRestClient.dataParam))
+	}
+
+	if mockRestClient.dataParam["nickname"] != nickname {
+		t.Errorf("Game.Init did not send proper value for nickname in data block.  Expected '%s', Got '%s'", nickname, mockRestClient.dataParam["nickname"])
+	}
+
+	if game.gameId != "abc123" {
+		t.Errorf("Game.Init did not properly set the gameId.  Expected 'abc123', Got '%s'", game.gameId)
+	}
+}
+
+func TestGameMoveWorks(t *testing.T) {
+	game := NewGame(nickname, aiLevel)
+	game.gameId = "abc123"
+	mockRestClient := &MockRestClient{}
+	mockRestClient.resultToSend = "{\"_id\": \"abc123\"}"
+	game.restClient = mockRestClient
+
+	column := 3
+	game.Move(column)
+
+	if mockRestClient.funcCalled != "Post" {
+		t.Errorf("Game.Move did not properly invoke 'Post' method on restClient")
+	}
+
+	expectedMethodParam := fmt.Sprintf("move/%s", game.gameId)
+	if mockRestClient.methodParam != expectedMethodParam {
+		t.Errorf("Game.Move did not send proper rest method to restClient.Post.  Expected '%s', Got '%s'", expectedMethodParam, mockRestClient.methodParam)
+	}
+
+	if len(mockRestClient.dataParam) != 1 {
+		t.Errorf("Game.Move did not send properly sized data map to restClient.Post.  Expected '1', Got '%d'", len(mockRestClient.dataParam))
+	}
+
+	expectedMove := fmt.Sprintf("%d", column)
+	if mockRestClient.dataParam["move"] != expectedMove {
+		t.Errorf("Game.Move did not send proper value for 'move' in data map.  Expected '%s', Got '%s'", expectedMove, mockRestClient.dataParam["move"])
+	}
+}
+
+func TestGameStateWorks(t *testing.T) {
+	game := NewGame(nickname, aiLevel)
+	game.gameId = "abc123"
+	mockRestClient := &MockRestClient{}
+	mockRestClient.resultToSend = "{\"_id\": \"abc123\"}"
+	game.restClient = mockRestClient
+
+	game.State()
+
+	if mockRestClient.funcCalled != "Get" {
+		t.Errorf("Game.State did not properly invoke 'Get' method on restClient")
+	}
+
+	expectedMethodParam := fmt.Sprintf("state/%s", game.gameId)
+	if mockRestClient.methodParam != expectedMethodParam {
+		t.Errorf("Game.State did not send proper rest method to restClient.Get.  Expected '%s', Got '%s'", expectedMethodParam, mockRestClient.methodParam)
+	}
+}
+
 func TestGetGameStateFromStringParsesJsonStringCorrectly(t *testing.T) {
 	json := `
       {
@@ -150,4 +228,24 @@ func verifyGameStateString(t *testing.T, method string, fieldName string, expect
 	if expected != actual {
 		t.Errorf("%s did not properly decode %s.  Expected '%s', Got '%s'", method, fieldName, expected, actual)
 	}
+}
+
+type MockRestClient struct {
+	funcCalled   string
+	methodParam  string
+	dataParam    map[string]string
+	resultToSend string
+}
+
+func (mock *MockRestClient) Post(method string, data map[string]string) string {
+	mock.funcCalled = "Post"
+	mock.methodParam = method
+	mock.dataParam = data
+	return mock.resultToSend
+}
+
+func (mock *MockRestClient) Get(method string) string {
+	mock.funcCalled = "Get"
+	mock.methodParam = method
+	return mock.resultToSend
 }
