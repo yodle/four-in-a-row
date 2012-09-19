@@ -21,8 +21,6 @@ func TestGameNewSetsNickNameAndAiLevel(t *testing.T) {
 
 func TestGamePrepareInitWorks(t *testing.T) {
 	game := NewGame(nickname, aiLevel)
-	game.aiLevel = aiLevel
-	game.nickname = nickname
 	method, data := game.prepareInit()
 
 	expectedMethod := fmt.Sprintf("init/%d", aiLevel)
@@ -36,6 +34,28 @@ func TestGamePrepareInitWorks(t *testing.T) {
 
 	if data["nickname"] != nickname {
 		t.Errorf("Game.prepareInit did not return the proper nickname in map.  Expected '%s', Got '%s'", nickname, data["nickname"])
+	}
+}
+
+func TestGamePrepareMoveWorks(t *testing.T) {
+	game := NewGame(nickname, aiLevel)
+	game.gameId = "testGameId"
+
+	column := 2
+	method, data := game.prepareMove(column)
+
+	expectedMethod := "move/testGameId"
+	if method != expectedMethod {
+		t.Errorf("Game.prepareMove did not return proper method. Expected '%s', Got '%s'", expectedMethod, method)
+	}
+
+	if len(data) != 1 {
+		t.Errorf("Game.prepareMove did not return the right # of items in map.  Expected '1', Got '%d'", len(data))
+	}
+
+	expectedMove := fmt.Sprintf("%d", column)
+	if data["move"] != expectedMove {
+		t.Errorf("Game.prepareMove did not return the proper move in map.  Expected '%s', Got '%s'", expectedMove, data["move"])
 	}
 }
 
