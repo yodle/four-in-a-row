@@ -3,6 +3,7 @@ package game
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -17,35 +18,29 @@ func NewRestClient(serverBaseUrl string) *RestClient {
 
 func (client *RestClient) Get(method string) string {
 	target := client.getApiTarget(method)
-	return executeGet(target)
+
+	resp, err := http.Get(target)
+	defer resp.Body.Close()
+
+	return handleHttpResponse(resp, err)
 }
 
 func (client *RestClient) Post(method string, data map[string]string) string {
 	target := client.getApiTarget(method)
 	formData := convertMapToUrlValues(data)
-	return executePost(target, formData)
-}
 
-func executeGet(target string) string {
-	resp, err := http.Get(target)
-	defer resp.Body.Close()
-
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
-
-	return getStringFromHttpResponse(resp)
-}
-
-func executePost(target string, formData url.Values) string {
 	resp, err := http.PostForm(target, formData)
 	defer resp.Body.Close()
 
+	return handleHttpResponse(resp, err)
+}
+
+func handleHttpResponse(response *http.Response, err error) string {
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
 
-	return getStringFromHttpResponse(resp)
+	return getStringFromReader(response.Body)
 }
 
 func convertMapToUrlValues(data map[string]string) url.Values {
@@ -69,8 +64,8 @@ func (client *RestClient) getApiTarget(method string) string {
 	return baseUrl + "/" + method
 }
 
-func getStringFromHttpResponse(resp *http.Response) string {
+func getStringFromReader(reader io.Reader) string {
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(resp.Body)
+	buf.ReadFrom(reader)
 	return buf.String()
 }
