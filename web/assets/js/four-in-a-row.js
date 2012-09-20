@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var baseGameServerUrl = "http://localhost:3000/game";
+    var baseGameServerUrl = "http://10.3.0.60:3000/game";
     var gameInitUrl = baseGameServerUrl + "/init";
     var moveUrl = baseGameServerUrl + "/move";
     var ROWS = 6;
@@ -112,20 +112,6 @@ $(document).ready(function() {
      * Callback from the server when it finish processing out move/init.
      */
     var gameResponseCallback = function(data) {
-        // Make sure the page is displaying the correct player piece to
-        // indicate the human player
-        var piecePng = "";
-        if (data.humanPlayer == 1) {
-            $("#playerPiece")
-                .removeClass("player2Piece")
-                .addClass("player1Piece");
-        }
-        else {
-            $("#playerPiece")
-                .removeClass("player1Piece")
-                .addClass("player2Piece");
-        }
-        
         var isGameOver = (data.error || data.gameOver);
 
         if (!data.error && data.lastMove && data.gameOver != data.humanPlayer) {
@@ -253,8 +239,8 @@ $(document).ready(function() {
             "\t\t\tvar board = data.playerNumber;\n" +
             "\t\t\t\n" +
             "\t\t\t// Instead of evaluating the board just\n" +
-            "\t\t\t// return a random move (0-6 are valid columns)\n" +
-            "\t\t\treturn Math.floor(Math.random() * 6);\n" +
+            "\t\t\t// always go in the first column.\n" +
+            "\t\t\treturn 0;\n" +
             "\t\t}\n" +
             "\t};\n" +
             "})();\n"
