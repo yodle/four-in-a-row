@@ -7,8 +7,7 @@ $(window).resize(function() {
 var GAME_UI = (function() {
     //game constants
     var EMPTY = 0;
-    var P1 = 1;
-    var P2 = 2;
+    var humanPieceNum = 2;
 
     var $board = $('#board');
     //ui constants
@@ -26,8 +25,8 @@ var GAME_UI = (function() {
 
     var baseImageUrl = "assets/images/game";
     var emptyPngPath = baseImageUrl + "/empty.png";
-    var player1PngPath = baseImageUrl + "/player1.png";
-    var player2PngPath = baseImageUrl + "/player2.png";
+    var playerAiPngPath = baseImageUrl + "/playerAi.png";
+    var playerHumanPngPath = baseImageUrl + "/playerHuman.png";
 
     var uiFinishedCallback = null;
     var lastData = null;
@@ -50,11 +49,11 @@ var GAME_UI = (function() {
      * return the sprite for piece for <player>
      */
     var pieceForPlayer = function(player) {
-        if(player == P1) {
-            return ui.p1Piece;
+        if (player == humanPieceNum) {
+            return ui.humanPiece;
         }
-        if(player == P2) {
-            return ui.p2Piece;
+        else {
+            return ui.aiPiece;
         }
     };
 
@@ -62,8 +61,8 @@ var GAME_UI = (function() {
 
 
     gameUiObj = {};
-    gameUiObj.player1PngPath = player1PngPath;
-    gameUiObj.player2PngPath = player2PngPath;
+    gameUiObj.playerAiPngPath = playerAiPngPath;
+    gameUiObj.playerHumanPngPath = playerHumanPngPath;
 
     gameUiObj.waitForManualMove = function(data, callback) {
         lastData = data;
@@ -173,6 +172,8 @@ var GAME_UI = (function() {
     };
 
     gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
+        humanPieceNum = data.humanPlayer;
+
         var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
         var curPieceId = move.moves;
@@ -245,13 +246,13 @@ var GAME_UI = (function() {
             offsetx: 0,
             offsety: 0});
 
-        ui.p1Piece = new $.gameQuery.Animation({ imageURL: player1PngPath,
+        ui.aiPiece = new $.gameQuery.Animation({ imageURL: playerAiPngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
             offsety: 0});
 
-        ui.p2Piece = new $.gameQuery.Animation({ imageURL: player2PngPath,
+        ui.humanPiece = new $.gameQuery.Animation({ imageURL: playerHumanPngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,

@@ -427,15 +427,15 @@ div #playerPieceBackground {
 	background-repeat: no-repeat;
 }
 
-div .player1Piece {
-	background-image: url(/assets/images/game/player1.png);
+div .playerAiPiece {
+	background-image: url(/assets/images/game/playerAi.png);
 	height: 64px;
 	width: 64px;
 	background-repeat: no-repeat;
 }
 
-div .player2Piece {
-	background-image: url(/assets/images/game/player2.png);
+div .playerHumanPiece {
+	background-image: url(/assets/images/game/playerHuman.png);
 	height: 64px;
 	width: 64px;
 	background-repeat: no-repeat;
