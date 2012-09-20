@@ -3,6 +3,7 @@ var MessagesDb = function(db) {
 };
 
 var DEF_ERR_MSG = "Well this is embarassing. Something went wrong with our server.";
+var GOOD_ENOUGH_MOVES = 35;
 
 MessagesDb.prototype.find = function(level, moves, win, manual, callback) {
     var that = this;
@@ -10,7 +11,7 @@ MessagesDb.prototype.find = function(level, moves, win, manual, callback) {
 	if (win) {
 	    col.find( { 'win' : win, 'manual' : manual }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db) });
 	} else {
-	    if (parseInt(moves) > 10) {
+	    if (parseInt(moves) > GOOD_ENOUGH_MOVES) {
             col.find( { 'win' : win, 'tenMoves' : true }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db) });
 	    } else {
             col.find( { 'win' : win, 'tenMoves' : false }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db) });
