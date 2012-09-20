@@ -200,6 +200,8 @@ aside section {border-bottom:1px solid #dfdfdf; }
 		.play-legend .your-piece .piece {background: #c44215; }
 		.play-legend .ai-piece .piece {background: #daa601; }
 
+#gameStatusModal {background:#ECECEC;}
+
 /*=== Status Messages ===*/
 .statusMessage {border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; padding:10px 10px 10px 50px; line-height:1; background: #ececec; border:1px solid #b9b9b9; color:#888;}
 	.statusMessage strong {font-family: 'OpenSansBold', arial black; font-size:16px; color:#464646; font-weight:normal; margin-bottom:4px; display:block;}
