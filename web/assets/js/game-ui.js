@@ -16,11 +16,12 @@ var GAME_UI = (function() {
 
     var spriteWidth;// = WIDTH / 7;
     var spriteHeight; // = HEIGHT / 6;
+    var boardHeight;
+    var squareSize;
 
     var REFRESH_RATE = 30;
     var pieceAcceleration = 0.02; // px/ms^2
 
-    var squareSize = 64;
 
 
     var baseImageUrl = "assets/images/game";
@@ -132,10 +133,13 @@ var GAME_UI = (function() {
         if (currentWindowWidth < 479) {
             return (squareSize != 42);
         }
-        else if (currentWindowWidth < 970 && currentWindowWidth > 768) {
-            return (squareSize != 53);
+        if (currentWindowWidth <= 768) {
+            return (squareSize != 64)
         }
-        return (squareSize != 64);
+        if (currentWindowWidth <= 970 && currentWindowWidth > 768) {
+            return (squareSize != 64);
+        }
+        return (squareSize != 85);
     };
 
     gameUiObj.calculateBoardSize = function() {
@@ -144,11 +148,14 @@ var GAME_UI = (function() {
         if (windowWidth < 479) {
             squareSize = 42;
         }
-        else if (windowWidth < 970 && windowWidth > 768) {
-            squareSize = 53;
+        else if (windowWidth <= 768) {
+            squareSize = 64;
+        }
+        else if (windowWidth <= 970 && windowWidth > 768) {
+            squareSize = 64;
         }
         else {
-            squareSize = 64;
+            squareSize = 85;
         }
 
         spriteWidth = squareSize;
@@ -184,6 +191,8 @@ var GAME_UI = (function() {
 
             $(this).css({ top : row, left : column });
         });
+
+        $("#game-board").height(6 * spriteHeight);
     };
 
 
@@ -192,6 +201,7 @@ var GAME_UI = (function() {
         ui.pieceLayer.empty();
 
         gameUiObj.calculateBoardSize();
+        gameUiObj.resizeBoard();
 
         for(var i = 0; i < this.rows; i++) {
             for(var j = 0; j < this.cols; j++) {
