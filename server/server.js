@@ -21,9 +21,9 @@ var PORT = 3000;
 var ais = {
     1: {url:'http://10.3.0.60:3001/ai/random'},
     2: {url:'http://10.3.0.60:3001/ai/twostep'},
-    3: {url:'http://10.3.0.60:3003/minimax'},
-    4: {url:'http://10.3.0.60:3002/game'},
-    5: {url:'http://localhost:3001/ai/random'},
+    3: {url:'http://localhost:8080/opening'},
+    4: {url:'http://10.3.0.60:3003/minimax'},
+    5: {url:'http://10.3.0.60:3002/game'},
     6: {url:'http://localhost:3001/ai/twostep'}
 }
 // Initialization

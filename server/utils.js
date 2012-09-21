@@ -1,3 +1,4 @@
+
 var Players = {
     EMPTY: 0,
     P1: 1,
@@ -6,7 +7,7 @@ var Players = {
 exports.Players = Players;
 
 var check = function(row, col, board, test, accumulator) {
-    if(board[col][row] == Players.EMPTY) { return 0; }
+    if(board[col][row] === Players.EMPTY) { return 0; }
     else if(test(row, col)) { return accumulator(row, col); }
     else { return 1; } 
 };
@@ -46,8 +47,8 @@ var checker = {
 };
 
 exports.nextPlayer = function(player) {
-    if(player == Players.P1) { return Players.P2; }
-    if(player == Players.P2) { return Players.P1; }
+    if(player === Players.P1) { return Players.P2; }
+    if(player === Players.P2) { return Players.P1; }
 };
 
 /* returns the lowest row index with a piece for given col */
