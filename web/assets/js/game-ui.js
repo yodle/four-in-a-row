@@ -27,6 +27,7 @@ var GAME_UI = (function() {
     var emptyPngPath = baseImageUrl + "/empty.png";
     var playerAiPngPath = baseImageUrl + "/playerAi.png";
     var playerHumanPngPath = baseImageUrl + "/playerHuman.png";
+    var winPiecePngPath = baseImageUrl + "/winning.png";
 
     var uiFinishedCallback = null;
     var lastData = null;
@@ -55,6 +56,58 @@ var GAME_UI = (function() {
         else {
             return ui.aiPiece;
         }
+    };
+
+    var dropSprite = function(currentSprite, move, data, callback, isPlayingManually) {
+        currentSprite.css({ 'background-size' : '100%' } );
+
+        var animStart = new Date().getTime();
+        var frameStart = new Date().getTime();
+        var posAndVelocity = {pos: -spriteHeight, velocity: 0};
+
+        var average = function(a){
+            var r = {mean: 0, variance: 0, deviation: 0}, t = a.length;
+            for(var m, s = 0, l = t; l--; s += a[l]);
+            for(m = r.mean = s / t, l = t, s = 0; l--; s += Math.pow(a[l] - m, 2));
+            return r.deviation = Math.sqrt(r.variance = s / t), r;
+        }
+        var posdiffs = [];
+        var dts = [];
+        $.playground().registerCallback(function() { 
+            bottomOfCol = move.row * spriteHeight;
+            var frameEnd = new Date().getTime();
+            posAndVelocity = function(posAndVelocity, startTime, endTime) {
+                var dt = endTime - startTime;
+                dts.push(dt);
+                var previous = posAndVelocity.pos;
+                posAndVelocity.pos = posAndVelocity.pos + posAndVelocity.velocity + pieceAcceleration / 2 * (dt * dt);
+                posdiffs.push(posAndVelocity.pos - previous);
+                posAndVelocity.velocity = posAndVelocity.velocity + pieceAcceleration * dt;
+                return posAndVelocity;
+            }(posAndVelocity, frameStart, frameEnd);
+
+            frameStart = frameEnd;
+            var newTop = posAndVelocity.pos;
+            if(newTop < bottomOfCol) {
+                currentSprite.css("top", newTop);
+                return false;
+            }
+            else {
+                currentSprite.css("top", bottomOfCol);
+                var animEnd = (new Date().getTime() - animStart);
+                if (isPlayingManually && !data.gameOver) {
+                    lastData = data;
+                    uiFinishedCallback = callback;
+                }
+                else if (callback) {
+                    callback(data);
+                }
+
+                console.log("animation finished in: " + animEnd + "ms, final velocity: " + posAndVelocity.velocity + ", avgMove: " + average(posdiffs).mean + ", avgDt: " + average(dts).mean + ", steps: " + dts.length);
+                return true;
+            }
+
+        }, REFRESH_RATE);
     };
 
 
@@ -131,8 +184,6 @@ var GAME_UI = (function() {
 
             $(this).css({ top : row, left : column });
         });
-
-
     };
 
 
@@ -171,9 +222,36 @@ var GAME_UI = (function() {
         $.playground().startGame();
     };
 
+    gameUiObj.highlightWinSequence = function(data) {
+        var winMoves = exports.getWinSequence(data.board);
+        if (!winMoves) {
+            return;
+        }
+
+        for (var i = 0; i < winMoves.length; i++) {
+            gameUiObj.highlightWinMove(winMoves[i]);
+        }
+    }
+
+    gameUiObj.highlightWinMove = function(move, data) {
+        var piece = ui.winPiece;
+        var moveId = "win-" + move.row + "x" + move.col;
+        var sprite = ui.pieceLayer.addSprite(moveId, {
+            animation: piece,
+            width: spriteWidth,
+            height: spriteHeight,
+            posx: move.col * spriteWidth,
+            posy: -spriteHeight 
+        });
+        var bottomOfCol = move.row * spriteHeight;
+
+        var currentSprite = $("#"+moveId);
+        dropSprite(currentSprite, move, data);
+    }
+
+
     gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
         humanPieceNum = data.humanPlayer;
-
         var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
         var curPieceId = move.moves;
@@ -186,58 +264,10 @@ var GAME_UI = (function() {
             posy: -spriteHeight 
         });
         var bottomOfCol = move.row * spriteHeight;
-
         var currentSprite = $("#"+moveId);
-        currentSprite.css({ 'background-size' : '100%' } );
-
-        var animStart = new Date().getTime();
-        var frameStart = new Date().getTime();
-        var posAndVelocity = {pos: -spriteHeight, velocity: 0};
-
-        var average = function(a){
-            var r = {mean: 0, variance: 0, deviation: 0}, t = a.length;
-            for(var m, s = 0, l = t; l--; s += a[l]);
-            for(m = r.mean = s / t, l = t, s = 0; l--; s += Math.pow(a[l] - m, 2));
-            return r.deviation = Math.sqrt(r.variance = s / t), r;
-        }
-        var posdiffs = [];
-        var dts = [];
-        $.playground().registerCallback(function() { 
-            bottomOfCol = move.row * spriteHeight;
-            var frameEnd = new Date().getTime();
-            posAndVelocity = function(posAndVelocity, startTime, endTime) {
-                var dt = endTime - startTime;
-                dts.push(dt);
-                var previous = posAndVelocity.pos;
-                posAndVelocity.pos = posAndVelocity.pos + posAndVelocity.velocity + pieceAcceleration / 2 * (dt * dt);
-                posdiffs.push(posAndVelocity.pos - previous);
-                posAndVelocity.velocity = posAndVelocity.velocity + pieceAcceleration * dt;
-                return posAndVelocity;
-            }(posAndVelocity, frameStart, frameEnd);
-
-            frameStart = frameEnd;
-            var newTop = posAndVelocity.pos;
-            if(newTop < bottomOfCol) {
-                currentSprite.css("top", newTop);
-                return false;
-            }
-            else {
-                currentSprite.css("top", bottomOfCol);
-                var animEnd = (new Date().getTime() - animStart);
-                if (isPlayingManually && !data.gameOver) {
-                    lastData = data;
-                    uiFinishedCallback = callback;
-                }
-                else {
-                    callback(data);
-                }
-
-                console.log("animation finished in: " + animEnd + "ms, final velocity: " + posAndVelocity.velocity + ", avgMove: " + average(posdiffs).mean + ", avgDt: " + average(dts).mean + ", steps: " + dts.length);
-                return true;
-            }
-
-        }, REFRESH_RATE);
+        dropSprite(currentSprite, move, data, callback, isPlayingManually);
     };
+
 
     gameUiObj.init =  function() {
         ui.boardSquare = new $.gameQuery.Animation({ imageURL: emptyPngPath,
@@ -253,6 +283,12 @@ var GAME_UI = (function() {
             offsety: 0});
 
         ui.humanPiece = new $.gameQuery.Animation({ imageURL: playerHumanPngPath,
+            numberOfFrame: 1,
+            type: $.gameQuery.ANIMATION_ONCE,
+            offsetx: 0,
+            offsety: 0});
+
+        ui.winPiece = new $.gameQuery.Animation({ imageURL: winPiecePngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,

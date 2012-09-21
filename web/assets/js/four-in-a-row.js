@@ -15,20 +15,6 @@ $(document).ready(function() {
         }
     });
 
-    /* returns the lowest row index with a piece for given col */
-    var highestFilledRow = function(board, col) {
-        var targetCol = board[col];
-        var rows = targetCol.length;
-        var highestFilledRow = rows;
-        for(var i=0; i<rows; i++) {
-            if(targetCol[i] != 0) {
-                highestFilledRow = i;
-                break;
-            }
-        }
-        return highestFilledRow;
-    };
-
     var makeJsonpAjaxRequest = function(url, data, callback) {
         $.ajax({
             type: "GET",
@@ -46,7 +32,7 @@ $(document).ready(function() {
             move: column
         };
 
-        targetRow = highestFilledRow(data.board, column) - 1;
+        targetRow = exports.highestFilledRow(data.board, column) - 1;
         data.lastMove = { 
             row: targetRow, 
             col: column, 
@@ -85,6 +71,7 @@ $(document).ready(function() {
                 }
             }
 
+            GAME_UI.highlightWinSequence(data);
             endGame(msg, didWeWin);
         }
         else {
@@ -236,7 +223,7 @@ $(document).ready(function() {
             "\t\t\t\n" +
             "\t\t\t// The current board state; a two-dimensional array with columns\n" +
             "\t\t\t// (left-to-right) on the first dimension.\n" +
-            "\t\t\tvar board = data.playerNumber;\n" +
+            "\t\t\tvar board = data.board;\n" +
             "\t\t\t\n" +
             "\t\t\t// Instead of evaluating the board just\n" +
             "\t\t\t// always go in the first column.\n" +
