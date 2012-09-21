@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var baseGameServerUrl = "http://10.3.0.60:3000/game";
+    var baseGameServerUrl = "http://localhost:3000/game";
     var gameInitUrl = baseGameServerUrl + "/init";
     var moveUrl = baseGameServerUrl + "/move";
     var ROWS = 6;
@@ -42,7 +42,7 @@ $(document).ready(function() {
 
         var thisMoveAnimationFinished = function() {
             // Post move to server and expect json resonse in callback
-            var url = moveUrl + '/' + data._id;
+            var url = moveUrl + '/' + data.id;
             makeJsonpAjaxRequest(url, moveArgsData, gameResponseCallback);
         }
 

@@ -8,7 +8,7 @@ GameDb.prototype.init = function(game, callback) {
 	that.db.collection('games', function(err, col) {
             col.insert(game, {safe:true}, function() { 
 		removeUnderscore(game);
-		callback(game._id); 
+		callback(game.id); 
 	    });
         });
     });
@@ -18,7 +18,9 @@ GameDb.prototype.init = function(game, callback) {
 GameDb.prototype.update = function(id, game, callback) {
     var that = this;
     this.db.collection('games', function(err, col) {
-        col.update({'_id': col.db.bson_serializer.ObjectID.createFromHexString(id)}, addUnderscore(game), function() {
+        var updateGame = removeId(game);
+
+        col.update({'_id': col.db.bson_serializer.ObjectID.createFromHexString(id)}, updateGame, function() {
             callback(game);
         });
     });
@@ -43,10 +45,8 @@ var removeUnderscore = function(json) {
     return json;
 };
 
-var addUnderscore = function(json) {
+var removeId = function(json) {
     var copy = JSON.parse(JSON.stringify(json));
-    var id = copy['id'];
-    copy["_id"] = id;
     delete copy['id'];
     return copy;
 };
