@@ -74,20 +74,20 @@ var choosePlayer = function() {
 
 // Routes
 app.all('/game/init/:ailevel', function(req, res) {
-    var ai = parseInt(req.params.ailevel);
+    var aiLevel = parseInt(req.params.ailevel);
     var nickname = req.body.nickname || req.query.nickname || 'anonymous';
     var scaffold = req.body.scaffold || 'none';
     var isPlayingManually = (req.query.isPlayingManually === "true") || false;
     var jsonp = req.query.jsonp;
 
-    if (isNaN(ai) || ai < 1 || ai > 6) {
+    if (isNaN(aiLevel) || aiLevel < 1 || aiLevel > 6) {
         res.end(makeJsonp(jsonp, errorResponse('ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest')));
     }
     else
     {
 
         var player = choosePlayer();
-        var theGame = game.newGame(ROWS, COLS, player, nickname, ai, isPlayingManually);
+        var theGame = game.newGame(ROWS, COLS, player, nickname, aiLevel, isPlayingManually);
 
         if(player == Utils.Players.P2) {
             var callback = function(result) {
@@ -95,25 +95,26 @@ app.all('/game/init/:ailevel', function(req, res) {
                     var moveResult = theGame.move(result.move); // make the AI move
 
                     gameDb.init(
-                            theGame, 
-                            function(gameId){
-                                res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
-                            }
-                            );
+                        theGame, 
+                        function(gameId){
+                            res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
+                        }
+                    );
                 }
             }
 
-            var aiSpec = ais[ai];
+            var aiSpec = ais[aiLevel];
             var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
             ai.move('', theGame);
         }
         else {
-            var theGame = game.newGame(ROWS, COLS, Utils.Players.P1, nickname, ai); // TODO: WML: hard-coded P1
+            var theGame = game.newGame(ROWS, COLS, player, nickname, aiLevel);
             gameDb.init(
-                    theGame, 
-                    function(game){
-                        res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
-                    });
+                theGame, 
+                function(game){
+                    res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
+                }
+            );
 
         }
 
@@ -122,15 +123,16 @@ app.all('/game/init/:ailevel', function(req, res) {
 
 function findGame(gameId, callback) {
     gameDb.findGame(
-            gameId,
-            function(game) {
-                callback(game);
-            }
-            );
+        gameId,
+        function(game) {
+            callback(game);
+        }
+    );
 };
 
 app.all('/game/move/:gameId', function(req, res) {
     var gameId = req.params.gameId;
+    console.log(gameId);
     var move = req.body.move || req.query.move;
     var jsonp = req.query.jsonp;
     if(typeof(move) === 'undefined') {
@@ -150,7 +152,7 @@ app.all('/game/move/:gameId', function(req, res) {
             return;
         }
 
-        var aiSpec = ais[gameSpec.ai];
+        var aiSpec = ais[gameSpec.aiLevel];
         var callback = function(result) {
             if(result.success) {
                 var moveResult = gameSpec.move(result.move); // make the AI move
@@ -162,7 +164,7 @@ app.all('/game/move/:gameId', function(req, res) {
                     // AI wins!
                     if (gameSpec.gameOver) { 
                         ai.endGame(gameSpec);
-                        messagesDb.find(gameSpec.ai, gameSpec.moves, false, gameSpec.isPlayingManually, function(result) {
+                        messagesDb.find(gameSpec.aiLevel, gameSpec.moves, false, gameSpec.isPlayingManually, function(result) {
                             gameSpec.message = result.message;
                             res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
                         });
@@ -183,7 +185,7 @@ app.all('/game/move/:gameId', function(req, res) {
             //Player wins!
             gameDb.update(gameId, gameSpec, function(game) {
                 ai.endGame(gameSpec);
-                messagesDb.find(gameSpec.ai, gameSpec.moves, true, gameSpec.isPlayingManually, function(result) {
+                messagesDb.find(gameSpec.aiLevel, gameSpec.moves, true, gameSpec.isPlayingManually, function(result) {
                     gameSpec.message = result.message;
                     res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
                 });
