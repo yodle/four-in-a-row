@@ -7,6 +7,7 @@ var GOOD_ENOUGH_MOVES = 35;
 
 MessagesDb.prototype.find = function(level, moves, win, manual, callback) {
     var that = this;
+    if(!typeof(manual) === "boolean") { manual = true; }
     this.db.collection('ai-messages', function(err, col) {
 	if (win) {
 	    col.find( { 'win' : win, 'manual' : manual }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db) });

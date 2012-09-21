@@ -108,7 +108,6 @@ app.all('/game/init/:ailevel', function(req, res) {
             ai.move('', theGame);
         }
         else {
-            var theGame = game.newGame(ROWS, COLS, player, nickname, aiLevel);
             gameDb.init(
                 theGame, 
                 function(game){
@@ -132,7 +131,6 @@ function findGame(gameId, callback) {
 
 app.all('/game/move/:gameId', function(req, res) {
     var gameId = req.params.gameId;
-    console.log(gameId);
     var move = req.body.move || req.query.move;
     var jsonp = req.query.jsonp;
     if(typeof(move) === 'undefined') {
@@ -192,8 +190,9 @@ app.all('/game/move/:gameId', function(req, res) {
                 return;
             });
         }
-
-        ai.move('', gameSpec);
+        else {
+            ai.move('', gameSpec);
+        }
     });
 });
 
