@@ -62,7 +62,7 @@ exports.deserialize = function(game) {
     that.moveList = game.moveList;
     that.lastMove = game.lastMove;
     that.board = game.board;
-	that._id = game._id;
+    that.id = game.id;
     return that;
 };
 
