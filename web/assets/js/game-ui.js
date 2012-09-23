@@ -65,6 +65,7 @@ var GAME_UI = (function() {
         var animStart = new Date().getTime();
         var frameStart = new Date().getTime();
         var posAndVelocity = {pos: -spriteHeight, velocity: 0};
+        var bottomOfCol = move.row * spriteHeight;
 
         var average = function(a){
             var r = {mean: 0, variance: 0, deviation: 0}, t = a.length;
@@ -253,7 +254,6 @@ var GAME_UI = (function() {
             posx: move.col * spriteWidth,
             posy: -spriteHeight 
         });
-        var bottomOfCol = move.row * spriteHeight;
 
         var currentSprite = $("#"+moveId);
         dropSprite(currentSprite, move, data);
@@ -273,7 +273,6 @@ var GAME_UI = (function() {
             posx: move.col * spriteWidth,
             posy: -spriteHeight 
         });
-        var bottomOfCol = move.row * spriteHeight;
         var currentSprite = $("#"+moveId);
         dropSprite(currentSprite, move, data, callback, isPlayingManually);
     };
