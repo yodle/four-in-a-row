@@ -1,11 +1,11 @@
 var Utils = require('./utils');
 
-var Game = function(rows, cols, humanPlayer, nickname, aiLevel, isPlayingManually) {
+var Game = function(rows, cols, challengerPlayer, nickname, aiLevel, isPlayingManually) {
     this.ROWS = rows;
     this.COLS = cols;
 
     this.gameOver = false;
-    this.humanPlayer = humanPlayer;
+    this.challengerPlayer = challengerPlayer;
     this.nickname = nickname;
     this.turn = Utils.Players.P1;
     this.moves = 0;
@@ -55,7 +55,7 @@ Game.prototype._advanceTurn = function(currentTurn) {
 };
 
 exports.deserialize = function(game) {
-    var that = new Game(game.ROWS, game.COLS, game.humanPlayer, game.nickname, game.aiLevel, game.isPlayingManually);
+    var that = new Game(game.ROWS, game.COLS, game.challengerPlayer, game.nickname, game.aiLevel, game.isPlayingManually);
     that.gameOver = game.gameOver;
     that.turn = game.turn;
     that.moves = game.moves;
@@ -66,6 +66,6 @@ exports.deserialize = function(game) {
     return that;
 };
 
-exports.newGame = function(rows, cols, humanPlayer, nickname, aiLevel, isPlayingManually) {
-    return new Game(rows, cols, humanPlayer, nickname, aiLevel, isPlayingManually);
+exports.newGame = function(rows, cols, challengerPlayer, nickname, aiLevel, isPlayingManually) {
+    return new Game(rows, cols, challengerPlayer, nickname, aiLevel, isPlayingManually);
 };
