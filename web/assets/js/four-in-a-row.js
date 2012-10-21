@@ -8,7 +8,7 @@ $(document).ready(function() {
     var isGameInProgress = false;
     var aiObject;
 
-    /* Mobile Glboal Nav */
+    /* Mobile Global Nav */
     $("#mGlobalNav select").on("change", function() {
         if ($(this).val() != "") {
             window.location.href = $(this).val();
@@ -131,7 +131,7 @@ $(document).ready(function() {
         GAME_UI.initBoard(ROWS, COLS);
         GAME_UI.resetBoard();
         GAME_UI.startGame();
-    }
+    };
 
 
     var processInputAndStartGame = function() {
