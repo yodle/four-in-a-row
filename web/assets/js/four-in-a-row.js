@@ -43,7 +43,7 @@ $(document).ready(function() {
         data.lastMove = { 
             row: targetRow, 
             col: column, 
-            player: data.challengerPiece, 
+            player: data.challengerPlayer, 
             moves: data.moves + 1
         };
 
@@ -59,7 +59,7 @@ $(document).ready(function() {
 
     var makeNextMove = function(data, manuallyChosenMove) {
         if (data.error || data.gameOver) { 
-            var didWeWin = (data.error == undefined) && (data.challengerPiece == data.gameOver);
+            var didWeWin = (data.error == undefined) && (data.challengerPlayer == data.gameOver);
             // Game is over.
             var msg = "";
             if (data.error != undefined) {
@@ -108,7 +108,7 @@ $(document).ready(function() {
     var gameResponseCallback = function(data) {
         var isGameOver = (data.error || data.gameOver);
 
-        if (!data.error && data.lastMove && data.gameOver != data.challengerPiece) {
+        if (!data.error && data.lastMove && data.gameOver != data.challengerPlayer) {
             // Update game UI with last move
             GAME_UI.dropPiece(
                     data, 
