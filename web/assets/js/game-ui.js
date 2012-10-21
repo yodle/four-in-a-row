@@ -92,7 +92,7 @@ var GAME_UI = (function() {
             else {
                 currentSprite.css("top", bottomOfCol);
                 var animEnd = (new Date().getTime() - animStart);
-                if (isPlayingManually && !data.gameOver) {
+                if (isPlayingManually && data.gameOver == 0) {
                     lastData = data;
                     uiFinishedCallback = callback;
                 }

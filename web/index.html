@@ -30,6 +30,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
+    <script src="assets/js/job-data.js"></script>
 </head>
 
 <body class="landingPage">
@@ -75,7 +76,7 @@
 				<!-- Right Column -->
 				<div class="main-col8 tablet-col6 clearfix border-right">
 					<section class="module mediablock">
-						<h2>What Is Four in a Row?</h2>
+						<h2>What is Four in a Row?</h2>
 						<p>Four in a Row is a simple game in which players take alternating turns dropping a single play token into one of seven columns in a vertically oriented board. As the name suggests, the first player to align four adjacent play tokens in a horizontal, vertical, or diagonal fashion wins the game.</p>
 						
 						<p>While the rules are simple, coming up with an efficient AI to play the game well is a challenging (and fun) endeavor. If you're up to the challenge, try to take on one of our engineer-submitted AIs in a one-on-one deathmatch.</p>
@@ -85,13 +86,15 @@
 						<p>There are three ways to play:</p>
 						<ul>
 							<li>Write a javascript AI in our <a href='play.html'>online code editor</a></li>
-							<li>Use one of the <a href="about:blank">Java</a>, <a href="about:blank">Python</a>, or <a href="about:blank">Ruby</a> clients</li>
+                            <li>Use one of the <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/python">Python</a>, 
+                                or <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/ruby">Ruby</a>
+                                or <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/go">Go</a> clients</li>
 							<li>Roll your own in your language of choice against the Four in a Row Rest API</li>
 						</ul>
 					</section>
 					<section class="module mediablock">
 						<h2>REST API Documentation</h2>
-						<p>The REST API consists of two primary API methods and one supporting method for testing purposes. Each method returns the same information in the response, which is encoded in JSON format. Where resource identifiers are required in the URL, they are denoted as <tt>:param_description</tt>. POST parameters are denoted in (parentheses) after the URL. All API URLs are relative to http://TODO_DOMAIN_HERE.com.</p>
+						<p>The REST API consists of two primary API methods and one supporting method for testing purposes. Each method returns the same information in the response, which is encoded in JSON format. Where resource identifiers are required in the URL, they are denoted as <tt>:param_description</tt>. POST parameters are denoted in (parentheses) after the URL. All API URLs are relative to http://challenge.yodle.com:3000.</p>
 
 
 						<div id="keys-values" class="clearfix">
@@ -124,14 +127,14 @@
 
                         <p>Example init request json:<br>
                         {<br>
-                        nickname: {column number}<br>   
+                        nickname: "nickname or email"<br>   
                         }</p>
 						
 						<h4>API Method: POST /game/move/:gameId</h4>
                         <p>Inserts a single play token into the board, into the column designated by the <tt>move</tt> parameter (between 0 and 6). The <tt>gameId</tt> segment of the uri should correspond to a unique game identifier returned by a call to the <tt>init/</tt> API. Once the move has been made, the server will solicit a move from the computer opponent before returning. Thus, after a call to the <tt>init/</tt> or <tt>move/</tt> APIs, it will always either be the challenger player's turn or the game will be over.</p>
                         <p>Example move request json:<br>
                         {<br>
-                        move: {column number}<br>   
+                        move: 3<br/>
                         }</p>
 						
 						<h4>API Method: GET /game/state/:gameId</h4>
@@ -149,22 +152,7 @@
 					</section>
 					<section class="module mediablock clearfix">
 						<h3>Tech Jobs at Yodle</h3>
-						<ul>
-							<li>
-								<a href="">Data Architect</a>
-						  	</li>
-							<li>
-								<a href="">IT Analyst</a>
-						  	</li>
-						  	<li>
-								<a href="">Lead Engineer</a>
-						  	</li>
-						  	<li>
-								<a href="">Senior Software Engineer</a>
-						  	</li>
-						  	<li>
-								<a href="">Software Engineer</a>
-						  	</li>
+						<ul id="jobListings">
 						</ul>
 					</section>
 				</aside>
