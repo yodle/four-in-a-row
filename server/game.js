@@ -4,7 +4,7 @@ var Game = function(rows, cols, challengerPlayer, nickname, aiLevel, isPlayingMa
     this.ROWS = rows;
     this.COLS = cols;
 
-    this.gameOver = false;
+    this.gameOver = 0;
     this.challengerPlayer = challengerPlayer;
     this.nickname = nickname;
     this.turn = Utils.Players.P1;
@@ -22,7 +22,7 @@ var Game = function(rows, cols, challengerPlayer, nickname, aiLevel, isPlayingMa
 };
 
 Game.prototype.move = function(col) {
-    if(this.gameOver) { 
+    if(this.gameOver > 0) { 
         return { failed: true, message: "The game has ended already" }; 
     }
     if(!Utils.isLegalMove(this.board, col)) {
