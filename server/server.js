@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Module dependencies.
  */
@@ -25,7 +27,8 @@ var ais = {
     4: {url:'http://four-in-a-row.corp.yodle.com:3003/minimax'},
     5: {url:'http://four-in-a-row.corp.yodle.com:3002/game'},
     6: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/twostep'}
-}
+};
+
 // Initialization
 app.configure(function(){
     app.use(express.bodyParser());
@@ -47,10 +50,10 @@ app.configure('production', function(){
 app.use(express.bodyParser());
 
 db.open(function(err, client) { if (err) {throw err;} });
-gameDb = new gamedb.GameDb(db);
-messagesDb = new messagesdb.MessagesDb(db);
+var gameDb = new gamedb.GameDb(db);
+var messagesDb = new messagesdb.MessagesDb(db);
 
-makeJsonp = function(jsonp, body) {
+var makeJsonp = function(jsonp, body) {
     if(jsonp) {
         return jsonp + "(" + body + ")";
     }
@@ -74,7 +77,7 @@ var choosePlayer = function() {
 
 // Routes
 app.all('/game/init/:ailevel', function(req, res) {
-    var aiLevel = parseInt(req.params.ailevel);
+    var aiLevel = parseInt(req.params.ailevel, 10);
     var nickname = req.body.nickname || req.query.nickname || 'anonymous';
     var scaffold = req.body.scaffold || 'none';
     var isPlayingManually = (req.query.isPlayingManually === "true") || false;
@@ -100,7 +103,7 @@ app.all('/game/init/:ailevel', function(req, res) {
                         }
                     );
                 }
-            }
+            };
 
             var aiSpec = ais[aiLevel];
             var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
