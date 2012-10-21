@@ -54,7 +54,7 @@ var GAME_UI = (function() {
         }
     };
 
-    var dropSprite = function(currentSprite, move, data, callback, isPlayingManually) {
+    var dropSprite = function(currentSprite, move, data, callback, isPlayingManually, dropFinishedCallback) {
         currentSprite.css({ 'background-size' : '100%' } );
 
         var animStart = new Date().getTime();
@@ -91,7 +91,11 @@ var GAME_UI = (function() {
             }
             else {
                 currentSprite.css("top", bottomOfCol);
-                var animEnd = (new Date().getTime() - animStart);
+
+                if (dropFinishedCallback) {
+                    dropFinishedCallback();
+                }
+
                 if (isPlayingManually && data.gameOver == 0) {
                     lastData = data;
                     uiFinishedCallback = callback;
@@ -249,7 +253,7 @@ var GAME_UI = (function() {
     };
 
 
-    gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
+    gameUiObj.dropPiece = function(data, callback, isPlayingManually, dropFinishedCallback) {
         humanPieceNum = data.challengerPlayer;
         var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
@@ -263,7 +267,7 @@ var GAME_UI = (function() {
             posy: -spriteHeight 
         });
         var currentSprite = $("#"+moveId);
-        dropSprite(currentSprite, move, data, callback, isPlayingManually);
+        dropSprite(currentSprite, move, data, callback, isPlayingManually, dropFinishedCallback);
     };
 
 

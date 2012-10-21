@@ -21,6 +21,20 @@ $(document).ready(function() {
         }
     }
 
+    /**
+     * Updates the header of the status box
+     */
+    var setGameStatusHeader = function(headerMsg) {
+        $('#gameStatusHeader').html(headerMsg);
+    }
+
+    /**
+     * Updates the content of the status box
+     */
+    var setGameStatusContent = function(contentMsg) {
+        $('#gameStatusContent').html(contentMsg);
+    }
+
     /* Mobile Global Nav */
     $("#mGlobalNav select").on("change", function() {
         if ($(this).val() != "") {
@@ -48,6 +62,8 @@ $(document).ready(function() {
      * Sends move to server
      */
     var sendMoveToServer = function(data) {
+        setGameStatusHeader("Waiting for Yodle AI to make a move.");
+
         moveArgsData = {
             move: data.lastMove.col
         };
@@ -123,22 +139,34 @@ $(document).ready(function() {
         }
     };
 
+    var setStatusAfterYodleMove = function() {
+        if (isPlayingManually) {
+            setGameStatusHeader("Waiting for challenger move, click a column to move.");
+        }
+        else {
+            setGameStatusHeader("Waiting for challenger AI to move.");
+        }
+    }
+
     /**
      * Callback from the server when it finish processing move/init requests.
      */
     var gameResponseCallback = function(data) {
         var isGameOver = (data.error || data.gameOver != 0);
 
+
         if (!data.error && data.lastMove && data.gameOver != data.challengerPlayer) {
             // Update game UI with last move
             GAME_UI.dropPiece(
                     data, 
                     makeNextMove, 
-                    isPlayingManually
+                    isPlayingManually,
+                    setStatusAfterYodleMove
                 );
         }
         else {
             if (isPlayingManually && !isGameOver) {
+                setGameStatusHeader("Waiting for challenger move, click a column to move.");
                 GAME_UI.waitForManualMove(data, makeNextMove);
             }
             else {
@@ -189,6 +217,9 @@ $(document).ready(function() {
 
         var difficulty = $("#difficultySelect option:selected").val();
 
+        setGameStatusHeader("Game starting...");
+        setGameStatusContent("");
+
         // Post to the server to start the game, and expect json response to callback
         var url = gameInitUrl + '/' + difficulty;
         makeJsonpAjaxRequest(url, gameInitData, gameResponseCallback);
@@ -204,10 +235,20 @@ $(document).ready(function() {
         return false;
     });
 
+
     /**
      * Displays message lightbox with results of game
      */
     var endGame = function(message, didWeWin) {
+        if (didWeWin) {
+            setGameStatusHeader("Game Over. Challenger won!");
+        }
+        else {
+            setGameStatusHeader("Game Over. Challenger lost.");
+        }
+
+        setGameStatusContent(message);
+
         isGameInProgress = false;
 
         /* Open Lightbox */
