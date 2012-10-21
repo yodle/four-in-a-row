@@ -197,7 +197,7 @@ aside section {border-bottom:1px solid #dfdfdf; }
 	#keys-values dt, 
 	#keys-values dd {line-height: 1.3em; margin-bottom:6px; }
 	#keys-values dt {float:left; font-weight:bold; width:20%; clear:left;}
-	#keys-values dd {float:left; display: block; width: 80%;}
+	#keys-values dd {float:left; display: block; width: 80%; margin-bottom:12px;}
 
 /*=== Play Legend ===*/
 .play-legend {padding:10px; background:#eeeeee; border:1px solid #d5d5d5; margin:15px 0 10px;}
@@ -362,6 +362,10 @@ button.button, input.button {}
 	footer#mainFooter .wrapper {height:259px; margin-bottom:70px;}
 	#footer section {min-height:230px;}
 
+	/*=== Keys Values ===*/
+	#keys-values dt {width:26%;}
+	#keys-values dd {width:74%;}
+
 }
 
 /* All Mobile Sizes (devices and browser) */
@@ -409,6 +413,10 @@ button.button, input.button {}
 	
 	/* Footer */
 	#copyright .text {width:320px;}
+
+	/*=== Keys Values ===*/
+	#keys-values dt {width:30%;}
+	#keys-values dd {width:70%;}
 }
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
@@ -427,7 +435,9 @@ button.button, input.button {}
 	footer #footer .container_12 section li {width:100%;}
 	#copyright .text {width:170px;}
 
-
+	/*=== Keys Values ===*/
+	#keys-values dt {width:40%;}
+	#keys-values dd {width:60%;}
 }
 
 div #editor { 

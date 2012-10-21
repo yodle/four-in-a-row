@@ -23,7 +23,7 @@ var PORT = 3000;
 var ais = {
     1: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/random'},
     2: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/twostep'},
-    3: {url:'http://four-in-a-row.corp.yodle.com:8080/opening'},
+    3: {url:'http://four-in-a-row.corp.yodle.com:3004/opening'},
     4: {url:'http://four-in-a-row.corp.yodle.com:3003/minimax'},
     5: {url:'http://four-in-a-row.corp.yodle.com:3002/game'},
     6: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/twostep'}
