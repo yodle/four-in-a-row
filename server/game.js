@@ -1,3 +1,5 @@
+"use strict";
+
 var Utils = require('./utils');
 
 var Game = function(rows, cols, challengerPlayer, nickname, aiLevel, isPlayingManually) {
@@ -30,7 +32,7 @@ Game.prototype.move = function(col) {
         return { failed: true, message: "(" + col + ") is an invalid move" };
     }
      
-    target = Utils.highestFilledRow(this.board, col) - 1;
+    var target = Utils.highestFilledRow(this.board, col) - 1;
     if(target >= 0) {
         this.moveList[this.moves] = col;
         this.moves = this.moves + 1;
