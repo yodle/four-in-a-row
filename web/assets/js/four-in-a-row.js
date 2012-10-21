@@ -25,7 +25,7 @@ $(document).ready(function() {
     $("#mGlobalNav select").on("change", function() {
         if ($(this).val() != "") {
             window.location.href = $(this).val();
-
+            
         }
     });
 

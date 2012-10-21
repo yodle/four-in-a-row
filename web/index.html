@@ -27,8 +27,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	
 	<!-- Modernizr -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
 </head>
 
@@ -128,10 +126,11 @@
 						<div class="main-col6 clear-both alpha">
 							<div class="example">
 	                        	<strong>Example init request json:</strong>
-	                        	<code>
-	                        	{<br>
-	                        	nickname: "name or email"<br>   
-	                        	}</code>
+<pre>
+{
+    nickname: "name or email"  
+}
+</pre>
 	                        </div>
                         </div>
 						
@@ -141,11 +140,11 @@
                         <div class="main-col6 clear-both alpha">
 	                        <div class="example">
 		                        <strong>Example move request json:</strong>
-		                        <code>
-		                        {<br>
-		                        move: 3<br>   
-		                        }
-		                    	</code>
+<pre>
+{
+    move: 3 
+}
+</pre>
 	                    	</div>
                     	</div>
 						
@@ -251,6 +250,13 @@
 		</div>
 	</div>
 </footer>
+
+<!-- jQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
+
+<!-- Javascript -->
+<script src="assets/js/four-in-a-row.js"></script>
 
 </body>
 </html>
