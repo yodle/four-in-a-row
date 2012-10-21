@@ -5,7 +5,7 @@ var express = require('express');
 var app = module.exports = express.createServer();
 var http = require('http');
 var mongo = require('mongodb');
-var db = new mongo.Db('mydb', new mongo.Server('10.3.0.60', 27017, {auto_reconnect: true}), {});
+var db = new mongo.Db('four-in-a-row', new mongo.Server('four-in-a-row.corp.yodle.com', 27017, {auto_reconnect: true}), {});
 
 var gamedb = require('./gamedb');
 var messagesdb = require('./aidb');
@@ -19,12 +19,12 @@ var COLS = 7;
 var PORT = 3000;
 
 var ais = {
-    1: {url:'http://10.3.0.60:3001/ai/random'},
-    2: {url:'http://10.3.0.60:3001/ai/twostep'},
-    3: {url:'http://10.3.0.60:8080/opening'},
-    4: {url:'http://10.3.0.60:3003/minimax'},
-    5: {url:'http://10.3.0.60:3002/game'},
-    6: {url:'http://localhost:3001/ai/twostep'}
+    1: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/random'},
+    2: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/twostep'},
+    3: {url:'http://four-in-a-row.corp.yodle.com:8080/opening'},
+    4: {url:'http://four-in-a-row.corp.yodle.com:3003/minimax'},
+    5: {url:'http://four-in-a-row.corp.yodle.com:3002/game'},
+    6: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/twostep'}
 }
 // Initialization
 app.configure(function(){
@@ -85,14 +85,13 @@ app.all('/game/init/:ailevel', function(req, res) {
     }
     else
     {
-
         var player = choosePlayer();
         var theGame = game.newGame(ROWS, COLS, player, nickname, aiLevel, isPlayingManually);
 
-        if(player == Utils.Players.P2) {
+        if(player == Utils.Players.P2) { // AI moves first
             var callback = function(result) {
                 if(result.success) {
-                    var moveResult = theGame.move(result.move); // make the AI move
+                    var moveResult = theGame.move(result.move);
 
                     gameDb.init(
                         theGame, 
@@ -107,20 +106,18 @@ app.all('/game/init/:ailevel', function(req, res) {
             var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
             ai.move('', theGame);
         }
-        else {
+        else { // Player moves first
             gameDb.init(
                 theGame, 
                 function(game){
                     res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
                 }
             );
-
         }
-
     }
 });
 
-function findGame(gameId, callback) {
+var findGame = function(gameId, callback) {
     gameDb.findGame(
         gameId,
         function(game) {
