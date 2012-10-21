@@ -30,6 +30,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
+    <script src="assets/js/job-data.js"></script>
 </head>
 
 <body class="landingPage">
@@ -85,13 +86,15 @@
 						<p>There are three ways to play:</p>
 						<ul>
 							<li>Write a javascript AI in our <a href='play.html'>online code editor</a></li>
-							<li>Use one of the <a href="about:blank">Java</a>, <a href="about:blank">Python</a>, or <a href="about:blank">Ruby</a> clients</li>
+                            <li>Use one of the <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/python">Python</a>, 
+                                or <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/ruby">Ruby</a>
+                                or <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/go">Go</a> clients</li>
 							<li>Roll your own in your language of choice against the Four in a Row Rest API</li>
 						</ul>
 					</section>
 					<section class="module mediablock">
 						<h2>REST API Documentation</h2>
-						<p>The REST API consists of two primary API methods and one supporting method for testing purposes. Each method returns the same information in the response, which is encoded in JSON format. Where resource identifiers are required in the URL, they are denoted as <tt>:param_description</tt>. POST parameters are denoted in (parentheses) after the URL. All API URLs are relative to http://TODO_DOMAIN_HERE.com.</p>
+						<p>The REST API consists of two primary API methods and one supporting method for testing purposes. Each method returns the same information in the response, which is encoded in JSON format. Where resource identifiers are required in the URL, they are denoted as <tt>:param_description</tt>. All API URLs are relative to http://challenge.yodle.com:8080</p>
 
 
 						<div id="keys-values" class="clearfix">
@@ -164,22 +167,7 @@
 					</section>
 					<section class="module mediablock clearfix">
 						<h3>Tech Jobs at Yodle</h3>
-						<ul>
-							<li>
-								<a href="">Data Architect</a>
-						  	</li>
-							<li>
-								<a href="">IT Analyst</a>
-						  	</li>
-						  	<li>
-								<a href="">Lead Engineer</a>
-						  	</li>
-						  	<li>
-								<a href="">Senior Software Engineer</a>
-						  	</li>
-						  	<li>
-								<a href="">Software Engineer</a>
-						  	</li>
+						<ul id="jobListings">
 						</ul>
 					</section>
 				</aside>
