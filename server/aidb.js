@@ -10,14 +10,14 @@ var GOOD_ENOUGH_MOVES = 35;
 MessagesDb.prototype.find = function(level, moves, win, manual, callback) {
     var that = this;
     if(typeof(manual) !== "boolean") { manual = true; }
-    this.db.collection('ai-messages', function(err, col) {
+    this.db.collection('messages', function(err, col) {
         if (win) {
             col.find( { 'win' : win, 'manual' : manual }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
         } else {
             if (parseInt(moves, 10) > GOOD_ENOUGH_MOVES) {
-                col.find( { 'win' : win, 'tenMoves' : true }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
+                col.find( { 'win' : win, 'enoughMoves' : true }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
             } else {
-                col.find( { 'win' : win, 'tenMoves' : false }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
+                col.find( { 'win' : win, 'enoughMoves' : false }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
             }
         }
     });
@@ -29,7 +29,7 @@ var findLevelCode = function(results, callback, level, win, db) {
     }
     else {
         var template = results[0].template;
-        db.collection('ai-messages', function(err, col) {
+        db.collection('messages', function(err, col) {
             if (win) {
                 col.find({ 'ai' : parseInt(level, 10) }, { 'win' : 1 }).toArray(function(err, results) { generateMessage(results, callback, level, template); });
             } else {
@@ -46,9 +46,9 @@ var generateMessage = function(results, callback, level, template) {
     else {
         var message= template.replace('$', level);
         if (results[0].win !== undefined) {
-            message= message.replace(/XXXXXXX/g, results[0].win);
+            message= message.replace(/XXXXXXXXX/g, results[0].win);
         } else {
-            message= message.replace(/XXXXXXX/g, results[0].loss);
+            message= message.replace(/XXXXXXXXX/g, results[0].loss);
         }
         callback({ 'message' : message});
     }

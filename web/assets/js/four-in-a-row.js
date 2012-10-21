@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var baseGameServerUrl = "http://challenge.yodle.com:3000/game";
+    var baseGameServerUrl = "http://four-in-a-row.corp.yodle.com:3000/game";
     var gameInitUrl = baseGameServerUrl + "/init";
     var moveUrl = baseGameServerUrl + "/move";
     var ROWS = 6;
