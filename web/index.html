@@ -107,10 +107,13 @@
 								<dt>turn</dt><dd>Whose turn it is - will always be your player number except if the opponent AI is thinking during a request to get the game state</dd>
 								<dt>moves</dt><dd>How many moves have been played in the current game</dd>
                                 <dt>lastMove</dt><dd>JSON object describing the last move made. Fields are:<br>
-                                row - row of last move<br>
-                                col - column of last move<br>
-                                player - player number that made last move<br>
-                                moves - total number of moves made</dd>
+                                	<ul style="margin-bottom:0;">
+	                                	<li>row - row of last move</li>
+	                                	<li>col - column of last move</li>
+	                                	<li>player - player number that made last move</li>
+	                                	<li>moves - total number of moves made</li>
+                                	</ul>
+                                	</dd>
 								<dt>moveList</dt><dd>An array containing the move history in ascending chronological order</dd>
 								<dt>ai</dt><dd>The opponent AI level</dd>
 								<dt>board</dt><dd>The current board state; a two-dimensional array with columns (left-to-right) on the first dimension and rows (top of the board at lowest index) on the second</dd>
@@ -122,17 +125,29 @@
 						<h4>API Method: POST /game/init/:aiLevel</h4>
 						<p>Initiates a new game. AI level should be an integer between 1 and 6, with 1 being the easiest and 6 being the hardest. A nickname may be supplied but is not required. The response will contain the challenger player's player number, denoting whether the challenger player is the first or second to make a move. If the computer player is the first player, the board will reflect the computer player's first move in the response.</p>
 
-                        <p>Example init request json:<br>
-                        {<br>
-                        nickname: {column number}<br>   
-                        }</p>
+						<div class="main-col6 clear-both alpha">
+							<div class="example">
+	                        	<strong>Example init request json:</strong>
+	                        	<code>
+	                        	{<br>
+	                        	nickname: {column number}<br>   
+	                        	}</code>
+	                        </div>
+                        </div>
 						
 						<h4>API Method: POST /game/move/:gameId</h4>
                         <p>Inserts a single play token into the board, into the column designated by the <tt>move</tt> parameter (between 0 and 6). The <tt>gameId</tt> segment of the uri should correspond to a unique game identifier returned by a call to the <tt>init/</tt> API. Once the move has been made, the server will solicit a move from the computer opponent before returning. Thus, after a call to the <tt>init/</tt> or <tt>move/</tt> APIs, it will always either be the challenger player's turn or the game will be over.</p>
-                        <p>Example move request json:<br>
-                        {<br>
-                        move: {column number}<br>   
-                        }</p>
+
+                        <div class="main-col6 clear-both alpha">
+	                        <div class="example">
+		                        <strong>Example move request json:</strong>
+		                        <code>
+		                        {<br>
+		                        move: {column number}<br>   
+		                        }
+		                    	</code>
+	                    	</div>
+                    	</div>
 						
 						<h4>API Method: GET /game/state/:gameId</h4>
 						<p>Retrieves the current state of the game corresponding to the <tt>gameId</tt> parameter.</p>
@@ -181,31 +196,31 @@
 					<h4>Yodle Sites</h4>
 					<nav class="links">
 						<ul>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.com/">Yodle.com</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlecareers.com/">Careers</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.net/">Company Blog</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlefaq.com/">FAQ</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.info/">Local Business Blog</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlereviews.com/">Yodle Reviews</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlelawmarketing.com/">Yodle Law</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://brandstandards.yodle.com/">Brand Standards</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodledentalmarketing.com/">Yodle Dental</a></li>
-													<li class="col2 no-gutter"><a  href="http://www.yodle.com/partner-programs/">Partner Programs</a></li>
-												</ul>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.com/">Yodle.com</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlecareers.com/">Careers</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.net/">Company Blog</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlefaq.com/">FAQ</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.info/">Local Business Blog</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlereviews.com/">Yodle Reviews</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlelawmarketing.com/">Yodle Law</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://brandstandards.yodle.com/">Brand Standards</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodledentalmarketing.com/">Yodle Dental</a></li>
+							<li class="col2 no-gutter"><a  href="http://www.yodle.com/partner-programs/">Partner Programs</a></li>
+						</ul>
 					</nav>
 				</section>
 
 				<section class="main-col4 tablet-col3 border-left border-right">
 					<h4>Yodle Social</h4>
 					<ul id="social-media">
-													<li><a id="sm-facebook" class="footer-sprite" href="http://www.facebook.com/Yodle" target="_blank"></a></li>
-													<li><a id="sm-twitter" class="footer-sprite" href="http://twitter.com/Yodle" target="_blank"></a></li>
-													<li><a id="sm-gplus" class="footer-sprite" href="https://plus.google.com/113049376312575366498/posts" target="_blank"></a></li>
-													<li><a id="sm-linkedin" class="footer-sprite" href="http://www.linkedin.com/companies/yodle" target="_blank"></a></li>
-													<li><a id="sm-youtube" class="footer-sprite" href="http://www.youtube.com/yodle" target="_blank"></a></li>
-													<li><a id="sm-wiki" class="footer-sprite" href="http://en.wikipedia.org/wiki/Yodle,_Inc" target="_blank"></a></li>
-													<li><a id="sm-rss" class="footer-sprite" href="http://www.yodle.com/rss/" target="_blank"></a></li>
-										</ul>
+						<li><a id="sm-facebook" class="footer-sprite" href="http://www.facebook.com/Yodle" target="_blank"></a></li>
+						<li><a id="sm-twitter" class="footer-sprite" href="http://twitter.com/Yodle" target="_blank"></a></li>
+						<li><a id="sm-gplus" class="footer-sprite" href="https://plus.google.com/113049376312575366498/posts" target="_blank"></a></li>
+						<li><a id="sm-linkedin" class="footer-sprite" href="http://www.linkedin.com/companies/yodle" target="_blank"></a></li>
+						<li><a id="sm-youtube" class="footer-sprite" href="http://www.youtube.com/yodle" target="_blank"></a></li>
+						<li><a id="sm-wiki" class="footer-sprite" href="http://en.wikipedia.org/wiki/Yodle,_Inc" target="_blank"></a></li>
+						<li><a id="sm-rss" class="footer-sprite" href="http://www.yodle.com/rss/" target="_blank"></a></li>
+					</ul>
 				</section>
 
 				<section class="main-col4 tablet-col3">

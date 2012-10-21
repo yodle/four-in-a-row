@@ -12,6 +12,9 @@
 .gutter-right {margin-left:0; margin-right:20px;}
 .no-gutter {margin-left:0; margin-right:0;}
 
+.alpha {margin-left:0;}
+.omega {margin-right:0;}
+
 /* Grid >> 12 Columns */
 .col1, .main-col1 { width:58px; }	
 .col2, .main-col2 { width:136px; }
