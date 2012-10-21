@@ -261,7 +261,7 @@ var GAME_UI = (function() {
 
 
     gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
-        humanPieceNum = data.humanPlayer;
+        humanPieceNum = data.challengerPlayer;
         var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
         var curPieceId = move.moves;
