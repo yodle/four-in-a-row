@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var baseGameServerUrl = "http://10.3.0.60:3000/game";
+    var baseGameServerUrl = "http://challenge.yodle.com:3000/game";
     var gameInitUrl = baseGameServerUrl + "/init";
     var moveUrl = baseGameServerUrl + "/move";
     var ROWS = 6;
@@ -15,6 +15,9 @@ $(document).ready(function() {
         }
     });
 
+    /**
+     * Sends a ajax GET request with jsonp
+     */
     var makeJsonpAjaxRequest = function(url, data, callback) {
         $.ajax({
             type: "GET",
@@ -27,7 +30,11 @@ $(document).ready(function() {
         });
     };
 
-    var animateHumanMoveAndSendToServer = function(data, column) {
+    /**
+     * Animates the move chosen by the challenger, 
+     * then sends the move to the server.
+     */
+    var animateChallengerMoveAndSendToServer = function(data, column) {
         moveArgsData = {
             move: column
         };
@@ -36,13 +43,13 @@ $(document).ready(function() {
         data.lastMove = { 
             row: targetRow, 
             col: column, 
-            player: data.humanPlayer, 
+            player: data.challengerPiece, 
             moves: data.moves + 1
         };
 
         var thisMoveAnimationFinished = function() {
             // Post move to server and expect json resonse in callback
-            var url = moveUrl + '/' + data._id;
+            var url = moveUrl + '/' + data.id;
             makeJsonpAjaxRequest(url, moveArgsData, gameResponseCallback);
         }
 
@@ -52,7 +59,7 @@ $(document).ready(function() {
 
     var makeNextMove = function(data, manuallyChosenMove) {
         if (data.error || data.gameOver) { 
-            var didWeWin = (data.error == undefined) && (data.humanPlayer == data.gameOver);
+            var didWeWin = (data.error == undefined) && (data.challengerPiece == data.gameOver);
             // Game is over.
             var msg = "";
             if (data.error != undefined) {
@@ -91,23 +98,23 @@ $(document).ready(function() {
                 }
             }
 
-            animateHumanMoveAndSendToServer(data, moveColumn);
+            animateChallengerMoveAndSendToServer(data, moveColumn);
         }
     };
 
     /**
-     * Callback from the server when it finish processing out move/init.
+     * Callback from the server when it finish processing move/init requests.
      */
     var gameResponseCallback = function(data) {
         var isGameOver = (data.error || data.gameOver);
 
-        if (!data.error && data.lastMove && data.gameOver != data.humanPlayer) {
+        if (!data.error && data.lastMove && data.gameOver != data.challengerPiece) {
             // Update game UI with last move
             GAME_UI.dropPiece(
                     data, 
                     makeNextMove, 
                     isPlayingManually
-                    );
+                );
         }
         else {
             if (isPlayingManually && !isGameOver) {
@@ -120,10 +127,14 @@ $(document).ready(function() {
     };
 
 
-    /**
-     * User sumbits form to start game
-     */
-    $("#inputCode").on("submit", function() {
+    var resetGameBoardUi = function() {
+        GAME_UI.initBoard(ROWS, COLS);
+        GAME_UI.resetBoard();
+        GAME_UI.startGame();
+    }
+
+
+    var processInputAndStartGame = function() {
         // Keep track of game in progress to prevent overlapping games being triggered
         if (isGameInProgress) {
             return false;
@@ -131,9 +142,6 @@ $(document).ready(function() {
         else {
             isGameInProgress = true;
         }
-
-        /* Difficulty chosen */
-        var difficulty = $("#difficultySelect option:selected").val();
 
         isPlayingManually = $("#playManuallyCheck").is(":checked");
 
@@ -147,8 +155,6 @@ $(document).ready(function() {
             catch (error) {
                 var msg = error.name + " occurred evaluating input code, error message: " + error.message;
                 endGame(msg, false);
-                // don't init game or submit form
-                return false;
             }
         }
 
@@ -158,14 +164,20 @@ $(document).ready(function() {
             isPlayingManually: isPlayingManually
         };
 
-        // Init game board
-        GAME_UI.initBoard(ROWS, COLS);
-        GAME_UI.resetBoard();
-        GAME_UI.startGame();
+        resetGameBoardUi();
+
+        var difficulty = $("#difficultySelect option:selected").val();
 
         // Post to the server to start the game, and expect json response to callback
         var url = gameInitUrl + '/' + difficulty;
         makeJsonpAjaxRequest(url, gameInitData, gameResponseCallback);
+    }
+
+    /**
+     * User sumbits form to start game
+     */
+    $("#inputCode").on("submit", function() {
+        processInputAndStartGame();
 
         // All logic is done already, don't submit to this page...
         return false;
@@ -197,9 +209,7 @@ $(document).ready(function() {
 
     // Initialize the game ui 
     GAME_UI.init();
-    GAME_UI.initBoard(ROWS, COLS);
-    GAME_UI.resetBoard();
-    GAME_UI.startGame();
+    resetGameBoardUi();
 
     // Ace
     var editor = ace.edit("editor");
