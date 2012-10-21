@@ -7,11 +7,25 @@ $(document).ready(function() {
     var isPlayingManually;
     var isGameInProgress = false;
     var aiObject;
+   
+    /**
+     * From: http://www.jquery4u.com/snippets/url-parameters-jquery
+     */
+    $.urlParam = function(name){
+        var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results != null) { 
+            return results[1] || null;
+        }
+        else {
+            return null;
+        }
+    }
 
-    /* Mobile Glboal Nav */
+    /* Mobile Global Nav */
     $("#mGlobalNav select").on("change", function() {
         if ($(this).val() != "") {
             window.location.href = $(this).val();
+
         }
     });
 
@@ -31,15 +45,24 @@ $(document).ready(function() {
     };
 
     /**
-     * Animates the move chosen by the challenger, 
-     * then sends the move to the server.
+     * Sends move to server
      */
-    var animateChallengerMoveAndSendToServer = function(data, column) {
+    var sendMoveToServer = function(data) {
         moveArgsData = {
-            move: column
+            move: data.lastMove.col
         };
 
+        // Post move to server and expect json resonse in callback
+        var url = moveUrl + '/' + data.id;
+        makeJsonpAjaxRequest(url, moveArgsData, gameResponseCallback);
+    }
+
+    /**
+     * Animates the move chosen by the challenger, 
+     */
+    var animateChallengerMove = function(data, column, callback) {
         targetRow = exports.highestFilledRow(data.board, column) - 1;
+
         data.lastMove = { 
             row: targetRow, 
             col: column, 
@@ -47,20 +70,18 @@ $(document).ready(function() {
             moves: data.moves + 1
         };
 
-        var thisMoveAnimationFinished = function() {
-            // Post move to server and expect json resonse in callback
-            var url = moveUrl + '/' + data.id;
-            makeJsonpAjaxRequest(url, moveArgsData, gameResponseCallback);
-        }
-
         // Update game UI with last our move
-        GAME_UI.dropPiece(data, thisMoveAnimationFinished);
+        GAME_UI.dropPiece(data, sendMoveToServer);
     };
 
+    /**
+     * Make the next move for the local player
+     */
     var makeNextMove = function(data, manuallyChosenMove) {
-        if (data.error || data.gameOver) { 
-            var didWeWin = (data.error == undefined) && (data.challengerPlayer == data.gameOver);
+        if (data.error || data.gameOver != 0) { 
             // Game is over.
+            var didWeWin = (data.error == undefined) && (data.challengerPlayer == data.gameOver);
+            
             var msg = "";
             if (data.error != undefined) {
                 msg = data.error;
@@ -98,7 +119,7 @@ $(document).ready(function() {
                 }
             }
 
-            animateChallengerMoveAndSendToServer(data, moveColumn);
+            animateChallengerMove(data, moveColumn, sendMoveToServer);
         }
     };
 
@@ -106,7 +127,7 @@ $(document).ready(function() {
      * Callback from the server when it finish processing move/init requests.
      */
     var gameResponseCallback = function(data) {
-        var isGameOver = (data.error || data.gameOver);
+        var isGameOver = (data.error || data.gameOver != 0);
 
         if (!data.error && data.lastMove && data.gameOver != data.challengerPlayer) {
             // Update game UI with last move
@@ -131,7 +152,7 @@ $(document).ready(function() {
         GAME_UI.initBoard(ROWS, COLS);
         GAME_UI.resetBoard();
         GAME_UI.startGame();
-    }
+    };
 
 
     var processInputAndStartGame = function() {
