@@ -10,19 +10,14 @@ var GAME_UI = (function() {
     var humanPieceNum = 2;
 
     var $board = $('#board');
-    //ui constants
-    //var HEIGHT = $board.height();
-    //var WIDTH = $board.width();
 
-    var spriteWidth;// = WIDTH / 7;
-    var spriteHeight; // = HEIGHT / 6;
+    var spriteWidth;
+    var spriteHeight;
     var boardHeight;
     var squareSize;
 
     var REFRESH_RATE = 30;
     var pieceAcceleration = 0.02; // px/ms^2
-
-
 
     var baseImageUrl = "assets/images/game";
     var emptyPngPath = baseImageUrl + "/empty.png";
@@ -59,7 +54,7 @@ var GAME_UI = (function() {
         }
     };
 
-    var dropSprite = function(currentSprite, move, data, callback, isPlayingManually) {
+    var dropSprite = function(currentSprite, move, data, callback, isPlayingManually, dropFinishedCallback) {
         currentSprite.css({ 'background-size' : '100%' } );
 
         var animStart = new Date().getTime();
@@ -96,24 +91,23 @@ var GAME_UI = (function() {
             }
             else {
                 currentSprite.css("top", bottomOfCol);
-                var animEnd = (new Date().getTime() - animStart);
-                if (isPlayingManually && !data.gameOver) {
+
+                if (dropFinishedCallback) {
+                    dropFinishedCallback();
+                }
+
+                if (isPlayingManually && data.gameOver == 0) {
                     lastData = data;
                     uiFinishedCallback = callback;
                 }
                 else if (callback) {
                     callback(data);
                 }
-
-                console.log("animation finished in: " + animEnd + "ms, final velocity: " + posAndVelocity.velocity + ", avgMove: " + average(posdiffs).mean + ", avgDt: " + average(dts).mean + ", steps: " + dts.length);
                 return true;
             }
 
         }, REFRESH_RATE);
     };
-
-
-
 
     gameUiObj = {};
     gameUiObj.playerAiPngPath = playerAiPngPath;
@@ -122,13 +116,12 @@ var GAME_UI = (function() {
     gameUiObj.waitForManualMove = function(data, callback) {
         lastData = data;
         uiFinishedCallback = callback;
-    }
+    };
 
     gameUiObj.initBoard = function(rows, cols) {
         this.rows = rows;
         this.cols = cols;
     };
-
 
     gameUiObj.hasSizeChanged = function(currentWindowWidth) {
         if (currentWindowWidth < 479) {
@@ -242,7 +235,7 @@ var GAME_UI = (function() {
         for (var i = 0; i < winMoves.length; i++) {
             gameUiObj.highlightWinMove(winMoves[i]);
         }
-    }
+    };
 
     gameUiObj.highlightWinMove = function(move, data) {
         var piece = ui.winPiece;
@@ -257,11 +250,11 @@ var GAME_UI = (function() {
 
         var currentSprite = $("#"+moveId);
         dropSprite(currentSprite, move, data);
-    }
+    };
 
 
-    gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
-        humanPieceNum = data.humanPlayer;
+    gameUiObj.dropPiece = function(data, callback, isPlayingManually, dropFinishedCallback) {
+        humanPieceNum = data.challengerPlayer;
         var move = data.lastMove;
         var piece = pieceForPlayer(move.player);
         var curPieceId = move.moves;
@@ -274,7 +267,7 @@ var GAME_UI = (function() {
             posy: -spriteHeight 
         });
         var currentSprite = $("#"+moveId);
-        dropSprite(currentSprite, move, data, callback, isPlayingManually);
+        dropSprite(currentSprite, move, data, callback, isPlayingManually, dropFinishedCallback);
     };
 
 

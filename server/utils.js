@@ -1,9 +1,10 @@
+"use strict";
 
 var Players = {
     EMPTY: 0,
     P1: 1,
     P2: 2
-}    
+};
 exports.Players = Players;
 
 var check = function(row, col, board, test, accumulator) {
@@ -14,7 +15,7 @@ var check = function(row, col, board, test, accumulator) {
     
 var checker = {
     cols: function(row, col, board, checkBoard) {
-        if(row == 0) { return 1; }
+        if(row === 0) { return 1; }
         
         var test = function(row, col) { return board[col][row] == board[col][row-1]; };
         var accumulator = function(row, col) { return checkBoard[col][row-1].cols + 1; };
@@ -22,7 +23,7 @@ var checker = {
         return check(row, col, board, test, accumulator);
     },
     rows: function(row, col, board, checkBoard) {
-        if(col == 0) { return 1; }
+        if(col === 0) { return 1; }
         
         var test = function(row, col) { return board[col][row] == board[col-1][row]; };
         var accumulator = function(row, col) { return checkBoard[col-1][row].rows + 1; };
@@ -30,7 +31,7 @@ var checker = {
         return check(row, col, board, test, accumulator);
     },
     diag_lr: function(row, col, board, checkBoard) {
-        if(col == 0 || row == 0) { return 1; }
+        if(col === 0 || row === 0) { return 1; }
         
         var test = function(row, col) { return board[col][row] == board[col-1][row-1]; };
         var accumulator = function(row, col) { return checkBoard[col-1][row-1].diag_lr + 1; };
@@ -38,7 +39,7 @@ var checker = {
     },
     diag_rl: function(row, col, board, checkBoard) {
         var rows = board[0].length;
-        if(col == 0 || row == rows-1) { return 1; }
+        if(col === 0 || row === rows-1) { return 1; }
         
         var test = function(row, col) { return board[col][row] == board[col-1][row+1]; };
         var accumulator = function(row, col) { return checkBoard[col-1][row+1].diag_rl + 1; };
@@ -68,9 +69,9 @@ exports.highestFilledRow = highestFilledRow;
 
 var isLegalMove = function(board, col) {
     if(board === undefined || 
-       board.length == 0 || 
+       board.length === 0 || 
        board[col] === undefined ||
-       board[col].length == 0) 
+       board[col].length === 0) 
     { return false; }
     return highestFilledRow(board, col) > 0;
 };
@@ -117,7 +118,7 @@ exports.checkWin = function(board) {
         }
     }
             
-    if(findLegalMoves(board).length == 0) {
+    if(findLegalMoves(board).length === 0) {
         return 'tie';
     }
     

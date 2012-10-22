@@ -27,8 +27,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	
 	<!-- Modernizr -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
 
 	<!--  ace editor -->
@@ -77,6 +75,10 @@
 				</header>
 				<!-- Main Content -->
 				<div class="main-col8 tablet-col6 clearfix border-right">
+					<div id="gameStatus" class="statusMessage">
+						<strong id="gameStatusHeader">Welcome! Press 'Run' to start game.</strong>
+						<p id="gameStatusContent"></p>
+					</div>
 					<section id="game-board" class="module mediablock">
 						<div id="board" class="clearfix;"></div>
 					</section>
@@ -121,19 +123,18 @@
 						</div>
 						<div class="play-legend">
 							<h3>Legend</h3>
-							<div class="your-piece"><span class="piece"></span>= You</div>
-							<div class="ai-piece"><span class="piece"></span>= AI</div>
+							<div class="your-piece"><span class="piece"></span>= Challenger</div>
+							<div class="ai-piece"><span class="piece"></span>= Yodle</div>
 						</div>
 					</section>
 				</aside>
 				<!-- End Sidebar -->
 
-			</div> <!-- End container 12 -->
-
-			<div class="container_12 clearfix">
-				<h2>Input Code</h2>
-				<!-- Code editor -->
-				<div id="editor"></div>
+				<div class="main-col12 tablet-col9">
+					<h2>Input Code</h2>
+					<!-- Code editor -->
+					<div id="editor"></div>
+				</div>
 			</div>
 		</div><!-- End #container -->
 	</div><!-- End #content -->
@@ -210,6 +211,10 @@
 		</div>
 	</div>
 </div>
+
+<!-- jQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 
 <!-- Javascript -->
 <script src="assets/js/jquery.gamequery-0.7.0.js"></script>

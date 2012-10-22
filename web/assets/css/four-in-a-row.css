@@ -23,7 +23,7 @@ a.block:hover {color:#464646; text-decoration: none;}
 	a.block:hover h2 {text-decoration: underline;}
 	
 
-h1, h2, h3, h4, h5, h6{ font-weight: normal; }
+h1, h2, h3, h4, h5, h6{ font-weight: normal; clear:both; }
 
 p {margin-bottom:12px; line-height:20px;}
 
@@ -44,6 +44,7 @@ textarea {resize:none; line-height:20px;}
 .left {float:left;}
 .center {margin-left:auto; margin-right:auto; float:none;}
 .right {float:right;}
+.clear-both {clear:both;}
 
 .hidden {display:none;}
 
@@ -174,6 +175,12 @@ header.main {background:#f0f0f0; padding:20px 0 25px; margin-bottom:20px; border
 	.c-icon.ex-link {font-size:.8em;}
 	.c-icon.ex-link:hover {text-decoration: none;}
 
+.example {background: none repeat scroll 0 0 #F3F3F3; margin-bottom: 20px; padding: 10px; }
+	.example ul {padding-bottom: 5px;}
+	.example > strong:first-child {display: block; margin-bottom: 3px;}
+	.example p {margin-bottom: 6px;}
+	.example p:last-child {margin-bottom: 0;}
+
 /*=== Sidebar ===*/
 aside section {border-bottom:1px solid #dfdfdf; }
 	aside section:last-child {border:0;}
@@ -190,7 +197,7 @@ aside section {border-bottom:1px solid #dfdfdf; }
 	#keys-values dt, 
 	#keys-values dd {line-height: 1.3em; margin-bottom:6px; }
 	#keys-values dt {float:left; font-weight:bold; width:20%; clear:left;}
-	#keys-values dd {float:left; display: block; width: 80%;}
+	#keys-values dd {float:left; display: block; width: 80%; margin-bottom:12px;}
 
 /*=== Play Legend ===*/
 .play-legend {padding:10px; background:#eeeeee; border:1px solid #d5d5d5; margin:15px 0 10px;}
@@ -203,14 +210,20 @@ aside section {border-bottom:1px solid #dfdfdf; }
 #gameStatusModal {background:#ECECEC;}
 
 /*=== Status Messages ===*/
-.statusMessage {border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; padding:10px 10px 10px 50px; line-height:1; background: #ececec; border:1px solid #b9b9b9; color:#888;}
+.statusMessage {border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; padding:10px; line-height:1; background: #ececec; border:1px solid #b9b9b9; color:#888;}
 	.statusMessage strong {font-family: 'OpenSansBold', arial black; font-size:16px; color:#464646; font-weight:normal; margin-bottom:4px; display:block;}
 	.statusMessage p {margin:0; padding:0; color:#464646; line-height:1.3; font-size:12px; margin-bottom:6px;}
 	.statusMessage p strong {font-family:arial; font-size:inherit; font-weight:bold; margin:0; display:inline;}
 
+	.statusMessage.success,
+	.statusMessage.alert,
+	.statusMessage.error {padding:10px 10px 10px 50px;}
+
 	.statusMessage.success {background: url('../images/icon-success.png') no-repeat 12px 10px #f0f4e6; border:1px solid #7bb111; -moz-box-shadow:0 0 2px #b0d861 inset; -webkit-box-shadow:0 0 2px #b0d861 inset; box-shadow:0 0 2px #b0d861 inset; }
 	.statusMessage.alert {background: url('../images/icon-alert.png') no-repeat 12px 10px #fff8be; border:1px solid #d2c23a; }
 	.statusMessage.error {background: url('../images/icon-error.png') no-repeat 12px 10px #fde7e4; border:1px solid #b9301d; }
+
+	.statusMessage#gameStatus {margin-bottom:10px;}
 
 /*=== Buttons ===*/
 	.button {padding:10px 20px; font-size:18px; line-height:18px; color:#fff; font-family: 'OpenSansBold'; text-align: center; display:inline; border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; cursor: pointer; position: relative; box-shadow: 0 0 5px #999; box-shadow: 0 0 4px rgba(40, 40, 40, .4); -webkit-box-shadow: 0 0 4px rgba(40, 40, 40, .4); -moz-box-shadow: 0 0 4px rgba(40, 40, 40, .4); float:left; margin-bottom:15px; 
@@ -237,6 +250,7 @@ aside section {border-bottom:1px solid #dfdfdf; }
 			background: linear-gradient(to bottom,  #ea7954 0%,#ce4e27 8%,#a0330b 92%,#843307 100%);
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ea7954', endColorstr='#843307',GradientType=0 );
 			}
+		.button:active {background: #a0330b;}
 		
 	/* Button Fix */
 	button.button, input.button {height:40px; line-height:38px; padding:0 20px;}
@@ -328,7 +342,10 @@ button.button, input.button {}
 
 /* Desktop + */
 @media only screen and (min-width: 971px) {
-
+	#gameStatus {width:574px;}
+	#gameStatus.error,
+	#gameStatus.alert,
+	#gameStatus.success {width:534px;}
 }
 
 /* Smaller than standard 960 (devices and browsers) */
@@ -344,6 +361,10 @@ button.button, input.button {}
 	/* Footer */
 	footer#mainFooter .wrapper {height:259px; margin-bottom:70px;}
 	#footer section {min-height:230px;}
+
+	/*=== Keys Values ===*/
+	#keys-values dt {width:26%;}
+	#keys-values dd {width:74%;}
 
 }
 
@@ -392,6 +413,10 @@ button.button, input.button {}
 	
 	/* Footer */
 	#copyright .text {width:320px;}
+
+	/*=== Keys Values ===*/
+	#keys-values dt {width:30%;}
+	#keys-values dd {width:70%;}
 }
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
@@ -410,7 +435,9 @@ button.button, input.button {}
 	footer #footer .container_12 section li {width:100%;}
 	#copyright .text {width:170px;}
 
-
+	/*=== Keys Values ===*/
+	#keys-values dt {width:40%;}
+	#keys-values dd {width:60%;}
 }
 
 div #editor { 
