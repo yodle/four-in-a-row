@@ -23,7 +23,8 @@ var GAME_UI = (function() {
     var emptyPngPath = baseImageUrl + "/empty.png";
     var playerAiPngPath = baseImageUrl + "/playerAi.png";
     var playerHumanPngPath = baseImageUrl + "/playerHuman.png";
-    var winPiecePngPath = baseImageUrl + "/winning.png";
+    var winPiecePngPathHuman = baseImageUrl + "/winningHuman.png";
+    var winPiecePngPathAi = baseImageUrl + "/winningAi.png";
 
     var uiFinishedCallback = null;
     var lastData = null;
@@ -53,6 +54,19 @@ var GAME_UI = (function() {
             return ui.aiPiece;
         }
     };
+
+     /*
+     * return the sprite for piece for <player>
+     */
+    var winningPieceForPlayer = function(player) {
+        if (player == humanPieceNum) {
+            return ui.winPieceHuman;
+        }
+        else {
+            return ui.winPieceAi;
+        }
+    };
+
 
     var dropSprite = function(currentSprite, move, data, callback, isPlayingManually) {
         currentSprite.css({ 'background-size' : '100%' } );
@@ -229,12 +243,12 @@ var GAME_UI = (function() {
         }
 
         for (var i = 0; i < winMoves.length; i++) {
-            gameUiObj.highlightWinMove(winMoves[i]);
+            gameUiObj.highlightWinMove(winMoves[i], data.gameOver);
         }
     };
 
-    gameUiObj.highlightWinMove = function(move, data) {
-        var piece = ui.winPiece;
+    gameUiObj.highlightWinMove = function(move, winPlayerNum) {
+        var piece = winningPieceForPlayer(winPlayerNum);
         var moveId = "win-" + move.row + "x" + move.col;
         var sprite = ui.pieceLayer.addSprite(moveId, {
             animation: piece,
@@ -245,7 +259,7 @@ var GAME_UI = (function() {
         });
 
         var currentSprite = $("#"+moveId);
-        dropSprite(currentSprite, move, data);
+        dropSprite(currentSprite, move);
     };
 
 
@@ -286,7 +300,13 @@ var GAME_UI = (function() {
             offsetx: 0,
             offsety: 0});
 
-        ui.winPiece = new $.gameQuery.Animation({ imageURL: winPiecePngPath,
+        ui.winPieceAi = new $.gameQuery.Animation({ imageURL: winPiecePngPathAi,
+            numberOfFrame: 1,
+            type: $.gameQuery.ANIMATION_ONCE,
+            offsetx: 0,
+            offsety: 0});
+
+        ui.winPieceHuman = new $.gameQuery.Animation({ imageURL: winPiecePngPathHuman,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
