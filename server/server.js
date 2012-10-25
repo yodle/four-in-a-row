@@ -7,7 +7,7 @@ var express = require('express');
 var app = module.exports = express.createServer();
 var http = require('http');
 var mongo = require('mongodb');
-var db = new mongo.Db('four-in-a-row', new mongo.Server('four-in-a-row.corp.yodle.com', 27017, {auto_reconnect: true}), {});
+var db = new mongo.Db('four-in-a-row', new mongo.Server('x4.corp.yodle.com', 27017, {auto_reconnect: true}), {});
 
 var gamedb = require('./gamedb');
 var messagesdb = require('./aidb');
@@ -21,12 +21,12 @@ var COLS = 7;
 var PORT = 3000;
 
 var ais = {
-    1: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/random'},
-    2: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/twostep'},
-    3: {url:'http://four-in-a-row.corp.yodle.com:3004/opening'},
-    4: {url:'http://four-in-a-row.corp.yodle.com:3003/minimax'},
-    5: {url:'http://four-in-a-row.corp.yodle.com:3002/game'},
-    6: {url:'http://four-in-a-row.corp.yodle.com:3001/ai/twostep'}
+    1: {url:'http://x4.corp.yodle.com:3001/ai/random'},
+    2: {url:'http://x4.corp.yodle.com:3001/ai/twostep'},
+    3: {url:'http://x4.corp.yodle.com:3004/opening'},
+    4: {url:'http://x4.corp.yodle.com:3003/minimax'},
+    5: {url:'http://x4.corp.yodle.com:3002/game'},
+    6: {url:'http://x4.corp.yodle.com:3001/ai/twostep'}
 };
 
 // Initialization
