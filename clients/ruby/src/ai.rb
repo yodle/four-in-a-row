@@ -1,5 +1,5 @@
 class AI
-  def self.makeMove (board)
+  def makeMove (board)
     puts board.to_s
     puts
     finalMoves = board.getLegalMoves

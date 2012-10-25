@@ -1,47 +1,74 @@
-require 'net/http'
+require 'c4-net-utils'
 
 require 'ai'
 require 'board'
 
-require 'rubygems'
-require 'json'
-require 'pp'
-
 class C4Client
-  def self.start
-    game = JSON.parse(self.connect());
-    gameId = game['_id']    
-    while (not game['gameOver'])
-      board = Board.new(game['board'])
-      
-      move = AI.makeMove(board)
-      begin
-        uri = URI.parse("http://localhost:3000/game/move/#{gameId}")
-        res = Net::HTTP.post_form(uri, 'move' => move)
-        game = JSON.parse(res.body)
-        error = game['error'];
-        if (not error.nil?)
-          puts error
-        end
-      rescue Exception => e
-        puts 'There was an error connecting to the server: '
-        puts e.message
-        return
-      end
+  @@GAME_HOST = 'challenge.yodle.com:3000'
+  
+  @netUtils = C4NetUtils.new()
+  @ai = AI.new()
+
+  def start(level, nickname)
+    game = self.connect(level, nickname);
+    if (!!game)
+      self.playGame(game);
     end
-    board = Board.new(game['board'])
-    puts board
   end
 
-private
-  def self.connect
-    begin
-      uri = URI.parse('http://localhost:3000/game/init/3')
-      res = Net::HTTP.post_form(uri, 'nickname' => 'peterpeterpumpkineater', 'scaffold' => 'ruby')
-      res.body
-    rescue Exception => e
-      puts 'There was an error connecting to the server: '
-      puts e.message
+  def game_host
+    return @@GAME_HOST
+  end
+
+  def netUtils=utils
+    @netUtils = utils
+  end
+
+  def ai=ai
+    @ai = ai
+  end
+
+
+  def playGame(game)
+    p game
+    while (game['gameOver'] == 0)
+      game = self.makeMove(game);
     end
+
+    if (not game['board'].nil?)
+      board = Board.new(game['board'], '1')
+      puts 'Final State:'
+      puts board
+    else
+      puts game['error']
+    end
+  end
+
+  def makeMove(game)
+    gameId = game['id']
+    board = Board.new(game['board'], game['humanPlayer'])
+
+    move = @ai.makeMove(board)
+    puts "Making move in column #{move}"
+    game = @netUtils.getGameState("/game/move/#{gameId}", {:move => move})
+
+    p game
+
+    error = game['error'];
+    if (not error.nil?)
+      puts error
+    end
+
+    return game
+  end
+
+  def connect(level, nickname)
+    uriString = "http://#{@@GAME_HOST}/game/init/#{level}";
+    puts "Connecting to #{uriString} ..."
+
+    result = @netUtils.getGameState("/game/init/#{level}", {:nickname => nickname})    
+
+    puts 'Connected to server.'
+    return result
   end
 end

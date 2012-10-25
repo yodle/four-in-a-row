@@ -1,5 +1,5 @@
 class Board
-  def initialize(board)
+  def initialize(board, me)
     @width = board.length;
     @height = board[0].length;
     @grid = board;

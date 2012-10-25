@@ -1,0 +1,2 @@
+#!/bin/sh
+ruby -rubygems -I 'src' src/c4-start.rb "$@"
