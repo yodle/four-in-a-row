@@ -24,8 +24,19 @@ $(document).ready(function() {
     /**
      * Updates the header of the status box
      */
-    var setGameStatusHeader = function(headerMsg) {
-        $('#gameStatusHeader').html(headerMsg);
+    var setGameStatusHeader = function(headerMsg, status) {
+        $statusHeader = $('#gameStatusHeader');
+        $statusHeaderWrap = $statusHeader.parents('.statusMessage');
+
+        $statusHeader.html(headerMsg);
+        
+        if (status === 'lost') {
+            $statusHeaderWrap.removeClass('success').addClass('error');
+        } else if (status === 'won'){
+            $statusHeaderWrap.removeClass('error').addClass('success');
+        } else {
+            $statusHeaderWrap.removeClass('error').removeClass('success');
+        }
     }
 
     /**
@@ -241,18 +252,19 @@ $(document).ready(function() {
      */
     var endGame = function(message, didWeWin) {
         if (didWeWin) {
-            setGameStatusHeader("Game Over. Challenger won!");
+            setGameStatusHeader("Challenger wins!", "won");
+
         }
         else {
-            setGameStatusHeader("Game Over. Challenger lost.");
+            
+            setGameStatusHeader("Game Over. Challenger lost.", "lost");
+            
         }
 
         setGameStatusContent(message);
 
         isGameInProgress = false;
 
-        /* Open Lightbox */
-        yodle.ui.lightbox.open('#gameStatusModal');
 
         /* Add text to modal body */
         $("#gameStatusModal .statusMessage strong").first().html(message);

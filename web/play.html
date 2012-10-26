@@ -18,10 +18,13 @@
 	<link rel="stylesheet" href="assets/css/reset-end.css">
 
 	<!-- Includes -->
+	<link rel="stylesheet" href="assets/yodle/ui/formfields/formfields.css">
 	<link rel="stylesheet" href="assets/yodle/ui/modal/modal.css">
 
 	<!-- Fonts -->
-	<link rel="stylesheet" href="http://c326906.r6.cf1.rackcdn.com/custom-fonts-cdn.css">
+	<link rel="stylesheet" href="assets/fonts/icons.css">
+	<link rel="stylesheet" href="assets/fonts/open-sans.css">
+	<link rel="stylesheet" href="assets/fonts/museo-slab.css">
 	
 	<!-- Mobile viewport optimized -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -76,7 +79,7 @@
 				<!-- Main Content -->
 				<div class="main-col8 tablet-col6 clearfix border-right">
 					<div id="gameStatus" class="statusMessage">
-						<strong id="gameStatusHeader">Welcome! Press 'Run' to start game.</strong>
+						<strong id="gameStatusHeader">Press 'Run' to start game.</strong>
 						<p id="gameStatusContent"></p>
 					</div>
 					<section id="game-board" class="module mediablock">
@@ -222,9 +225,17 @@
 <script src="assets/js/game-utils.js"></script>
 <script src="assets/js/four-in-a-row.js"></script>
 
-<!-- Yodle Modal -->
+<!-- Yodle JS Includes -->
 <script src="assets/yodle/ui/modal/modal.js"></script>
 <script src="assets/yodle/ui/lightbox/lightbox.js"></script>
+<script src="assets/yodle/ui/formfields/formfields.js"></script>
+<script src="assets/yodle/ui/formfields/select-dropdown.js"></script>
+
+<script>
+	$(document).ready(function(){
+		yodle.ui.formfields.format('#inputCode');
+	});
+</script>
 
 </body>
 </html>
