@@ -1,46 +1,51 @@
+require 'c4-log-utils'
 require 'c4-net-utils'
-
 require 'ai'
 require 'board'
 
 class C4Client
-  @@GAME_HOST = 'challenge.yodle.com:3000'
-  
-  @netUtils = C4NetUtils.new()
-  @ai = AI.new()
+  def initialize (options)
+    @logger = C4LogUtils.logger
 
-  def start(level, nickname)
-    game = self.connect(level, nickname);
+    @netUtils = C4NetUtils.new(options[:server])
+    @ai = AI.new()
+
+    @level = options[:level]
+    @nickname = options[:nickname]
+    @server = options[:server]
+  end
+
+  def start()
+    game = connect();
     if (!!game)
       self.playGame(game);
     end
   end
 
   def game_host
-    return @@GAME_HOST
+    return @server
   end
 
-  def netUtils=utils
+  def netUtils=(utils)
     @netUtils = utils
   end
 
-  def ai=ai
+  def ai=(ai)
     @ai = ai
   end
 
 
   def playGame(game)
-    p game
     while (game['gameOver'] == 0)
       game = self.makeMove(game);
     end
 
     if (not game['board'].nil?)
       board = Board.new(game['board'], '1')
-      puts 'Final State:'
-      puts board
+      @logger.info('Final State:')
+      @logger.info(board)
     else
-      puts game['error']
+      @logger.error(game['error'])
     end
   end
 
@@ -49,26 +54,24 @@ class C4Client
     board = Board.new(game['board'], game['humanPlayer'])
 
     move = @ai.makeMove(board)
-    puts "Making move in column #{move}"
+    @logger.info("Making move in column #{move}")
     game = @netUtils.getGameState("/game/move/#{gameId}", {:move => move})
-
-    p game
 
     error = game['error'];
     if (not error.nil?)
-      puts error
+      @logger.error(error)
     end
 
     return game
   end
 
-  def connect(level, nickname)
-    uriString = "http://#{@@GAME_HOST}/game/init/#{level}";
-    puts "Connecting to #{uriString} ..."
+  def connect
+    @logger.info("Starting game.")
+    @logger.info("Connecting to server...")
 
-    result = @netUtils.getGameState("/game/init/#{level}", {:nickname => nickname})    
+    result = @netUtils.getGameState("/game/init/#{@level}", {:nickname => @nickname})    
 
-    puts 'Connected to server.'
+    @logger.info('Connected to server.')
     return result
   end
 end

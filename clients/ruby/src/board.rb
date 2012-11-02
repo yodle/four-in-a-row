@@ -24,7 +24,6 @@ class Board
     @grid[col][row];
   end
   
-
   def iWin?
     @iWin
   end
@@ -61,7 +60,7 @@ class Board
   end
 
   def to_s 
-    s = "";
+    s = "\n";
     for r in 0...@height do
       for c in 0...@width do
         s += @grid[c][r].to_s + ' ';

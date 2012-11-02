@@ -10,7 +10,8 @@ class C4NetUtilsTest < Test::Unit::TestCase
 
   @netUtils
   def setup
-    @netUtils = C4NetUtils.new()
+    @server = 'this.server.com'
+    @netUtils = C4NetUtils.new(@server)
 
     @http_mock = mock('Net::HTTPResponse')
     @http_mock.stubs(

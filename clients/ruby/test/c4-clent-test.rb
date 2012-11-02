@@ -11,10 +11,16 @@ class C4ClientTest < Test::Unit::TestCase
 
   # mocked dependencies
   def setup
-    @netUtils = C4NetUtils.new()
+    @options = {
+      :level => 1, 
+      :nickname => 'nickname',
+      :server => 'challenge.yodle.com:3000'
+    }
+
+    @netUtils = C4NetUtils.new(@options[:server])
     @ai = AI.new()
 
-    @client = C4Client.new()
+    @client = C4Client.new(@options)
     @client.netUtils = @netUtils
     @client.ai = @ai;
 
@@ -33,16 +39,20 @@ class C4ClientTest < Test::Unit::TestCase
     }.to_json)
   end
 
+  def test_givenServer_initialize_setsUpNetUtilsCorrectly
+    
+  end
+
   def test_givenLevel_startGame_postsWithLevel
     @netUtils.stubs(:getGameState).with('/game/init/1', anything).returns(@game)
 
-    assert_not_nil(@client.connect(1, 'nickname'))
+    assert_not_nil(@client.connect())
   end
 
   def test_givenNickname_startGame_postsWithNickname
     @netUtils.stubs(:getGameState).with(anything, {:nickname => 'nickname'}).returns(@game)
 
-    assert_not_nil(@client.connect(1, 'nickname'))
+    assert_not_nil(@client.connect())
   end
 
   def test_givenGameId_makeMove_postsWithCorrectId

@@ -1,15 +1,29 @@
+require 'c4-log-utils'
+require 'logger'
 require 'net/http'
 
 require 'json'
 
 class C4NetUtils
-  @@GAME_HOST = 'challenge.yodle.com:3000'
+  def initialize(server)
+    @logger = C4LogUtils.logger
+
+    @server = server
+  end
 
   def getGameState(path, options={})
-    uri = URI.parse("http://#{@@GAME_HOST}#{path}")
+    uri = URI.parse("http://#{@server}#{path}")
+    @logger.debug("Posting to #{uri}")
 
     res = Net::HTTP.post_form(uri, options)
+
+    result = JSON.parse(res.body)
+    @logger.debug("Response: #{result.to_json}")
   
-    return JSON.parse(res.body)
+    return result
+  end
+
+  def server
+    @server
   end
 end
