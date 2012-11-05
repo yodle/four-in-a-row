@@ -1,9 +1,10 @@
 require 'c4-client'
 
+require 'c4-test-harness'
 require 'test/unit'
 require 'mocha'
 
-class C4ClientTest < Test::Unit::TestCase
+class C4ClientTest < C4TestHarness
   @client
 
   @netUtils
@@ -40,7 +41,7 @@ class C4ClientTest < Test::Unit::TestCase
   end
 
   def test_givenServer_initialize_setsUpNetUtilsCorrectly
-    
+
   end
 
   def test_givenLevel_startGame_postsWithLevel

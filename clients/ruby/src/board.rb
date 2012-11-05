@@ -15,6 +15,14 @@ class Board
   def height
     @height
   end
+
+  def me
+    @me
+  end
+
+  def opponent
+    @opp
+  end
   
   def set(col, row, player)
     @grid[col][row] = player;
