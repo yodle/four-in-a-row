@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Module dependencies.
  */
@@ -5,9 +7,10 @@ var express = require('express');
 var app = module.exports = express.createServer();
 var http = require('http');
 var mongo = require('mongodb');
-var db = new mongo.Db('mydb', new mongo.Server('localhost', 27017, {auto_reconnect: true}), {});
+var db = new mongo.Db('four-in-a-row', new mongo.Server('x4.corp.yodle.com', 27017, {auto_reconnect: true}), {});
 
 var gamedb = require('./gamedb');
+var messagesdb = require('./aidb');
 var game = require('./game');
 var computerplayer = require('./computer_player');
 var Utils = require('./utils');
@@ -18,13 +21,14 @@ var COLS = 7;
 var PORT = 3000;
 
 var ais = {
-    1: {url:'http://localhost:3001/ai/random'},
-    2: {url:'http://localhost:3001/ai/twostep'},
-    3: {url:'http://localhost:3001/ai/random'},
-    4: {url:'http://localhost:3001/ai/twostep'},
-    5: {url:'http://localhost:3001/ai/random'},
-    6: {url:'http://localhost:3001/ai/twostep'}
-}
+    1: {url:'http://x4.corp.yodle.com:3001/ai/random'},
+    2: {url:'http://x4.corp.yodle.com:3001/ai/twostep'},
+    3: {url:'http://x4.corp.yodle.com:3004/opening'},
+    4: {url:'http://x4.corp.yodle.com:3003/minimax'},
+    5: {url:'http://x4.corp.yodle.com:3002/game'},
+    6: {url:'http://x4.corp.yodle.com:3001/ai/twostep'}
+};
+
 // Initialization
 app.configure(function(){
     app.use(express.bodyParser());
@@ -46,9 +50,10 @@ app.configure('production', function(){
 app.use(express.bodyParser());
 
 db.open(function(err, client) { if (err) {throw err;} });
-gameDb = new gamedb.GameDb(db);
+var gameDb = new gamedb.GameDb(db);
+var messagesDb = new messagesdb.MessagesDb(db);
 
-makeJsonp = function(jsonp, body) {
+var makeJsonp = function(jsonp, body) {
     if(jsonp) {
         return jsonp + "(" + body + ")";
     }
@@ -57,32 +62,65 @@ makeJsonp = function(jsonp, body) {
     }
 };
 
-var errorResponse = function(error) {
+var errorResponse = function(error, gameSpec) {
     return JSON.stringify({'error': error});
-}
+};
+
+var choosePlayer = function() {
+    if(Math.random() < 0.5) {
+        return Utils.Players.P1;
+    }
+    else {
+        return Utils.Players.P2;
+    }
+};
 
 // Routes
 app.all('/game/init/:ailevel', function(req, res) {
-    var ai = parseInt(req.params.ailevel);
+    var aiLevel = parseInt(req.params.ailevel, 10);
     var nickname = req.body.nickname || req.query.nickname || 'anonymous';
+    var scaffold = req.body.scaffold || 'none';
+    var isPlayingManually = (req.query.isPlayingManually === "true") || false;
     var jsonp = req.query.jsonp;
 
-    if (isNaN(ai) || ai < 1 || ai > 6) {
+    if (isNaN(aiLevel) || aiLevel < 1 || aiLevel > 6) {
         res.end(makeJsonp(jsonp, errorResponse('ai level must be between 1 and 6, inclusive, with 1 being the easiest and 6 being the hardest')));
     }
     else
     {
-	var theGame = game.newGame(ROWS, COLS, Utils.Players.P1, nickname, ai); // TODO: WML: hard-coded P1
-	gameDb.init(
-	    theGame, 
-	    function(game){
-            res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
-	    }
-	);
+        var player = choosePlayer();
+        var theGame = game.newGame(ROWS, COLS, player, nickname, aiLevel, isPlayingManually);
+
+        if(player == Utils.Players.P2) { // AI moves first
+            var callback = function(result) {
+                if(result.success) {
+                    var moveResult = theGame.move(result.move);
+
+                    gameDb.init(
+                        theGame, 
+                        function(gameId){
+                            res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
+                        }
+                    );
+                }
+            };
+
+            var aiSpec = ais[aiLevel];
+            var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
+            ai.move('', theGame);
+        }
+        else { // Player moves first
+            gameDb.init(
+                theGame, 
+                function(game){
+                    res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
+                }
+            );
+        }
     }
 });
 
-function findGame(gameId, callback) {
+var findGame = function(gameId, callback) {
     gameDb.findGame(
         gameId,
         function(game) {
@@ -92,7 +130,6 @@ function findGame(gameId, callback) {
 };
 
 app.all('/game/move/:gameId', function(req, res) {
-
     var gameId = req.params.gameId;
     var move = req.body.move || req.query.move;
     var jsonp = req.query.jsonp;
@@ -113,7 +150,7 @@ app.all('/game/move/:gameId', function(req, res) {
             return;
         }
 
-        var aiSpec = ais[gameSpec.ai];
+        var aiSpec = ais[gameSpec.aiLevel];
         var callback = function(result) {
             if(result.success) {
                 var moveResult = gameSpec.move(result.move); // make the AI move
@@ -122,7 +159,17 @@ app.all('/game/move/:gameId', function(req, res) {
                     return;
                 }
                 gameDb.update(gameId, gameSpec, function(game) {
-                    res.end(makeJsonp(jsonp, JSON.stringify(game)));
+                    // AI wins!
+                    if (gameSpec.gameOver) { 
+                        ai.endGame(gameSpec);
+                        messagesDb.find(gameSpec.aiLevel, gameSpec.moves, false, gameSpec.isPlayingManually, function(result) {
+                            gameSpec.message = result.message;
+                            res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
+                        });
+                        return;
+                    } else {
+                        res.end(makeJsonp(jsonp, JSON.stringify(game)));
+                    }
                 });
             }
             else {
@@ -136,12 +183,16 @@ app.all('/game/move/:gameId', function(req, res) {
             //Player wins!
             gameDb.update(gameId, gameSpec, function(game) {
                 ai.endGame(gameSpec);
-                res.end(makeJsonp(jsonp, JSON.stringify(game)));
+                messagesDb.find(gameSpec.aiLevel, gameSpec.moves, true, gameSpec.isPlayingManually, function(result) {
+                    gameSpec.message = result.message;
+                    res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
+                });
+                return;
             });
-            return;
         }
-
-        ai.move('', gameSpec);
+        else {
+            ai.move('', gameSpec);
+        }
     });
 });
 

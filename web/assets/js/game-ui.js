@@ -7,191 +7,73 @@ $(window).resize(function() {
 var GAME_UI = (function() {
     //game constants
     var EMPTY = 0;
-    var P1 = 1;
-    var P2 = 2;
+    var humanPieceNum = 2;
 
-    var $board = $('#c4-board');
-    //ui constants
-    //var HEIGHT = $board.height();
-    //var WIDTH = $board.width();
+    var $board = $('#board');
 
-    var spriteWidth;// = WIDTH / 7;
-    var spriteHeight; // = HEIGHT / 6;
+    var spriteWidth;
+    var spriteHeight;
+    var boardHeight;
+    var squareSize;
 
     var REFRESH_RATE = 30;
     var pieceAcceleration = 0.02; // px/ms^2
 
-    var squareSize = 64;
+    var baseImageUrl = "assets/images/game";
+    var emptyPngPath = baseImageUrl + "/empty.png";
+    var playerAiPngPath = baseImageUrl + "/playerAi.png";
+    var playerHumanPngPath = baseImageUrl + "/playerHuman.png";
+    var winPiecePngPathHuman = baseImageUrl + "/winningHuman.png";
+    var winPiecePngPathAi = baseImageUrl + "/winningAi.png";
 
-
-	var baseImageUrl = "assets/images/game";
-	var emptyPngPath = baseImageUrl + "/empty.png";
-	var player1PngPath = baseImageUrl + "/player1.png";
-	var player2PngPath = baseImageUrl + "/player2.png";
-
-	var uiFinishedCallback = null;
-	var lastData = null;
-	var isWaitingForAnimation = false;
+    var uiFinishedCallback = null;
+    var lastData = null;
+    var isWaitingForAnimation = false;
 
     //ui state    
     var ui = {};
 
-	var makeManualMove = function(col) {
-		if (!isWaitingForAnimation && uiFinishedCallback) {
-			uiFinishedCallback(lastData, col);
-			// Clear out the callback so we don't re-use it on accident.
-			uiFinishedCallback = null;
-			currentMoveData = null;
-		}
-	}
+    var makeManualMove = function(col) {
+        if (!isWaitingForAnimation && uiFinishedCallback) {
+            uiFinishedCallback(lastData, col);
+            // Clear out the callback so we don't re-use it on accident.
+            uiFinishedCallback = null;
+            currentMoveData = null;
+        }
+    }
 
 
     /*
      * return the sprite for piece for <player>
      */
     var pieceForPlayer = function(player) {
-        if(player == P1) {
-            return ui.p1Piece;
-        }
-        if(player == P2) {
-            return ui.p2Piece;
-        }
-    };
-
-
-
-
-    gameUiObj = {};
-	gameUiObj.player1PngPath = player1PngPath;
-	gameUiObj.player2PngPath = player2PngPath;
-
-	gameUiObj.waitForManualMove = function(data, callback) {
-		lastData = data;
-		uiFinishedCallback = callback;
-	}
-
-    gameUiObj.initBoard = function(rows, cols) {
-        this.rows = rows;
-        this.cols = cols;
-    };
-
-
-    gameUiObj.hasSizeChanged = function(currentWindowWidth) {
-        if (currentWindowWidth < 479) {
-            return (squareSize != 42);
-        }
-        else if (currentWindowWidth < 970 && currentWindowWidth > 768) {
-            return (squareSize != 53);
-        }
-        return (squareSize != 64);
-    };
-
-    gameUiObj.calculateBoardSize = function() {
-        windowWidth = $(window).width();
-
-        if (windowWidth < 479) {
-            squareSize = 42;
-        }
-        else if (windowWidth < 970 && windowWidth > 768) {
-            squareSize = 53;
+        if (player == humanPieceNum) {
+            return ui.humanPiece;
         }
         else {
-            squareSize = 64;
+            return ui.aiPiece;
         }
-
-        spriteWidth = squareSize;
-        spriteHeight = squareSize;
     };
-
-    gameUiObj.resizeBoard = function() {
-        gameUiObj.calculateBoardSize();
-        
-
-        $("#boardsquares").children().each(function() {
-            $(this).width(spriteWidth);
-            $(this).height(spriteHeight);
-
-            var pieceId = $(this).attr("id");
-            parts = pieceId.split("x");
-            row = parseInt(parts[0]) * spriteHeight;
-            column = parseInt(parts[1]) * spriteWidth;
-
-            $(this).css({ top : row, left : column });
-        });
-
-        $("#pieceSprites").children().each(function() {
-            $(this).width(spriteWidth);
-            $(this).height(spriteHeight);
-
-            var pieceId = $(this).attr("id");
-            // ID should be in form 'move{moveNumber}-{row}x{column}
-            // i.e. move2-4x3
-            parts = pieceId.split("-")[1].split("x");
-            row = parseInt(parts[0]) * spriteHeight;
-            column = parseInt(parts[1]) * spriteWidth;
-
-            $(this).css({ top : row, left : column });
-        });
-        
-
-    };
-
-
-    gameUiObj.resetBoard = function() {
-        ui.boardLayer.empty();
-        ui.pieceLayer.empty();
-        
-        gameUiObj.calculateBoardSize();
-
-        for(var i = 0; i < this.rows; i++) {
-            for(var j = 0; j < this.cols; j++) {
-                var currentSquare = i + "x" + j;
-                ui.boardLayer.addSprite(currentSquare, {
-                    animation: ui.boardSquare, 
-                    width: spriteWidth, 
-                    height: spriteHeight, 
-                    posx: j * spriteWidth, 
-                    posy: i * spriteHeight
-                });
-                $('#'+currentSquare).css({ 'background-size' : '100%' } );
-
-				// Create a closure for the callback so it can hold
-				// onto the column variable
-				var clickCallback = (function(col) {
-					return function() {
-						makeManualMove(col);
-					}
-				})(j);
-
-				$('#'+currentSquare).click(clickCallback);
-            }
+     /*
+     * return the sprite for piece for <player>
+     */
+    var winningPieceForPlayer = function(player) {
+        if (player == humanPieceNum) {
+            return ui.winPieceHuman;
+        }
+        else {
+            return ui.winPieceAi;
         }
     };
 
-    gameUiObj.startGame = function() {
-        $.playground().startGame();
-    };
 
-    gameUiObj.dropPiece = function(data, callback, isPlayingManually) {
-		var move = data.lastMove;
-        var piece = pieceForPlayer(move.player);
-        var curPieceId = move.moves;
-        var moveId = "move" + curPieceId + "-" + move.row + "x" + move.col;
-        var sprite = ui.pieceLayer.addSprite(moveId, {
-            animation: piece,
-            width: spriteWidth,
-            height: spriteHeight,
-            posx: move.col * spriteWidth,
-            posy: -spriteHeight 
-        });
-        var bottomOfCol = move.row * spriteHeight;
-        
-        var currentSprite = $("#"+moveId);
+    var dropSprite = function(currentSprite, move, data, callback, isPlayingManually, dropFinishedCallback) {
         currentSprite.css({ 'background-size' : '100%' } );
 
         var animStart = new Date().getTime();
         var frameStart = new Date().getTime();
         var posAndVelocity = {pos: -spriteHeight, velocity: 0};
+        var bottomOfCol = move.row * spriteHeight;
 
         var average = function(a){
             var r = {mean: 0, variance: 0, deviation: 0}, t = a.length;
@@ -222,21 +104,185 @@ var GAME_UI = (function() {
             }
             else {
                 currentSprite.css("top", bottomOfCol);
-                var animEnd = (new Date().getTime() - animStart);
-				if (isPlayingManually) {
-					lastData = data;
-					uiFinishedCallback = callback;
-				}
-				else {
-					callback(data);
-				}
 
-                console.log("animation finished in: " + animEnd + "ms, final velocity: " + posAndVelocity.velocity + ", avgMove: " + average(posdiffs).mean + ", avgDt: " + average(dts).mean + ", steps: " + dts.length);
+                if (dropFinishedCallback) {
+                    dropFinishedCallback();
+                }
+
+                if (isPlayingManually && data.gameOver == 0) {
+                    lastData = data;
+                    uiFinishedCallback = callback;
+                }
+                else if (callback) {
+                    callback(data);
+                }
                 return true;
             }
 
         }, REFRESH_RATE);
     };
+
+    gameUiObj = {};
+    gameUiObj.playerAiPngPath = playerAiPngPath;
+    gameUiObj.playerHumanPngPath = playerHumanPngPath;
+
+    gameUiObj.waitForManualMove = function(data, callback) {
+        lastData = data;
+        uiFinishedCallback = callback;
+    };
+
+    gameUiObj.initBoard = function(rows, cols) {
+        this.rows = rows;
+        this.cols = cols;
+    };
+
+    gameUiObj.hasSizeChanged = function(currentWindowWidth) {
+        if (currentWindowWidth < 479) {
+            return (squareSize != 42);
+        }
+        if (currentWindowWidth <= 768) {
+            return (squareSize != 64)
+        }
+        if (currentWindowWidth <= 970 && currentWindowWidth > 768) {
+            return (squareSize != 64);
+        }
+        return (squareSize != 85);
+    };
+
+    gameUiObj.calculateBoardSize = function() {
+        windowWidth = $(window).width();
+
+        if (windowWidth < 479) {
+            squareSize = 42;
+        }
+        else if (windowWidth <= 768) {
+            squareSize = 64;
+        }
+        else if (windowWidth <= 970 && windowWidth > 768) {
+            squareSize = 64;
+        }
+        else {
+            squareSize = 85;
+        }
+
+        spriteWidth = squareSize;
+        spriteHeight = squareSize;
+    };
+
+    gameUiObj.resizeBoard = function() {
+        gameUiObj.calculateBoardSize();
+
+
+        $("#boardsquares").children().each(function() {
+            $(this).width(spriteWidth);
+            $(this).height(spriteHeight);
+
+            var pieceId = $(this).attr("id");
+            parts = pieceId.split("x");
+            row = parseInt(parts[0]) * spriteHeight;
+            column = parseInt(parts[1]) * spriteWidth;
+
+            $(this).css({ top : row, left : column });
+        });
+
+        $("#pieceSprites").children().each(function() {
+            $(this).width(spriteWidth);
+            $(this).height(spriteHeight);
+
+            var pieceId = $(this).attr("id");
+            // ID should be in form 'move{moveNumber}-{row}x{column}
+            // i.e. move2-4x3
+            parts = pieceId.split("-")[1].split("x");
+            row = parseInt(parts[0]) * spriteHeight;
+            column = parseInt(parts[1]) * spriteWidth;
+
+            $(this).css({ top : row, left : column });
+        });
+
+        $("#game-board").height(6 * spriteHeight);
+    };
+
+
+    gameUiObj.resetBoard = function() {
+        ui.boardLayer.empty();
+        ui.pieceLayer.empty();
+
+        gameUiObj.calculateBoardSize();
+        gameUiObj.resizeBoard();
+
+        for(var i = 0; i < this.rows; i++) {
+            for(var j = 0; j < this.cols; j++) {
+                var currentSquare = i + "x" + j;
+                ui.boardLayer.addSprite(currentSquare, {
+                    animation: ui.boardSquare, 
+                    width: spriteWidth, 
+                    height: spriteHeight, 
+                    posx: j * spriteWidth, 
+                    posy: i * spriteHeight
+                });
+                $('#'+currentSquare).css({ 'background-size' : '100%' } );
+
+                // Create a closure for the callback so it can hold
+                // onto the column variable
+                var clickCallback = (function(col) {
+                    return function() {
+                        makeManualMove(col);
+                    }
+                })(j);
+
+                $('#'+currentSquare).click(clickCallback);
+            }
+        }
+    };
+
+    gameUiObj.startGame = function() {
+        $.playground().startGame();
+    };
+
+    gameUiObj.highlightWinSequence = function(data) {
+        var winMoves = exports.getWinSequence(data.board);
+        if (!winMoves) {
+            return;
+        }
+
+        for (var i = 0; i < winMoves.length; i++) {
+            gameUiObj.highlightWinMove(winMoves[i], data.gameOver);
+        }
+    };
+
+    gameUiObj.highlightWinMove = function(move, winPlayerNum) {
+        var piece = winningPieceForPlayer(winPlayerNum);
+        var moveId = "win-" + move.row + "x" + move.col;
+        var sprite = ui.pieceLayer.addSprite(moveId, {
+            animation: piece,
+            width: spriteWidth,
+            height: spriteHeight,
+            posx: move.col * spriteWidth,
+            posy: -spriteHeight 
+        });
+
+        var currentSprite = $("#"+moveId);
+        dropSprite(currentSprite, move);
+    };
+
+
+    gameUiObj.dropPiece = function(data, callback, isPlayingManually, dropFinishedCallback) {
+        humanPieceNum = data.challengerPlayer;
+        var move = data.lastMove;
+        var piece = pieceForPlayer(move.player);
+        var curPieceId = move.moves;
+        var moveId = "move" + curPieceId + "-" + move.row + "x" + move.col;
+        var sprite = ui.pieceLayer.addSprite(moveId, {
+            animation: piece,
+            width: spriteWidth,
+            height: spriteHeight,
+            posx: move.col * spriteWidth,
+            posy: -spriteHeight 
+        });
+        var currentSprite = $("#"+moveId);
+        dropSprite(currentSprite, move, data, callback, isPlayingManually, dropFinishedCallback);
+    };
+
 
     gameUiObj.init =  function() {
         ui.boardSquare = new $.gameQuery.Animation({ imageURL: emptyPngPath,
@@ -245,13 +291,25 @@ var GAME_UI = (function() {
             offsetx: 0,
             offsety: 0});
 
-        ui.p1Piece = new $.gameQuery.Animation({ imageURL: player1PngPath,
+        ui.aiPiece = new $.gameQuery.Animation({ imageURL: playerAiPngPath,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,
             offsety: 0});
 
-        ui.p2Piece = new $.gameQuery.Animation({ imageURL: player2PngPath,
+        ui.humanPiece = new $.gameQuery.Animation({ imageURL: playerHumanPngPath,
+            numberOfFrame: 1,
+            type: $.gameQuery.ANIMATION_ONCE,
+            offsetx: 0,
+            offsety: 0});
+
+        ui.winPieceAi = new $.gameQuery.Animation({ imageURL: winPiecePngPathAi,
+            numberOfFrame: 1,
+            type: $.gameQuery.ANIMATION_ONCE,
+            offsetx: 0,
+            offsety: 0});
+
+        ui.winPieceHuman = new $.gameQuery.Animation({ imageURL: winPiecePngPathHuman,
             numberOfFrame: 1,
             type: $.gameQuery.ANIMATION_ONCE,
             offsetx: 0,

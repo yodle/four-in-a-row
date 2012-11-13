@@ -12,7 +12,7 @@ class Game:
 		self.port = port
 
 	def init(self, nickname, level):
-		response = self.get_post_request(self.host, self.port, '/init/' + str(level), {'nickname': nickname})
+        response = self.get_post_request(self.host, self.port, '/init/' + str(level), {'nickname': nickname, 'scaffold': 'python'})
 		json_root = json.loads(response)
 		self.gameId = json_root['gameId']
 		self.update_board(json_root['board'])

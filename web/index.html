@@ -13,7 +13,7 @@
 
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="assets/css/reset-start.css">
-	<link rel="stylesheet" href="assets/css/c4.css">
+	<link rel="stylesheet" href="assets/css/four-in-a-row.css">
 	<link rel="stylesheet" href="assets/css/956.css">
 	<link rel="stylesheet" href="assets/css/reset-end.css">
 
@@ -27,8 +27,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	
 	<!-- Modernizr -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
 </head>
 
@@ -68,16 +66,16 @@
 		<div id="container" class="full-width center">
 			<div class="container_12">
 				<div class="main-col12">
-					<h1>Welcome to the Yodle Four in a Row Challenge</h1>
+					<h1>We Challenge You</h1>
 				</div>
 
 
 				<!-- Right Column -->
-				<div class="main-col8 tablet-col5 clearfix border-right">
+				<div class="main-col8 tablet-col6 clearfix border-right">
 					<section class="module mediablock">
-						<h2>What Is It?</h2>
-						<p>Think you've got what it takes to match our engineers in a battle of wits? Take on the Yodle Four in a Row Challenge!</p>
+						<h2>What Is Four in a Row?</h2>
 						<p>Four in a Row is a simple game in which players take alternating turns dropping a single play token into one of seven columns in a vertically oriented board. As the name suggests, the first player to align four adjacent play tokens in a horizontal, vertical, or diagonal fashion wins the game.</p>
+						
 						<p>While the rules are simple, coming up with an efficient AI to play the game well is a challenging (and fun) endeavor. If you're up to the challenge, try to take on one of our engineer-submitted AIs in a one-on-one deathmatch.</p>
 					</section>
 					<section class="module mediablock">
@@ -85,37 +83,74 @@
 						<p>There are three ways to play:</p>
 						<ul>
 							<li>Write a javascript AI in our <a href='play.html'>online code editor</a></li>
-							<li>Use one of the <a href="about:blank">Java</a>, <a href="about:blank">Python</a>, or <a href="about:blank">Ruby</a> clients</li>
+                            <li>Use one of the <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/python">Python</a>, 
+                                or <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/ruby">Ruby</a>
+                                or <a href="https://github.com/yodle/four-in-a-row/tree/master/clients/go">Go</a> clients</li>
 							<li>Roll your own in your language of choice against the Four in a Row Rest API</li>
 						</ul>
 					</section>
 					<section class="module mediablock">
 						<h2>REST API Documentation</h2>
-						<p>The REST API consists of two primary API methods and one supporting method for testing purposes. Each method returns the same information in the response, which is encoded in JSON format. Where resource identifiers are required in the URL, they are denoted as <tt>:param_description</tt>. POST parameters are denoted in (parentheses) after the URL. All API URLs are relative to http://TODO_DOMAIN_HERE.com.</p>
-						<strong>Standard JSON Response</strong>
-						<p>
-						  <table>
-						    <thead><tr><td>Key</td><td>Value</td></tr></thead>
-						    <tbody>
-						      <tr><td>ROWS</td><td>The number of rows in the game board, always 6</td>
-						      <tr><td>COLS</td><td>The number of columns in the game board, always 7</td>
-						      <tr><td>_id</td><td>The unique game identifier, used in the other API methods</td>
-						      <tr><td>humanPlayer&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Your player number (1 or 2), corresponding to the turn order</td>
-						      <tr><td>gameOver</td><td>0 if the game is not over, otherwise the winner's player number</td>
-						      <tr><td>nickname</td><td>The nickname you supplied to the init API, used for the leaderboard</td>
-						      <tr><td>turn</td><td>Whose turn it is - will always be your player number except if the opponent AI is thinking during a request to get the game state</td>
-						      <tr><td>moves</td><td>How many moves have been played in the current game</td>
-						      <tr><td>lastMove</td><td>The most recent move (denoted by column), or null on the first turn</td>
-						      <tr><td>moveList</td><td>An array containing the move history in ascending chronological order</td>
-						      <tr><td>ai</td><td>The opponent AI level</td>
-						      <tr><td>board</td><td>The current board state; a two-dimensional array with columns (left-to-right) on the first dimension and rows (top of the board at lowest index) on the second</td>
-						    </tbody>
-                                                  </table>
-                                                </p>
-						<strong>API Method: POST /game/init/:aiLevel (nickname)</strong>
-						<p>Initiates a new game. AI level should be an integer between 1 and 6, with 1 being the easiest and 6 being the hardest. A nickname may be supplied for the leaderboard (strongly suggested). The response will contain the human player's player number, denoting whether the human player is the first or second to make a move. If the computer player is the first player, the board will reflect the computer player's first move in the response.</p>
-						<strong>API Method: POST /game/move/:gameId (move)</strong>						<p>Inserts a single play token into the board, into the column designated by the <tt>move</tt> parameter (between 1 and 7). The <tt>gameId</tt> segment of the uri should correspond to a unique game identifier returned by a call to the <tt>init/</tt> API. Once the move has been made, the server will solicit a move from the computer opponent before returning. Thus, after a call to the <tt>init/</tt> or <tt>move/</tt> APIs, it will always either be the human player's turn or the game will be over.</p>
-						<strong>API Method: GET /game/state/:gameId</strong>
+						<p>The REST API consists of two primary API methods and one supporting method for testing purposes. Each method returns the same information in the response, which is encoded in JSON format. Where resource identifiers are required in the URL, they are denoted as <tt>:param_description</tt>. All API URLs are relative to http://challenge.yodle.com:8080</p>
+
+
+						<div id="keys-values" class="clearfix">
+							<h4>Standard JSON Response</h4>
+							<dl>
+								<dt class="head">Key</dt><dd class="head">Value</dd>
+								<dt>ROWS</dt><dd>The number of rows in the game board, always 6</dd>
+								<dt>COLS</dt><dd>The number of columns in the game board, always 7</dd>
+								<dt>id</dt><dd>The unique game identifier, used in the other API methods. Note: this value is a string type.</dd>
+								<dt>challengerPlayer&nbsp;&nbsp;&nbsp;&nbsp;</dt><dd>Your player number (1 or 2), corresponding to the turn order</dd>
+								<dt>gameOver</dt><dd>0 if the game is not over, otherwise the winner's player number</dd>
+								<dt>nickname</dt><dd>The nickname you supplied to the init API, used for the leaderboard</dd>
+								<dt>turn</dt><dd>Whose turn it is - will always be your player number except if the opponent AI is thinking during a request to get the game state</dd>
+								<dt>moves</dt><dd>How many moves have been played in the current game</dd>
+                                <dt>lastMove</dt><dd>JSON object describing the last move made. Fields are:<br>
+                                	<ul style="margin-bottom:0;">
+	                                	<li>row - row of last move</li>
+	                                	<li>col - column of last move</li>
+	                                	<li>player - player number that made last move</li>
+	                                	<li>moves - total number of moves made</li>
+                                	</ul>
+                                	</dd>
+								<dt>moveList</dt><dd>An array containing the move history in ascending chronological order</dd>
+								<dt>ai</dt><dd>The opponent AI level</dd>
+								<dt>board</dt><dd>The current board state; a two-dimensional array with columns (left-to-right) on the first dimension and rows (top of the board at lowest index) on the second</dd>
+								<dt>message</dt><dd>A message describing the end of the game, or <strong>undefined</strong> if the game is not over.</dd>
+								<dt>error</dt><dd>A description of the error that has occurred, or <strong>undefined</strong> if there is no error. Errors (like invalid moves) cause you to lose.</dd>
+							</dl>
+						</div>
+						
+						<h4>API Method: POST /game/init/:aiLevel</h4>
+						<p>Initiates a new game. AI level should be an integer between 1 and 6, with 1 being the easiest and 6 being the hardest. A nickname may be supplied but is not required. The response will contain the challenger player's player number, denoting whether the challenger player is the first or second to make a move. If the computer player is the first player, the board will reflect the computer player's first move in the response.</p>
+
+						<div class="main-col6 clear-both alpha">
+							<div class="example">
+	                        	<strong>Example init request json:</strong>
+<pre>
+{
+    nickname: "name or email"  
+}
+</pre>
+	                        </div>
+                        </div>
+						
+						<h4>API Method: POST /game/move/:gameId</h4>
+                        <p>Inserts a single play token into the board, into the column designated by the <tt>move</tt> parameter (between 0 and 6). The <tt>gameId</tt> segment of the uri should correspond to a unique game identifier returned by a call to the <tt>init/</tt> API. Once the move has been made, the server will solicit a move from the computer opponent before returning. Thus, after a call to the <tt>init/</tt> or <tt>move/</tt> APIs, it will always either be the challenger player's turn or the game will be over.</p>
+
+                        <div class="main-col6 clear-both alpha">
+	                        <div class="example">
+		                        <strong>Example move request json:</strong>
+<pre>
+{
+    move: 3 
+}
+</pre>
+	                    	</div>
+                    	</div>
+						
+						<h4>API Method: GET /game/state/:gameId</h4>
 						<p>Retrieves the current state of the game corresponding to the <tt>gameId</tt> parameter.</p>
 					</section>
 				</div>
@@ -124,45 +159,13 @@
 				<!-- Right Column -->
 				<aside class="main-col4 tablet-col3 clearfix border-left">
 					<section class="module listing clearfix">
-						<h3>Top 8</h3>
-						<ul>
-							<li>
-								<strong>John Doe</strong>
-								<p>823,003,223</p>
-						  	</li>
-						  	<li>
-								<strong>Jane Doorman</strong>
-								<p>805,003,223</p>
-						  	</li>
-						  	<li>
-								<strong>Really Long Name Goes Here</strong>
-								<p>723,003,223</p>
-						  	</li>
-						  	<li>
-								<strong>Shhh</strong>
-								<p>523,003,223</p>
-						  	</li>
-						</ul>
+						<h3>Show Us What You Got</h3>
+						<p>Think you've got what it takes to match our engineers in a battle of wits? Take on the Yodle Four in a Row Challenge!</p>
+						<a href="play.html" class="button">Play</a>
 					</section>
-					<section class="module listing clearfix">
+					<section class="module mediablock clearfix">
 						<h3>Tech Jobs at Yodle</h3>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-						<ul>
-							<li>
-								<a href="">Data Architect</a>
-						  	</li>
-							<li>
-								<a href="">IT Analyst</a>
-						  	</li>
-						  	<li>
-								<a href="">Lead Engineer</a>
-						  	</li>
-						  	<li>
-								<a href="">Senior Software Engineer</a>
-						  	</li>
-						  	<li>
-								<a href="">Software Engineer</a>
-						  	</li>
+						<ul id="jobListings">
 						</ul>
 					</section>
 				</aside>
@@ -179,31 +182,31 @@
 					<h4>Yodle Sites</h4>
 					<nav class="links">
 						<ul>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.com/">Yodle.com</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlecareers.com/">Careers</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.net/">Company Blog</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlefaq.com/">FAQ</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.info/">Local Business Blog</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlereviews.com/">Yodle Reviews</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlelawmarketing.com/">Yodle Law</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://brandstandards.yodle.com/">Brand Standards</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodledentalmarketing.com/">Yodle Dental</a></li>
-													<li class="col2 no-gutter"><a  href="http://www.yodle.com/partner-programs/">Partner Programs</a></li>
-												</ul>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.com/">Yodle.com</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlecareers.com/">Careers</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.net/">Company Blog</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlefaq.com/">FAQ</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.info/">Local Business Blog</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlereviews.com/">Yodle Reviews</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlelawmarketing.com/">Yodle Law</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://brandstandards.yodle.com/">Brand Standards</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodledentalmarketing.com/">Yodle Dental</a></li>
+							<li class="col2 no-gutter"><a  href="http://www.yodle.com/partner-programs/">Partner Programs</a></li>
+						</ul>
 					</nav>
 				</section>
 
 				<section class="main-col4 tablet-col3 border-left border-right">
 					<h4>Yodle Social</h4>
 					<ul id="social-media">
-													<li><a id="sm-facebook" class="footer-sprite" href="http://www.facebook.com/Yodle" target="_blank"></a></li>
-													<li><a id="sm-twitter" class="footer-sprite" href="http://twitter.com/Yodle" target="_blank"></a></li>
-													<li><a id="sm-gplus" class="footer-sprite" href="https://plus.google.com/113049376312575366498/posts" target="_blank"></a></li>
-													<li><a id="sm-linkedin" class="footer-sprite" href="http://www.linkedin.com/companies/yodle" target="_blank"></a></li>
-													<li><a id="sm-youtube" class="footer-sprite" href="http://www.youtube.com/yodle" target="_blank"></a></li>
-													<li><a id="sm-wiki" class="footer-sprite" href="http://en.wikipedia.org/wiki/Yodle,_Inc" target="_blank"></a></li>
-													<li><a id="sm-rss" class="footer-sprite" href="http://www.yodle.com/rss/" target="_blank"></a></li>
-										</ul>
+						<li><a id="sm-facebook" class="footer-sprite" href="http://www.facebook.com/Yodle" target="_blank"></a></li>
+						<li><a id="sm-twitter" class="footer-sprite" href="http://twitter.com/Yodle" target="_blank"></a></li>
+						<li><a id="sm-gplus" class="footer-sprite" href="https://plus.google.com/113049376312575366498/posts" target="_blank"></a></li>
+						<li><a id="sm-linkedin" class="footer-sprite" href="http://www.linkedin.com/companies/yodle" target="_blank"></a></li>
+						<li><a id="sm-youtube" class="footer-sprite" href="http://www.youtube.com/yodle" target="_blank"></a></li>
+						<li><a id="sm-wiki" class="footer-sprite" href="http://en.wikipedia.org/wiki/Yodle,_Inc" target="_blank"></a></li>
+						<li><a id="sm-rss" class="footer-sprite" href="http://www.yodle.com/rss/" target="_blank"></a></li>
+					</ul>
 				</section>
 
 				<section class="main-col4 tablet-col3">
@@ -234,12 +237,13 @@
 		</div>
 	</div>
 </footer>
-<!-- Javascript -->
-<script src="assets/js/c4.js"></script>
 
-<!-- Yodle Modal -->
-<script src="assets/yodle/ui/modal/modal.js"></script>
-<script src="assets/yodle/ui/lightbox/lightbox.js"></script>
+<!-- jQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
+
+<!-- Javascript -->
+<script src="assets/js/job-data.js"></script>
 
 </body>
 </html>

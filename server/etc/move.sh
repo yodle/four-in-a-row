@@ -4,5 +4,5 @@ if [ 1 -ne $# ]; then
     exit 187
 fi
 
-curl http://localhost:3000/game/move/$1 -d move='0'
+curl http://localhost:3000/game/move/$1 -d move='5'
 echo

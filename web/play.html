@@ -13,22 +13,23 @@
 
 	<!-- Stylesheets -->
 	<link rel="stylesheet" href="assets/css/reset-start.css">
-	<link rel="stylesheet" href="assets/css/c4.css">
+	<link rel="stylesheet" href="assets/css/four-in-a-row.css">
 	<link rel="stylesheet" href="assets/css/956.css">
 	<link rel="stylesheet" href="assets/css/reset-end.css">
 
 	<!-- Includes -->
+	<link rel="stylesheet" href="assets/yodle/ui/formfields/formfields.css">
 	<link rel="stylesheet" href="assets/yodle/ui/modal/modal.css">
 
 	<!-- Fonts -->
-	<link rel="stylesheet" href="http://c326906.r6.cf1.rackcdn.com/custom-fonts-cdn.css">
+	<link rel="stylesheet" href="assets/fonts/icons.css">
+	<link rel="stylesheet" href="assets/fonts/open-sans.css">
+	<link rel="stylesheet" href="assets/fonts/museo-slab.css">
 	
 	<!-- Mobile viewport optimized -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	
 	<!-- Modernizr -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 	<script src="assets/js/modernizr-2.5.3.min.js"></script>
 
 	<!--  ace editor -->
@@ -76,62 +77,67 @@
 					<h1>Play Game</h1>
 				</header>
 				<!-- Main Content -->
-				<div class="main-col6 tablet-col5 clearfix border-right">
+				<div class="main-col8 tablet-col6 clearfix border-right">
+					<div id="gameStatus" class="statusMessage">
+						<strong id="gameStatusHeader">Press 'Run' to start game.</strong>
+						<p id="gameStatusContent"></p>
+					</div>
 					<section id="game-board" class="module mediablock">
-						<div id="c4-board" class="clearfix;"></div>
-						<div id="c4-moves">
-							<div id="move1" class="p1"></div>
-							<div id="move2" class="p2"></div>
-						</div>
+						<div id="board" class="clearfix;"></div>
 					</section>
 				</div>
 				<!-- End Main Content -->
 
 				<!-- Sidebar -->
-				<aside class="main-col6 tablet-col4 clearfix border-left">
+				<aside class="main-col4 tablet-col3 clearfix border-left">
+					<section class="module">
+						<h3>Need Help?</h3>
+						<p>Check out the <a href="index.html">rules</a> page.</p>
+					</section>
 					<section class="module listing">
 						<div class="clearfix">
 							<form id="inputCode" action="#" >
-								<div class="formfield col6 tablet-col4 no-gutter">
-									<fieldset class="formfield">
-                                        <label forId="nicknameInput">Nickname</label>
-                                        <input id="nicknameInput" type="text" value="Anonymous" />
-
-										<label>Difficulty</label>
-										<select id="difficultySelect">
-											<option value="1">Level 1 (Easiest)</option>
-											<option value="2">Level 2</option>
-											<option value="3">Level 3</option>
-											<option value="4">Level 4</option>
-											<option value="5">Level 5</option>
-											<option value="6">Level 6 (Hardest)</option>
-										</select>
-
-										<label forId="playManuallyCheck">
-											Play by hand?
-										</label>
+								<div class="formfield main-col4 tablet-col3 no-gutter">
+									<label forId="nicknameInput">Nickname</label>
+									<div class="field-wrapper">
+                                    	<input id="nicknameInput" type="text" value="Anonymous" />
+                                    </div>
+								</div>
+								<div class="formfield main-col4 tablet-col3 no-gutter">
+									<label>Difficulty</label>
+									<select id="difficultySelect">
+										<option value="1">Level 1 (Easiest)</option>
+										<option value="2">Level 2</option>
+										<option value="3">Level 3</option>
+										<option value="4">Level 4</option>
+										<option value="5">Level 5</option>
+										<option value="6">Level 6 (Hardest)</option>
+									</select>
+								</div>
+								<fieldset class="formfield main-col4 no-gutter">
+									<label forId="playManuallyCheck">
 										<input id="playManuallyCheck" type="checkbox" />
-										</input>
-									</fieldset>
-									<input type="submit" class="primaryButton button" value="Run"/>
+										<strong>Play manually</strong> (Click-by-click)
+									</label>
+									</input>
+								</fieldset>
+								<input type="submit" class="primaryButton button" value="Run"/>
 							</form>
 						</div>
-						<div id="playedPieceContainer">
-							<span>Your Piece</span>
-							<div id="playerPieceBackground" >
-								<div id="playerPiece" >
-							<div>
+						<div class="play-legend">
+							<h3>Legend</h3>
+							<div class="your-piece"><span class="piece"></span>= Challenger</div>
+							<div class="ai-piece"><span class="piece"></span>= Yodle</div>
 						</div>
 					</section>
 				</aside>
 				<!-- End Sidebar -->
 
-			</div> <!-- End container 12 -->
-
-			<div class="container_12 clearfix">
-				<h3>Input Code</h3>
-				<!-- Code editor -->
-				<div id="editor"></div>
+				<div class="main-col12 tablet-col9">
+					<h2>Input Code</h2>
+					<!-- Code editor -->
+					<div id="editor"></div>
+				</div>
 			</div>
 		</div><!-- End #container -->
 	</div><!-- End #content -->
@@ -143,17 +149,17 @@
 					<h4>Yodle Sites</h4>
 					<nav class="links">
 						<ul>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.com/">Yodle.com</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlecareers.com/">Careers</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.net/">Company Blog</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlefaq.com/">FAQ</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.info/">Local Business Blog</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlereviews.com/">Yodle Reviews</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlelawmarketing.com/">Yodle Law</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://brandstandards.yodle.com/">Brand Standards</a></li>
-													<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodledentalmarketing.com/">Yodle Dental</a></li>
-													<li class="col2 no-gutter"><a  href="http://www.yodle.com/partner-programs/">Partner Programs</a></li>
-												</ul>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.com/">Yodle.com</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlecareers.com/">Careers</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.net/">Company Blog</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlefaq.com/">FAQ</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodle.info/">Local Business Blog</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlereviews.com/">Yodle Reviews</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodlelawmarketing.com/">Yodle Law</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://brandstandards.yodle.com/">Brand Standards</a></li>
+							<li class="col2 no-gutter"><a  target="_blank"  href="http://www.yodledentalmarketing.com/">Yodle Dental</a></li>
+							<li class="col2 no-gutter"><a  href="http://www.yodle.com/partner-programs/">Partner Programs</a></li>
+						</ul>
 					</nav>
 				</section>
 
@@ -201,21 +207,35 @@
 
 <!-- RSVP Modal -->
 <div id="gameStatusModal" class="main-col6 tablet-col6" style="display:none">
-	<div class="statusMessage">
-		<strong>You Win!</strong>
-		<p class="message"></p>
-		<p>Maybe you can work at Yodle. Email your resume to <a href="mailto:emailaddress">EmailAddress</a>.</p>
+	<div class="yo-modal-body">
+		<div class="statusMessage">
+			<strong>You Win!</strong>
+			<p class="message"></p>
+		</div>
 	</div>
 </div>
 
-<!-- Javascript -->
-<script src="assets/js/jquery.gamequery-0.5.1.js"></script>
-<script src="assets/js/game-ui.js"></script>
-<script src="assets/js/c4.js"></script>
+<!-- jQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write("<script src='js/jquery-1.7.1.min.js'>\x3C/script>")</script>
 
-<!-- Yodle Modal -->
+<!-- Javascript -->
+<script src="assets/js/jquery.gamequery-0.7.0.js"></script>
+<script src="assets/js/game-ui.js"></script>
+<script src="assets/js/game-utils.js"></script>
+<script src="assets/js/four-in-a-row.js"></script>
+
+<!-- Yodle JS Includes -->
 <script src="assets/yodle/ui/modal/modal.js"></script>
 <script src="assets/yodle/ui/lightbox/lightbox.js"></script>
+<script src="assets/yodle/ui/formfields/formfields.js"></script>
+<script src="assets/yodle/ui/formfields/select-dropdown.js"></script>
+
+<script>
+	$(document).ready(function(){
+		yodle.ui.formfields.format('#inputCode');
+	});
+</script>
 
 </body>
 </html>
