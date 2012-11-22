@@ -1,4 +1,7 @@
 class Board
+  attr_reader   :grid
+  attr_accessor :width, :height, :me, :opp
+
   def initialize(board, me)
     @width = board.length;
     @height = board[0].length;
@@ -6,22 +9,6 @@ class Board
 
     @me = me;
     @opp = (me % 2) + 1;
-  end
-  
-  def width
-    @width
-  end
-  
-  def height
-    @height
-  end
-
-  def me
-    @me
-  end
-
-  def opponent
-    @opp
   end
   
   def set(col, row, player)
@@ -60,11 +47,15 @@ class Board
       end
     end
 
-    @iWin = updateWins(move, rowStopped, @me);
-    @oppWins = updateWins(move, rowStopped, @opp);
-    if @iWin or @oppWins
-      return;
-    end
+    # @iWin = updateWins(move, rowStopped, @me);
+    # @oppWins = updateWins(move, rowStopped, @opp);
+    # if @iWin or @oppWins
+    #   return;
+    # end
+  end
+
+  def == (other)
+    @grid == other.grid
   end
 
   def to_s 
@@ -77,4 +68,7 @@ class Board
     end
     s
   end
+
+private
+
 end
