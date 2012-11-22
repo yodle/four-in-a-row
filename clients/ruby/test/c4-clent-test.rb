@@ -1,10 +1,9 @@
 require 'c4-client'
 
-require 'c4-test-harness'
 require 'test/unit'
 require 'mocha'
 
-class C4ClientTest < C4TestHarness
+class C4ClientTest < Test::Unit::TestCase
   @client
 
   @netUtils
@@ -12,6 +11,8 @@ class C4ClientTest < C4TestHarness
 
   # mocked dependencies
   def setup
+    C4LogUtils.logger = Logger.new('/dev/null')
+
     @options = {
       :level => 1, 
       :nickname => 'nickname',
@@ -28,6 +29,7 @@ class C4ClientTest < C4TestHarness
     @game = JSON.parse({
       :id => '230f329jf3',
       :gameOver => false,
+      :humanPlayer => 1,
       :board => [
         [0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0],

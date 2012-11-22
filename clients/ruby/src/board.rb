@@ -4,8 +4,8 @@ class Board
     @height = board[0].length;
     @grid = board;
 
-    @me = 1;
-    @opp = 2;
+    @me = me;
+    @opp = (me % 2) + 1;
   end
   
   def width
