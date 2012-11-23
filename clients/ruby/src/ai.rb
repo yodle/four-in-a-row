@@ -8,8 +8,9 @@ class AI
   def makeMove (board)
     @logger.info(board.to_s)
 
+    # write your code here!
+
     finalMoves = board.getLegalMoves
     finalMoves[rand(finalMoves.length)]
-    3
   end
 end

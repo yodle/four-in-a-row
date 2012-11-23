@@ -18,14 +18,6 @@ class Board
   def get(col, row)
     @grid[col][row];
   end
-  
-  def iWin?
-    @iWin
-  end
-  
-  def oppWins?
-    @oppWins
-  end
 
   def getLegalMoves
     result = [];
@@ -46,12 +38,6 @@ class Board
         break;
       end
     end
-
-    # @iWin = updateWins(move, rowStopped, @me);
-    # @oppWins = updateWins(move, rowStopped, @opp);
-    # if @iWin or @oppWins
-    #   return;
-    # end
   end
 
   def == (other)

@@ -135,22 +135,4 @@ class BoardTest < Test::Unit::TestCase
 
     assert_equal(expectedGrid, b.grid)
   end
-
-  def test_givenMoveMakesConnect4_updateWins_updatesCorrectPlayerOfWin
-    @grid = [
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1], # column 3
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-    ];
-
-    b = Board.new(@grid, 1)
-
-    b.makeMove(3, 1)
-
-    assert(b.iWin?)
-  end
 end
