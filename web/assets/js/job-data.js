@@ -7,9 +7,13 @@ jQuery(document).ready(function($) {
             var category = $(this).find("category").text();
             if(category === "Technology") {
                 var title = $(this).find("title").text();
-                var detailUrl = $(this).find("detail-url").html().replace("<!--[CDATA[", "").replace("]]-->", "");
-                jobListings.append("<li><a href="+detailUrl+">"+title+"</a></li>")
+                var detailUrl = 'http://www.yodlecareers.com/jobs/' + makeURL($(this).find("region").text()) + '/' + makeURL($(this).find("title").text()) + '/';
+                jobListings.append("<li><a href="+detailUrl+">"+title+"</a></li>");
             }
         });
     });
+
+    function makeURL(string) {
+        return string.replace(" ", "-").replace("---", "-").toLowerCase();
+    }
 });
