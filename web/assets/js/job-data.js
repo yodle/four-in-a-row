@@ -8,12 +8,12 @@ jQuery(document).ready(function($) {
             if(category === "Technology") {
                 var title = $(this).find("title").text();
                 var detailUrl = 'http://www.yodlecareers.com/jobs/' + makeURL($(this).find("region").text()) + '/' + makeURL($(this).find("title").text()) + '/';
-                jobListings.append("<li><a href="+detailUrl+">"+title+"</a></li>");
+                jobListings.append("<li><a href=\""+detailUrl+"\">"+title+"</a></li>");
             }
         });
     });
 
     function makeURL(string) {
-        return string.replace(" ", "-").replace("---", "-").toLowerCase();
+        return string.replace(/ /g, "-").replace(/---/g, "-").replace(/,/g, "").toLowerCase();
     }
 });
