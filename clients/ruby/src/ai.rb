@@ -6,8 +6,6 @@ class AI
   end
 
   def makeMove (board)
-    @logger.info(board.to_s)
-
     # write your code here!
 
     finalMoves = board.getLegalMoves

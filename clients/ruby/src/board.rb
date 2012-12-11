@@ -45,14 +45,30 @@ class Board
   end
 
   def to_s 
-    s = "\n";
+    s = '';
     for r in 0...@height do
       for c in 0...@width do
-        s += @grid[c][r].to_s + ' ';
+        tile = @grid[c][r]
+        
+        if tile == 0 
+          t = ' '
+        else
+          t = Board.player_to_s(tile)
+        end
+
+        s += "[#{t}]";
       end
       s += "\n";
     end
     s
+  end
+
+  def self.player_to_s(player)
+    if player == 1
+      '1'
+    elsif player == 2
+      '2'
+    end
   end
 
 private
