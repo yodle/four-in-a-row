@@ -23,14 +23,16 @@ This is a scaffold for easily writing your four-in-a-row AI in Ruby. It handles 
 The only thing you have to interact with is the ```start-game``` and ```src/ai.rb```.
 
 ###How do I run a game?
-To start the game, navigate to the root of this scaffold ```four-in-a-row/clients/ruby``` and just run:
+Make sure you have the ```json``` gem install. If not, just run ```sudo gem install json```.
+
+Navigate to the root of this scaffold ```four-in-a-row/clients/ruby``` and just run:
 
     ./start-game
 
     Usage: start-game [options]
     -l, --level N                    Choose which level of AI to play against.
                                      Default: 1
-    -n, --nickname NICNAME           This is your nickname. It will be used for high scores.
+    -n, --nickname NICKNAME          This is your nickname. It will be used for high scores.
                                      Default: 'challenger'
     -s, --server SERVER              This is the server to connect to.
                                      Default: challenge.yodle.com:3000
