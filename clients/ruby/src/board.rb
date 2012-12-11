@@ -49,14 +49,8 @@ class Board
     for r in 0...@height do
       for c in 0...@width do
         tile = @grid[c][r]
-        
-        if tile == 0 
-          t = ' '
-        else
-          t = Board.player_to_s(tile)
-        end
 
-        s += "[#{t}]";
+        s += "[#{tile == 0 ? ' ' : Board.player_to_s(tile)}]";
       end
       s += "\n";
     end
