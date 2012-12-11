@@ -1,4 +1,6 @@
-This is a scaffold for easily writing your four-in-a-row AI in Ruby. It handles all the communication, parsing, logging, etc. so you can focus on just the AI!
+#Ruby Client
+
+This is a barebones four-in-a-row client for easily writing your AI in Ruby. It handles all the uninteresting stuff like network communication, parsing and feedback so you can focus on just the AI!
 
 
 ###How is this scaffold organized?
@@ -20,7 +22,7 @@ This is a scaffold for easily writing your four-in-a-row AI in Ruby. It handles 
         └── c4-net-utils-test.rb
 
 
-The only thing you have to interact with is the ```start-game``` and ```src/ai.rb```.
+The only things you have to interact with is the ```start-game``` and ```src/ai.rb```.
 
 ###How do I run a game?
 Make sure you have the ```json``` gem install. If not, just run ```sudo gem install json```.
@@ -43,3 +45,13 @@ This will automatically start a new game with the server running your AI.
 
 ###Where do I start writing my AI?
 Just implement ```makeMove()``` inside of ```src/ai.rb```. It takes, as input, a ```Board``` object and returns a number from 0 to 6 for the column in which to make the next move. ```Board``` contains all the information that the server returned for the state of the game. You can inspect ```src/board.rb``` for more detail.
+
+```Board``` provides a few convenience methods:
+
+```set(col, row, player)``` sets the board at ```(col, row)``` for the specified ```player```.
+
+```get(col, row)``` gets which player has a piece at ```(col, row)```, 0 means it's empty.
+
+```getLegalMoves()``` returns a list of columns where it is legal to move.
+
+```makeMove(column, player)``` makes a move in the specified ```column``` for the specified ```player```.
