@@ -6,3 +6,4 @@ npm-debug.log
 server/node_modules/
 ^err.log$
 ^out.log$
+clients/go/ai

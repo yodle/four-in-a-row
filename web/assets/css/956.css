@@ -1,0 +1,128 @@
+/* Containers */
+.full-width {width:956px;}
+.container_12 { margin-left:auto;margin-right:auto;width:936px; position: relative;}
+	
+/* Grid >> Global */
+.col1,.col2,.col3,.col4,.col5,.col6,.col7,.col8,.col9,.col10,.col11,.col12 { float:left; position:relative; margin-left:10px; margin-right:10px;}
+.main-col1,.main-col2,.main-col3,.main-col4,.main-col5,.main-col6,.main-col7,.main-col8,.main-col9,.main-col10,.main-col11,.main-col12 {float:left; position:relative; margin-left:10px; margin-right:10px;}
+
+/* Gutters */
+.gutter {margin-left:10px; margin-right:10px;}
+.gutter-left {margin-left:20px; margin-right:0;}
+.gutter-right {margin-left:0; margin-right:20px;}
+.no-gutter {margin-left:0; margin-right:0;}
+
+.alpha {margin-left:0;}
+.omega {margin-right:0;}
+
+/* Grid >> 12 Columns */
+.col1, .main-col1 { width:58px; }	
+.col2, .main-col2 { width:136px; }
+.col3, .main-col3 { width:214px; }
+.col4, .main-col4 { width:292px; }
+.col5, .main-col5 { width:370px; }
+.col6, .main-col6 { width:448px; }
+.col7, .main-col7 { width:526px; }
+.col8, .main-col8 { width:604px; }	
+.col9, .main-col9 { width:682px; }
+.col10, .main-col10 { width:760px; }
+.col11, .main-col11 { width:838px; }
+.col12, .main-col12 { width:916px; }
+	
+/* Left and Right borders */
+.border-left {margin-left:-1px; padding-left:10px; border-left:1px solid #dbdbdb;}
+.border-right {margin-right:0px; padding-right:9px; border-right:1px solid #dbdbdb;}
+
+/* Mobile, Tablet, & Desktop Show/Hide */
+.mobile-only {display:none;}
+.tablet-only {display:none;}
+.desktop-only {display:block;}
+
+.mobile-hide {display:block;}
+.tablet-hide {display:block;}
+.desktop-hide {display:none;}
+
+/* Desktop + */
+@media only screen and (min-width: 971px) {
+}
+
+/* Smaller than standard 960 (devices and browsers) */
+@media only screen and (max-width: 970px) {
+}
+
+/* Tablet Portrait size to standard 960 (devices and browsers) */
+@media only screen and (min-width: 768px) and (max-width: 970px) {
+
+	/* Containers */
+	.full-width {width:742px;}
+	.container_12 {width:704px;}
+
+	/* Tablet Specific Grid Structure */
+	.tablet-col1 { width:58px; }	
+	.tablet-col2 { width:136px; }
+	.tablet-col3 { width:214px; }
+	.tablet-col4 { width:292px; }
+	.tablet-col5 { width:370px; }
+	.tablet-col6 { width:448px; }
+	.tablet-col7 { width:526px; }
+	.tablet-col8 { width:604px; }	
+	.tablet-col9 { width:682px; }
+
+	/* Column Fix for columns that don't exist on Tablet */
+	.col10, .col11, .col12 { width:682px; }
+
+	/* Mobile, Tablet, & Desktop Show/Hide */
+	.mobile-only {display:none;}
+	.tablet-only {display:block;}
+	.desktop-only {display:none;}
+
+	.mobile-hide {display:block;}
+	.tablet-hide {display:none;}
+	.desktop-hide {display:block;}
+
+	/* REMOVE THIS */
+	/*.main-col1,.main-col2,.main-col3,.main-col4,.main-col5,.main-col6,.main-col7,.main-col8,.main-col9,.main-col10,.main-col11,.main-col12 {width:none;} */
+}
+
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (max-width: 767px) {
+	
+	/* Containers */
+	.full-width {width:auto;}
+	.main-col1,.main-col2,.main-col3,.main-col4,.main-col5,.main-col6,.main-col7,.main-col8,.main-col9,.main-col10,.main-col11,.main-col12 {width:100%; margin-left:auto; margin-right:auto; float:none;}
+
+	/* REMOVE BORDERS ON BORDER-RIGHT AND BORDER LEFT IF NEEDED */
+	.border-left {margin-left:0; margin-right:0; padding-left:0; border:none;}
+	.border-right {margin-left:0; margin-right:0; padding-right:0; border:none;}
+
+	/* Mobile, Tablet, & Desktop Show/Hide */
+	.mobile-only {display:block;}
+	.tablet-only {display:none;}
+	.desktop-only {display:none;}
+
+	.mobile-hide {display:none;}
+	.tablet-hide {display:block;}
+	.desktop-hide {display:block;}
+}
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+	
+	.full-width {min-width:478px; width:auto;}
+	.container_12 {width:478px;}
+	.main-col1,.main-col2,.main-col3,.main-col4,.main-col5,.main-col6,.main-col7,.main-col8,.main-col9,.main-col10,.main-col11,.main-col12 {width:448px; margin-left:auto; margin-right:auto; float:none;}
+
+	/* Column Fix for columns that don't exist on Tablet */
+	.col7, .col8, .col9, .col10, .col11, .col12 { width:448px; }
+}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (max-width: 479px) {
+	
+	.full-width {min-width:322px; width:auto;}
+	.container_12 {width:322px;}
+	.main-col1,.main-col2,.main-col3,.main-col4,.main-col5,.main-col6,.main-col7,.main-col8,.main-col9,.main-col10,.main-col11,.main-col12 {width:292px; margin-left:auto; margin-right:auto; float:none;}
+
+	/* Column Fix for columns that don't exist on Tablet */
+	.col5, .col6, .col7, .col8, .col9, .col10, .col11, .col12 { width:292px; }
+}

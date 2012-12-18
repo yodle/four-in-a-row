@@ -1,0 +1,98 @@
+/*=== Forms & formfields ===*/
+form label {line-height:1.5em; font-weight:bold; margin-left:1px;}
+form label.inField {position: absolute; cursor: text; color:#8e8e8e; padding:12px 9px 2px; z-index:5}
+	form .textarea label.inField { padding:10px 8px}
+input, textarea, select, .field-wrapper {border-radius: 3px; background:#fff; position: relative; -moz-border-radius: 3px; -webkit-border-radius: 3px; border:1px solid #c8c8c8; box-shadow: 0 0 5px rgba(0,0,0,.1) inset; -moz-box-shadow: 0 0 5px rgba(0,0,0,.1) inset; -webkit-box-shadow: 0 0 5px rgba(0,0,0,.1) inset; padding:8px 7px 2px; outline:none; color:#636363;}
+
+select,  
+input, 
+textarea, 
+label {font-size: 12px;}
+	input[type="checkbox"], input[type="radio"] {box-shadow: none; border:none; padding:0;}
+	textarea {min-height:100px; resize:none;}
+
+.formfield, fieldset {display:block; position: relative; margin-bottom: 15px; border:none;}
+
+fieldset label {display:block; font-weight:normal; padding:6px 5px 4px; line-height:1em;}
+	fieldset p {margin-bottom:3px;}
+	fieldset input[type="checkbox"],
+	fieldset input[type="radio"] {margin-right:5px; min-height:0;}
+
+/*=== Select Fields ===*/
+select {width:100%;}
+.field-wrapper input, .field-wrapper textarea {width: 100%; margin: 0; padding: 0; border: 0; box-shadow: none; border:0;}
+.field-wrapper.select select {opacity:0; -webkit-appearance:none; height:100%; padding:3px 0; margin:0; width:100%; position: absolute; left:0; top:0; z-index: 2; cursor:pointer;}
+	.field-wrapper.select select option {padding:3px 10px;}
+	.field-wrapper.select {padding:0; position:relative; min-height:29px; font-size:11px; font-family:'OpenSansBold'; font-weight:normal; overflow: hidden; background:#EBEBEB; box-shadow: 0 0 2px #fff inset; border:1px solid #c8c8c8;}
+	.field-wrapper.select:after {content:'d'; font-family: 'Icon'; font-weight: normal; position: absolute; right:0; line-height: 32px; z-index: 1; font-size:8px; padding:0 7px; background:#dfdfdf; border-left:1px solid #c8c8c8;}
+		.field-wrapper .select-option { position: absolute; text-overflow:ellipsis; white-space:nowrap; z-index: 1; left:10px; line-height:30px; max-width: 68%; overflow: hidden; }
+
+	.field-wrapper.select.focus:after {background-color:#ccc;}
+
+/*=== Search Input Fields ===*/
+.field-wrapper.search {padding:5px 10px 4px 20px;}
+.field-wrapper.search:before {position: absolute; font-weight:normal; left:5px; content:'S'; display: block; font-family: 'Icon'; line-height:20px;}
+
+
+/*=== Validator Essentials ===*/
+
+/* Smooth CSS3 Transitions */
+.field-wrapper,
+.field-wrapper:after,
+.yv-formfield,
+.yv-formfield .fieldCaption {-webkit-transition: all 0.2s ease-in; -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; transition: all 0.2s ease-in;}
+
+/* Form Field Style */
+.yv-formfield {position: relative; background-color: #efeff0; border-radius: 3px; display:block; border:1px solid #c8c8c8;}
+.yv-formfield.showMessage {padding-bottom:20px;}
+	.yv-formfield .field-wrapper {border:none; border-bottom:1px solid #c8c8c8; margin-bottom:-1px;}
+		.yv-formfield .field-wrapper,
+		.yv-formfield input, 
+		.yv-formfield textarea, 
+		.yv-formfield select {z-index: 5}
+
+/* Checkbox field */
+.yv-formfield.radioCheckbox,
+.yv-formfield.radioCheckbox.valid {border:1px solid transparent; background:none;}
+
+	.yv-formfield .fieldCaption {position: absolute; bottom:2px; left:5px; z-index: 4; font-size: 11px; font-weight:normal; opacity:0;}
+		.yv-formfield.showMessage .fieldCaption {opacity: 1}
+	
+/* HelperText */
+
+/* HelpTip */
+	.yv-formfield .helpTip {background-image:url(helpTip.png); position: absolute; top:4px; right:4px; width:12px; height:12px;  z-index: 4;}
+		.yv-formfield .helpTip .helpTipContent {z-index:20; color:#4D4D4F; position:absolute; top:0; left:0; font-size:11px; padding:10px 12px; width:110px; border-radius:3px; border:1px solid #8F8F8F; line-height:15px; box-shadow:0 0 6px #b8b8b8; display:none; 
+			background: -moz-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0; 
+			background: -webkit-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
+			background: -ms-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
+			background: -o-linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
+			background: linear-gradient(#F8F8F8,#EFEFF0), #EFEFF0;
+			background-color: #EFEFF0;
+		}
+		.yv-formfield .helpTip-pointer {background-image:url(helpTip-pointer.png); display:block; width:14px; height:14px; position:absolute; right:14px; bottom:-12px;}
+
+/* Focus */
+.field-wrapper.focus,
+.field-wrapper.focus:after,
+.yv-formfield.focus,
+.yv-formfield.focus .field-wrapper {border-color:#777;}
+
+/* Valid */
+.yv-formfield.invalid {border-color:#C63232; color:#C63232; background-color:#FDE7E4;}
+	.yv-formfield.invalid input, 
+	.yv-formfield.invalid textarea, 
+	.yv-formfield.invalid select, 
+	.yv-formfield.invalid .field-wrapper {border-color:#C63232}
+
+/* Invalid */
+.yv-formfield.valid {border-color:#7bb111; box-shadow-color:#7bb111;}
+	.yv-formfield.valid input, 
+	.yv-formfield.valid textarea, 
+	.yv-formfield.valid select, 
+	.yv-formfield.valid .field-wrapper {border-color:#7bb111}
+
+/* Required Fields */
+.yv-required-field {margin-left:3px;}
+
+/*=== END VALIDATOR ESSENTIALS ===*/

@@ -5,32 +5,56 @@ import json
 from state import State
 
 class Game:
+	ROWS = 6
+	COLS = 7
+
 	def __init__(self, host, port):
 		self.gameId = 0
 		self.state = None
 		self.host = host
 		self.port = port
+		self.state = State(Game.ROWS, Game.COLS)
 
 	def init(self, nickname, level):
-		response = self.get_post_request(self.host, self.port, '/game/init/' + str(level), {'nickname': nickname})
-		json_root = json.loads(response)
-		self.gameId = json_root['_id']
-		self.update_board(json_root['board'])
-	
-	def move(self, col):
-		response = self.get_post_request(self.host, self.port, '/game/move/' + str(self.gameId), {'move': col})
-		json_root = json.loads(response)
-		self.update_board(json_root['board'])
+		response = self.getPostRequest(
+			self.host, self.port,
+			'/game/init/%s' % level,
+			{'nickname': nickname, 'scaffold': 'python'}
+		)
+		stateJson = json.loads(response)
+		self.updateState(stateJson)
 
-	def update_board(self, board):
-		cols = len(board)
-		rows = len(board[0])
-		self.state = State(rows, cols)
+		self.gameId = stateJson['id']
+
+		return self.state
+
+	def move(self, col):
+		response = self.getPostRequest(
+			self.host, self.port,
+			'/game/move/%s' % self.gameId,
+			{'move': col}
+		)
+		stateJson = json.loads(response)
+		self.updateState(stateJson)
+
+		return self.state
+
+	def updateState(self, stateJson):
+		if 'error' in stateJson:
+			self.state.setError(stateJson['error'])
+			return
+		self.updateBoard(stateJson['board'])
+		self.state.setGameOver(stateJson['gameOver'])
+		self.state.setMoveList(stateJson['moveList'])
+		self.state.setMoves(stateJson['moves'])
+		self.state.setPlayerNumber(stateJson['challengerPlayer'])
+
+	def updateBoard(self, board):
 		for col_i, col in enumerate(board):
 			for row_i, slot in enumerate(col):
 				self.state.setSlot(row_i, col_i, slot)
 
-	def get_post_request(self, host, port, url, params):
+	def getPostRequest(self, host, port, url, params):
 		params = urllib.urlencode(params)
 		headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
 		conn = httplib.HTTPConnection(host, port)

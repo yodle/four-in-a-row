@@ -1,6 +1,9 @@
-var http = require('http');
+"use strict";
 
-ComputerPlayer = function(moveUrl, playerIdx, moveCallback) {
+var http = require('http');
+var url = require('url');
+
+var ComputerPlayer = function(moveUrl, playerIdx, moveCallback) {
     this.playerIdx = playerIdx;
     this.moveUrl = url.parse(moveUrl);
     this.moveCallback = moveCallback;
@@ -15,22 +18,19 @@ ComputerPlayer.prototype.valid = function() {
 };
 
 ComputerPlayer.prototype.move = function(msg, state) {  
-    if(state.currentTurn == this.playerIdx) {
+    if(state.turn == this.playerIdx) {
         var mc = this.moveCallback;
         var callback = function(moveJson) {
-            var move = moveJson.move;
-            mc(move);
+            mc(moveJson);
         };
 
-        var that = this;
-        // this artifically slows down the game pace
-        setTimeout(function() { that.makeRequest.call(that, state, callback) }, 500);
+        this.makeRequest.call(this, state, 'move', callback);
     }
 };
 
-ComputerPlayer.prototype.makeRequest = function(state, callback) {
+ComputerPlayer.prototype.makeRequest = function(state, action, callback) {
     var data = JSON.stringify(state);
-    var path = this.moveUrl.pathname;
+    var path = this.moveUrl.pathname + '/' + action;
     if(this.moveUrl.search) {
         path = path + this.moveUrl.search;
     }
@@ -46,12 +46,32 @@ ComputerPlayer.prototype.makeRequest = function(state, callback) {
     };
 
     var req = http.request(options, function(res) {
-        res.on('data', function(data) {
-            callback(JSON.parse(data));
+        res.on('data', function(rawData) {
+            try {
+                var data = JSON.parse(rawData);
+                data.success = true;
+                if(typeof(callback) === 'function') {
+                    callback(data);
+                }
+            }
+            catch (e) {
+                if(typeof(callback) === 'function') {
+                    callback({success: false, error: 'misbehaving AI, try again later'});
+                }
+            }
         });
+    });
+    req.on('error', function(e) {
+        if(typeof(callback) === 'function') {
+            callback({success: false, error: e});
+        }
     });
     
     req.end(data);
+};
+
+ComputerPlayer.prototype.endGame = function(state) {
+    this.makeRequest.call(this, state, 'end');
 };
 
 ComputerPlayer.prototype.toString = function() {
