@@ -36,14 +36,20 @@ class C4Client
 
 
   def playGame(game)
+    @turn = 1
+    @challengePlayer = game['challengerPlayer'];
     while (game['gameOver'] == 0)
+      log_turn
       game = self.makeMove(game);
+
+      @turn += 1
     end
 
     if (not game['board'].nil?)
-      board = Board.new(game['board'], '1')
-      @logger.info('Final State:')
-      @logger.info(board)
+      log_turn
+      board = Board.new(game['board'], game['challengerPlayer'])
+      @logger.info(game['message']) 
+      log_board(board)
     else
       @logger.error(game['error'])
     end
@@ -51,10 +57,11 @@ class C4Client
 
   def makeMove(game)
     gameId = game['id']
-    board = Board.new(game['board'], game['humanPlayer'])
+    board = Board.new(game['board'], @challengePlayer)
+    log_board(board)
 
     move = @ai.makeMove(board)
-    @logger.info("Making move in column #{move}")
+    @logger.info("Turn #{@turn}: making move in column #{move}\n")
     game = @netUtils.getGameState("/game/move/#{gameId}", {:move => move})
 
     error = game['error'];
@@ -73,5 +80,15 @@ class C4Client
 
     @logger.info('Connected to server.')
     return result
+  end
+
+private
+  def log_board(board)
+    board.to_s.split("\n").each do |s| @logger.info(s) end
+  end
+
+  def log_turn
+    @logger.info("-- Turn: #{@turn}, you are player #{@challengePlayer} --")
+    #@logger.info("-- Turn: #{@turn} You are [#{Board.player_to_s(@challengePlayer)}] --")
   end
 end

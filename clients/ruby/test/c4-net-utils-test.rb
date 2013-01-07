@@ -1,17 +1,17 @@
 require 'c4-net-utils'
 require 'c4-log-utils'
-require 'c4-test-harness'
 
 require 'rubygems'
 require 'test/unit'
 
 require 'mocha'
 
-class C4NetUtilsTest < C4TestHarness
+class C4NetUtilsTest < Test::Unit::TestCase
   @http_mock
 
   @netUtils
   def setup
+    C4LogUtils.logger = Logger.new('/dev/null')
 
     @server = 'this.server.com'
     @netUtils = C4NetUtils.new(@server)

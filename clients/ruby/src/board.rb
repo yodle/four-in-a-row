@@ -1,27 +1,14 @@
 class Board
+  attr_reader   :grid
+  attr_accessor :width, :height, :me, :opp
+
   def initialize(board, me)
     @width = board.length;
     @height = board[0].length;
     @grid = board;
 
-    @me = 1;
-    @opp = 2;
-  end
-  
-  def width
-    @width
-  end
-  
-  def height
-    @height
-  end
-
-  def me
-    @me
-  end
-
-  def opponent
-    @opp
+    @me = me;
+    @opp = (me % 2) + 1;
   end
   
   def set(col, row, player)
@@ -30,14 +17,6 @@ class Board
   
   def get(col, row)
     @grid[col][row];
-  end
-  
-  def iWin?
-    @iWin
-  end
-  
-  def oppWins?
-    @oppWins
   end
 
   def getLegalMoves
@@ -59,22 +38,33 @@ class Board
         break;
       end
     end
+  end
 
-    @iWin = updateWins(move, rowStopped, @me);
-    @oppWins = updateWins(move, rowStopped, @opp);
-    if @iWin or @oppWins
-      return;
-    end
+  def == (other)
+    @grid == other.grid
   end
 
   def to_s 
-    s = "\n";
+    s = '';
     for r in 0...@height do
       for c in 0...@width do
-        s += @grid[c][r].to_s + ' ';
+        tile = @grid[c][r]
+
+        s += "[#{tile == 0 ? ' ' : Board.player_to_s(tile)}]";
       end
       s += "\n";
     end
     s
   end
+
+  def self.player_to_s(player)
+    if player == 1
+      '1'
+    elsif player == 2
+      '2'
+    end
+  end
+
+private
+
 end
