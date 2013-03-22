@@ -91,32 +91,34 @@ app.all('/game/init/:ailevel', function(req, res) {
         var player = choosePlayer();
         var theGame = game.newGame(ROWS, COLS, player, nickname, aiLevel, isPlayingManually);
 
+	var callbackAfterInit;
         if(player == Utils.Players.P2) { // AI moves first
-            var callback = function(result) {
-                if(result.success) {
-                    var moveResult = theGame.move(result.move);
-
-                    gameDb.init(
-                        theGame, 
-                        function(gameId){
-                            res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
-                        }
-                    );
-                }
-            };
-
-            var aiSpec = ais[aiLevel];
-            var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
-            ai.move('', theGame);
+	    callbackAfterInit = function(gameId) {
+		var callback = function(result) {
+		    if (result.success) {
+			var moveResult = gameSpec.move(result.move);
+			if (moveResult.failed) {
+			    res.end(makeJsonp(jsonp, errorResponse('sorry, this AI is misbehaving')));
+			    return;
+			}
+			findGame(gameId, function(gameSpec) {
+			    gameDb.update(gameId, gameSpec, function(game) {
+				res.end(makeJsonp(jsonp. JSON.stringify(gameSpec)));
+			    });
+			});
+		    }
+		}
+		var aiSpec = ais[aiLevel];
+		var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
+		ai.move('', theGame);
+	    }
         }
         else { // Player moves first
-            gameDb.init(
-                theGame, 
-                function(game){
-                    res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
-                }
-            );
-        }
+	    callbackAfterInit = function() {
+		res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
+	    };
+	}
+	gameDb.init(theGame, callbackAfterInit(gameId));
     }
 });
 
