@@ -132,16 +132,23 @@ var handleBoardStateAndAiMove = function(gameSpec, jsonp, res, gameId) {
                     return;
                 }
                 gameDb.update(gameId, gameSpec, function(game) {
-                    // AI wins!
-                    if (gameSpec.gameOver) { 
+                    if (gameSpec.gameOver && gameSpec.gameOver != 3) { 
+                        // AI wins!
                         ai.endGame(gameSpec);
                         messagesDb.find(gameSpec.aiLevel, gameSpec.moves, false, gameSpec.isPlayingManually, function(result) {
                             gameSpec.message = result.message;
                             res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
                         });
                         return;
-                    } else {
-
+                    } 
+                    else if (gameSpec.gameOver == 3) {
+                        // Tie
+                        ai.endGame(gameSpec);
+                        gameSpec.message = ""; // let the UI header do the talking
+                        res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
+                        return;
+                    }
+                    else {
                         console.log('before res.end');
                         res.end(makeJsonp(jsonp, JSON.stringify(game)));
                     }
@@ -156,7 +163,7 @@ var handleBoardStateAndAiMove = function(gameSpec, jsonp, res, gameId) {
         console.log('before creating computer player');
         var ai = new computerplayer.ComputerPlayer(aiSpec.url, gameSpec.turn, callback);
 
-        if(gameSpec.gameOver) {
+        if(gameSpec.gameOver && gameSpec.gameOver != 3) {
             //Player wins!
             gameDb.update(gameId, gameSpec, function(game) {
                 ai.endGame(gameSpec);
@@ -166,6 +173,13 @@ var handleBoardStateAndAiMove = function(gameSpec, jsonp, res, gameId) {
                 });
                 return;
             });
+        }
+        else if (gameSpec.gameOver == 3) {
+            // Tie
+            ai.endGame(gameSpec);
+            gameSpec.message = ""; // let the UI header do the talking
+            res.end(makeJsonp(jsonp, JSON.stringify(gameSpec)));
+            return;
         }
         else {
             console.log('before ai.move');
