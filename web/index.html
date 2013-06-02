@@ -102,7 +102,7 @@
 								<dt>COLS</dt><dd>The number of columns in the game board, always 7</dd>
 								<dt>id</dt><dd>The unique game identifier, used in the other API methods. Note: this value is a string type.</dd>
 								<dt>challengerPlayer&nbsp;&nbsp;&nbsp;&nbsp;</dt><dd>Your player number (1 or 2), corresponding to the turn order</dd>
-								<dt>gameOver</dt><dd>0 if the game is not over, otherwise the winner's player number</dd>
+								<dt>gameOver</dt><dd>0 if the game is not over, otherwise the winner's player number. 3 in the event of a tie</dd>
 								<dt>nickname</dt><dd>The nickname you supplied to the init API, used for the leaderboard</dd>
 								<dt>turn</dt><dd>Whose turn it is - will always be your player number except if the opponent AI is thinking during a request to get the game state</dd>
 								<dt>moves</dt><dd>How many moves have been played in the current game</dd>
