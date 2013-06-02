@@ -88,29 +88,16 @@ app.all('/game/init/:ailevel', function(req, res) {
     }
     else
     {
+        console.log('before choose player');
         var player = choosePlayer();
+        console.log('before new game');
         var theGame = game.newGame(ROWS, COLS, player, nickname, aiLevel, isPlayingManually);
 
         var callbackAfterInit;
         if(player == Utils.Players.P2) { // AI moves first
             callbackAfterInit = function(gameId) {
-                var callback = function(result) {
-                    if (result.success) {
-                        var moveResult = gameSpec.move(result.move);
-                        if (moveResult.failed) {
-                            res.end(makeJsonp(jsonp, errorResponse('sorry, this AI is misbehaving')));
-                            return;
-                        }
-                        findGame(gameId, function(gameSpec) {
-                            gameDb.update(gameId, gameSpec, function(game) {
-                                res.end(makeJsonp(jsonp. JSON.stringify(gameSpec)));
-                            });
-                        });
-                    }
-                }
-                var aiSpec = ais[aiLevel];
-                var ai = new computerplayer.ComputerPlayer(aiSpec.url, theGame.turn, callback);
-                ai.move('', theGame);
+                console.log('game id type:' + typeof(gameId));
+                handleBoardStateAndAiMove(theGame, jsonp, res, gameId);
             }
         }
         else { // Player moves first
@@ -118,6 +105,7 @@ app.all('/game/init/:ailevel', function(req, res) {
                 res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
             };
         }
+        console.log('before init');
         gameDb.init(theGame, callbackAfterInit);
     }
 });
@@ -131,31 +119,7 @@ var findGame = function(gameId, callback) {
     );
 };
 
-app.all('/game/move/:gameId', function(req, res) {
-    var gameId = req.params.gameId;
-    // Make sure the game ID is a string
-    if (gameId) {
-        gameId = gameId.toString();
-    }
-    var move = req.body.move || req.query.move;
-    var jsonp = req.query.jsonp;
-    if(typeof(move) === 'undefined') {
-        res.end(makeJsonp(jsonp, errorResponse('Must specify a "move" parameter')));
-        return;
-    }
-    findGame(gameId, function(gameSpec) {
-        if(gameSpec === null) {
-            res.end(makeJsonp(jsonp, errorResponse('Invalid GameId: ' + gameId)));
-            return;
-        }
-        gameSpec = game.deserialize(gameSpec);
-
-        var moveResult = gameSpec.move(move); // make the player's move
-        if(moveResult.failed) {
-            res.end(makeJsonp(jsonp, errorResponse(moveResult.message)));
-            return;
-        }
-
+var handleBoardStateAndAiMove = function(gameSpec, jsonp, res, gameId) {
         var aiSpec = ais[gameSpec.aiLevel];
         var callback = function(result) {
             if(result.success) {
@@ -174,6 +138,8 @@ app.all('/game/move/:gameId', function(req, res) {
                         });
                         return;
                     } else {
+
+                        console.log('before res.end');
                         res.end(makeJsonp(jsonp, JSON.stringify(game)));
                     }
                 });
@@ -183,6 +149,8 @@ app.all('/game/move/:gameId', function(req, res) {
                 return; 
             }
         };
+
+        console.log('before creating computer player');
         var ai = new computerplayer.ComputerPlayer(aiSpec.url, gameSpec.turn, callback);
 
         if(gameSpec.gameOver) {
@@ -197,8 +165,40 @@ app.all('/game/move/:gameId', function(req, res) {
             });
         }
         else {
+            console.log('before ai.move');
             ai.move('', gameSpec);
         }
+};
+
+app.all('/game/move/:gameId', function(req, res) {
+    var gameId = req.params.gameId;
+    // Make sure the game ID is a string
+    if (gameId) {
+        gameId = gameId.toString();
+    }
+    var move = req.body.move || req.query.move;
+    var jsonp = req.query.jsonp;
+    if(typeof(move) === 'undefined') {
+        res.end(makeJsonp(jsonp, errorResponse('Must specify a "move" parameter')));
+        return;
+    }
+    console.log('before find game');
+    findGame(gameId, function(gameSpec) {
+        if(gameSpec === null) {
+            res.end(makeJsonp(jsonp, errorResponse('Invalid GameId: ' + gameId)));
+            return;
+        }
+        console.log('before find game');
+        gameSpec = game.deserialize(gameSpec);
+
+        console.log('before gameSpec.move');
+        var moveResult = gameSpec.move(move); // make the player's move
+        if(moveResult.failed) {
+            res.end(makeJsonp(jsonp, errorResponse(moveResult.message)));
+            return;
+        }
+
+        handleBoardStateAndAiMove(gameSpec, jsonp, res, gameId);
     });
 });
 
