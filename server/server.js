@@ -23,10 +23,10 @@ var PORT = 3000;
 var ais = {
     1: {url:'http://x4.corp.yodle.com:3001/ai/random'},
     2: {url:'http://x4.corp.yodle.com:3001/ai/twostep'},
-    3: {url:'http://x4.corp.yodle.com:3004/opening'},
+    3: {url:'http://x4.corp.yodle.com:3004/front/front/move'},
     4: {url:'http://x4.corp.yodle.com:3003/minimax'},
     5: {url:'http://x4.corp.yodle.com:3002/game'},
-    6: {url:'http://x4.corp.yodle.com:3001/ai/twostep'}
+    6: {url:'http://x4.corp.yodle.com:3005/front/front'}
 };
 
 // Initialization
