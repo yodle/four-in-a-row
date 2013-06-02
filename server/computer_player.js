@@ -48,6 +48,7 @@ ComputerPlayer.prototype.makeRequest = function(state, action, callback) {
     var req = http.request(options, function(res) {
         res.on('data', function(rawData) {
             try {
+                console.log('rawData: ' + rawData);
                 var data = JSON.parse(rawData);
                 data.success = true;
                 if(typeof(callback) === 'function') {
@@ -55,6 +56,7 @@ ComputerPlayer.prototype.makeRequest = function(state, action, callback) {
                 }
             }
             catch (e) {
+                console.log('error trying to get move from ai: ' + e.stack);
                 if(typeof(callback) === 'function') {
                     callback({success: false, error: 'misbehaving AI, try again later'});
                 }

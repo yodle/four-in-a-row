@@ -29,14 +29,16 @@ $(document).ready(function() {
         $statusHeaderWrap = $statusHeader.parents('.statusMessage');
 
         $statusHeader.html(headerMsg);
+
+        $statusHeaderWrap.removeClass('error').removeClass('success').removeClass('alert');
         
         if (status === 'lost') {
-            $statusHeaderWrap.removeClass('success').addClass('error');
-        } else if (status === 'won'){
-            $statusHeaderWrap.removeClass('error').addClass('success');
-        } else {
-            $statusHeaderWrap.removeClass('error').removeClass('success');
-        }
+            $statusHeaderWrap.addClass('error');
+        } else if (status === 'won') {
+            $statusHeaderWrap.addClass('success');
+        } else if (status === 'tie') {
+            $statusHeaderWrap.addClass('alert');
+        } 
     }
 
     /**
@@ -108,6 +110,7 @@ $(document).ready(function() {
         if (data.error || data.gameOver != 0) { 
             // Game is over.
             var didWeWin = (data.error == undefined) && (data.challengerPlayer == data.gameOver);
+            var didWeTie = data.gameOver == 3;
             
             var msg = "";
             if (data.error != undefined) {
@@ -127,7 +130,7 @@ $(document).ready(function() {
             }
 
             GAME_UI.highlightWinSequence(data);
-            endGame(msg, didWeWin);
+            endGame(msg, didWeWin, didWeTie);
         }
         else {
             var moveColumn = 0;
@@ -140,7 +143,7 @@ $(document).ready(function() {
                 }
                 catch (error) {
                     var msg = error.name + " occurred evaluating getNextMove function, error message: " + error.message;
-                    endGame(msg, false);
+                    endGame(msg, false, false);
                     // don't send any move, let game be over
                     return;
                 }
@@ -250,35 +253,24 @@ $(document).ready(function() {
     /**
      * Displays message lightbox with results of game
      */
-    var endGame = function(message, didWeWin) {
+    var endGame = function(message, didWeWin, didWeTie) {
         if (didWeWin) {
             setGameStatusHeader("Challenger wins!", "won");
 
         }
+        else if (didWeTie) {
+            setGameStatusHeader("Tie Game.", "tie");
+        }
         else {
-            
             setGameStatusHeader("Game Over. Challenger lost.", "lost");
-            
         }
 
         setGameStatusContent(message);
 
         isGameInProgress = false;
 
-
         /* Add text to modal body */
         $("#gameStatusModal .statusMessage strong").first().html(message);
-
-        if (didWeWin) {
-            $("#gameStatusModal .statusMessage")
-                .removeClass("error")
-                .addClass("success");
-        }
-        else {
-            $("#gameStatusModal .statusMessage")
-                .removeClass("success")
-                .addClass("error");
-        }
     };
 
     // Initialize the game ui 
