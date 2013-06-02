@@ -28,7 +28,7 @@ var ais = {
 
     // Going to make 5 and 6 the same for now
     //5: {url:'http://x4.corp.yodle.com:3002/game'},
-    5: {url:'http://x4.corp.yodle.com:3005/front/front'}
+    5: {url:'http://x4.corp.yodle.com:3005/front/front'},
     6: {url:'http://x4.corp.yodle.com:3005/front/front'}
 };
 

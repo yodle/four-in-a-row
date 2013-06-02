@@ -119,7 +119,7 @@ exports.checkWin = function(board) {
     }
             
     if(findLegalMoves(board).length === 0) {
-        return 'tie';
+        return 3;
     }
     
     return false;
