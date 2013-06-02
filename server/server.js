@@ -118,7 +118,7 @@ app.all('/game/init/:ailevel', function(req, res) {
                 res.end(makeJsonp(jsonp, JSON.stringify(theGame)));
             };
         }
-        gameDb.init(theGame, callbackAfterInit(gameId));
+        gameDb.init(theGame, callbackAfterInit);
     }
 });
 
