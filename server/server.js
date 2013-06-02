@@ -133,6 +133,10 @@ var findGame = function(gameId, callback) {
 
 app.all('/game/move/:gameId', function(req, res) {
     var gameId = req.params.gameId;
+    // Make sure the game ID is a string
+    if (gameId) {
+        gameId = gameId.toString();
+    }
     var move = req.body.move || req.query.move;
     var jsonp = req.query.jsonp;
     if(typeof(move) === 'undefined') {

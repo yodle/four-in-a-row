@@ -20,8 +20,7 @@ GameDb.prototype.update = function(id, game, callback) {
     var that = this;
     this.db.collection('games', function(err, col) {
         var updateGame = removeId(game);
-        var strId = id.toString();
-        var dbId = col.db.bson_serializer.ObjectID.createFromHexString(strId);
+        var dbId = col.db.bson_serializer.ObjectID.createFromHexString(id);
         col.update({'_id': dbId}, updateGame, function() {
             callback(game);
 
