@@ -14,7 +14,7 @@ MessagesDb.prototype.find = function(level, moves, win, manual, callback) {
         if (win) {
             col.find( { 'win' : win, 'manual' : manual }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
         } else {
-            if (parseInt(moves, 10) > GOOD_ENOUGH_MOVES) {
+            if (parseInt(moves, 10) > GOOD_ENOUGH_MOVES && !manual) {
                 col.find( { 'win' : win, 'enoughMoves' : true }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
             } else {
                 col.find( { 'win' : win, 'enoughMoves' : false }, { 'template' : 1 }).toArray(function(err, results) { findLevelCode(results, callback, level, win, that.db); });
